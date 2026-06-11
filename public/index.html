@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>雨夜偵探社：第七封情書</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <header class="center">
+      <p class="dim" style="letter-spacing:0.3em; margin-bottom:0;">RAINY NIGHT DETECTIVE</p>
+      <h1 id="game-title">雨夜偵探社：第七封情書</h1>
+      <p class="dim">七天、七封信、一個被刪掉的雨夜。</p>
+    </header>
+
+    <section class="panel">
+      <h2>故事簡介</h2>
+      <p>
+        平凡上班族的你，在雨夜收到一封沒有署名的情書——信末卻寫著一行失蹤預告。
+        當晚，自稱「雨夜偵探社」的偵探敲響你的家門。
+        七天之內，你將與這位對你熟悉得反常的偵探搭檔，追查好友的下落、
+        七封信的真相，以及一段被親手刪去的記憶。
+      </p>
+      <ul class="clue-list">
+        <li>每日更新：Day 1 至 Day 7，每天解鎖一章（依日本時間 JST）</li>
+        <li>你的選擇會影響「好感・信任・真相・懷疑」四項數值與最終結局</li>
+        <li>主線（Day1-7 + 兩種免費結局）完全免費</li>
+      </ul>
+    </section>
+
+    <div class="notice" id="age-notice">
+      本作品含懸疑、微驚悚、情感拉扯，以及創傷與失憶相關之虛構情節，所有登場角色均為 18 歲以上之成年人，適合 18 歲以上玩家遊玩。若你正處於情緒低潮，請斟酌遊玩節奏、適時休息。
+    </div>
+    <div class="notice" id="fictional-notice">
+      本作品為純虛構互動故事。所有人物、地名、機構、事件均屬虛構，與現實無關。對話皆為預先寫成的劇本，沒有任何即時 AI 在與你交談。
+    </div>
+
+    <!-- 18+ 確認閘門 -->
+    <section id="gate-section" class="panel center">
+      <p>進入遊戲前，請先確認：</p>
+      <button id="confirm-gate-btn" class="btn btn-primary">我已滿 18 歲，且了解這是虛構故事</button>
+      <p class="dim">未滿 18 歲請離開本頁面。</p>
+    </section>
+
+    <!-- 確認後才顯示 -->
+    <section id="start-section" class="panel center hidden">
+      <button id="continue-btn" class="btn btn-primary hidden">繼續遊戲</button>
+      <button id="start-btn" class="btn">開始新遊戲</button>
+      <p class="dim">進度只儲存在你的瀏覽器（localStorage），不會上傳任何資料。</p>
+    </section>
+
+    <footer class="footer">
+      <p>
+        <a href="privacy.html">隱私政策</a>｜
+        <a href="terms.html">服務條款</a>｜
+        <a href="unlock.html">補完內容</a>
+      </p>
+      <p>本故事文本由 AI 協助生成・純虛構作品・© 2026 雨夜偵探社製作組（示範專案）</p>
+    </footer>
+  </div>
+
+  <script src="app.js"></script>
+  <script>
+    'use strict';
+    (function () {
+      var RD = window.RainyDetective;
+
+      // 嘗試載入 story.json，以官方文案覆蓋提醒文字（載入失敗則用內建文字）
+      RD.loadStory().then(function (story) {
+        if (!story) return;
+        if (story.game_title) {
+          document.getElementById('game-title').textContent = story.game_title;
+          document.title = story.game_title;
+        }
+        if (story.age_notice) document.getElementById('age-notice').textContent = story.age_notice;
+        if (story.fictional_notice) document.getElementById('fictional-notice').textContent = story.fictional_notice;
+      });
+
+      var gateSection = document.getElementById('gate-section');
+      var startSection = document.getElementById('start-section');
+      var continueBtn = document.getElementById('continue-btn');
+
+      function showStartSection() {
+        gateSection.classList.add('hidden');
+        startSection.classList.remove('hidden');
+        if (RD.hasSave()) continueBtn.classList.remove('hidden');
+      }
+
+      if (RD.storageGet('ageConfirmed', false)) {
+        showStartSection();
+      }
+
+      document.getElementById('confirm-gate-btn').addEventListener('click', function () {
+        RD.storageSet('ageConfirmed', true);
+        showStartSection();
+      });
+
+      document.getElementById('start-btn').addEventListener('click', function () {
+        if (RD.hasSave()) {
+          var ok = window.confirm('已有存檔。開始新遊戲將清除目前進度（已解鎖的補完內容會保留），確定嗎？');
+          if (!ok) return;
+        }
+        RD.resetProgress();
+        window.location.href = 'game.html';
+      });
+
+      continueBtn.addEventListener('click', function () {
+        window.location.href = 'game.html';
+      });
+    })();
+  </script>
+</body>
+</html>

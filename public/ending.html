@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>結局 — 雨夜偵探社：第七封情書</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <!-- 載入錯誤 -->
+    <section id="error-panel" class="panel hidden">
+      <h2>載入失敗</h2>
+      <p class="dim">無法載入結局資料。請以本機伺服器開啟本頁。</p>
+      <a class="btn btn-ghost" href="index.html">回首頁</a>
+    </section>
+
+    <!-- 尚未通關提醒 -->
+    <section id="not-finished-panel" class="panel hidden center">
+      <h2>七天還沒有結束</h2>
+      <p class="dim">最終結局會在 Day 7 結束後判定。雨還在下，故事還在路上。</p>
+      <a class="btn btn-primary" href="game.html">回到遊戲</a>
+      <button id="force-judge-btn" class="btn btn-ghost">仍要以目前進度判定（測試用）</button>
+    </section>
+
+    <!-- 結局內容 -->
+    <section id="ending-section" class="hidden">
+      <div class="center">
+        <p class="dim" style="letter-spacing:0.3em;">FINAL JUDGEMENT</p>
+        <h1 class="ending-title" id="ending-name"></h1>
+        <span class="ending-tag" id="ending-tag"></span>
+      </div>
+
+      <main id="ending-chat" class="chat-area" aria-live="polite"></main>
+
+      <div class="ending-panel hidden" id="ending-after">
+        <div class="share-box" id="ending-share-text"></div>
+        <button id="copy-share-btn" class="btn btn-ghost">複製分享文案</button>
+        <p class="dim center hidden" id="copy-feedback">已複製！</p>
+
+        <!-- 達成付費結局條件但未解鎖時的提示 -->
+        <div class="upsell-box hidden" id="locked-better-box">
+          <p id="locked-better-text"></p>
+          <a class="btn btn-primary" href="unlock.html">前往解鎖補完內容</a>
+        </div>
+
+        <!-- 免費結局的 upsell -->
+        <div class="upsell-box hidden" id="upsell-box">
+          <p id="upsell-text"></p>
+          <a class="btn btn-primary" href="unlock.html">前往解鎖補完內容</a>
+        </div>
+
+        <div class="panel">
+          <h2>本周目紀錄</h2>
+          <div id="final-stats" class="dim"></div>
+          <p class="dim" id="clue-count"></p>
+          <ul class="clue-list" id="clue-list"></ul>
+          <p class="dim" id="completed-endings"></p>
+        </div>
+
+        <button id="replay-btn" class="btn">再讀一次這場雨（重新開始）</button>
+        <a class="btn btn-ghost" href="index.html">回首頁</a>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <p><a href="privacy.html">隱私政策</a>｜<a href="terms.html">服務條款</a></p>
+    </footer>
+  </div>
+
+  <script src="app.js"></script>
+  <script>
+    'use strict';
+    (function () {
+      var RD = window.RainyDetective;
+
+      if (!RD.storageGet('ageConfirmed', false)) {
+        window.location.replace('index.html');
+        return;
+      }
+
+      var story = null;
+      var endingsData = null;
+      var partnerName = RD.storageGet('partner_name', null) || '偵探';
+
+      function showError() {
+        document.getElementById('error-panel').classList.remove('hidden');
+      }
+
+      function runJudgement() {
+        document.getElementById('not-finished-panel').classList.add('hidden');
+        document.getElementById('ending-section').classList.remove('hidden');
+
+        var stats = RD.storageGet('stats', {}) || {};
+        var clues = RD.storageGet('obtainedClues', []) || [];
+        var unlockedPaid = RD.storageGet('unlockedPaidContent', []) || [];
+
+        // 防止重整頁面時重複判定：每個周目只判定一次結局。
+        // 若已判定，直接用快取的 lastEnding 還原，不重新跑 determineEnding 也不增加 replayCount。
+        var alreadyJudged = RD.storageGet('endingJudgedThisRun', false);
+        var result;
+        if (alreadyJudged) {
+          var cachedId = RD.storageGet('lastEnding', null);
+          if (!cachedId) { showError(); return; }
+          var cachedEnding = null;
+          for (var ei = 0; ei < endingsData.length; ei++) {
+            if (endingsData[ei].ending_id === cachedId) { cachedEnding = endingsData[ei]; break; }
+          }
+          if (!cachedEnding) { showError(); return; }
+          result = { ending: cachedEnding, lockedBetter: null };
+        } else {
+          result = RD.determineEnding(endingsData, stats, clues, unlockedPaid);
+        }
+
+        var ending = result.ending;
+        if (!ending) { showError(); return; }
+
+        // 首次判定：紀錄結局、累計 replayCount、標記本局已判定
+        if (!alreadyJudged) {
+          var completed = RD.storageGet('completedEndings', []) || [];
+          if (completed.indexOf(ending.ending_id) === -1) {
+            completed.push(ending.ending_id);
+            RD.storageSet('completedEndings', completed);
+          }
+          RD.storageSet('lastEnding', ending.ending_id);
+          RD.storageSet('endingJudgedThisRun', true);
+          // Day7 通關後累計 replayCount（每周目只加一次）
+          RD.incrementReplayCount();
+        }
+
+        // 重整時重新讀取已存的 completed 清單（供顯示用）
+        var completed = RD.storageGet('completedEndings', []) || [];
+
+        document.getElementById('ending-name').textContent = ending.name || ending.ending_id;
+        document.getElementById('ending-tag').textContent =
+          ending.free_or_paid === 'free' ? '免費結局' : '補完內容（已解鎖）';
+
+        // 決定要顯示幾則 final_chat_messages（付費結局未解鎖只顯示前 3 則）
+        var messages = renderEndingMessages(ending, unlockedPaid);
+
+        var chat = document.getElementById('ending-chat');
+        RD.renderMessagesSequentially(chat, messages, story, partnerName, 750)
+          .then(function () {
+            showAfterPanel(ending, result.lockedBetter, stats, clues, completed, unlockedPaid);
+          });
+      }
+
+      /**
+       * renderEndingMessages(ending, unlockedPaid)
+       * 付費結局（unlock_required_for_full_content: true）未解鎖時，只回傳前 3 則訊息。
+       * 免費結局或已解鎖時回傳完整訊息。
+       */
+      function renderEndingMessages(ending, unlockedPaid) {
+        var all = ending.final_chat_messages || [];
+        if (!ending.unlock_required_for_full_content) return all;
+        // 判斷是否已解鎖：unlockedPaid 包含對應 pack id 或 DEMO-TRUE
+        var packId = (window.RainyDetective.ENDING_PACK_MAP || {})[ending.ending_id];
+        var isUnlocked = (unlockedPaid || []).indexOf(packId) !== -1 ||
+                         (unlockedPaid || []).indexOf('DEMO-TRUE') !== -1;
+        if (isUnlocked) return all;
+        return all.slice(0, 3);
+      }
+
+      function showAfterPanel(ending, lockedBetter, stats, clues, completed, unlockedPaid) {
+        document.getElementById('ending-after').classList.remove('hidden');
+
+        // 分享文案
+        var shareText = RD.fillPartnerName(ending.share_line || '', partnerName);
+        document.getElementById('ending-share-text').textContent = shareText;
+        document.getElementById('copy-share-btn').addEventListener('click', function () {
+          RD.copyTextToClipboard(shareText).then(function (ok) {
+            var fb = document.getElementById('copy-feedback');
+            fb.textContent = ok ? '已複製！' : '複製失敗，請手動選取文字。';
+            fb.classList.remove('hidden');
+          });
+        });
+
+        // 付費結局內容截斷提示：有 unlock_required_for_full_content 且未解鎖
+        if (ending.unlock_required_for_full_content) {
+          var packId = (RD.ENDING_PACK_MAP || {})[ending.ending_id];
+          var isFullUnlocked = (unlockedPaid || []).indexOf(packId) !== -1 ||
+                               (unlockedPaid || []).indexOf('DEMO-TRUE') !== -1;
+          if (!isFullUnlocked) {
+            var truncBox = document.getElementById('upsell-box');
+            truncBox.classList.remove('hidden');
+            document.getElementById('upsell-text').textContent =
+              '解鎖 True Case File 觀看完整案件真相';
+          }
+        }
+
+        // 達成了更高優先的付費結局，但尚未解鎖
+        if (lockedBetter) {
+          var box = document.getElementById('locked-better-box');
+          box.classList.remove('hidden');
+          var betterText = '你的選擇已達成「' + (lockedBetter.name || lockedBetter.ending_id) +
+            '」的全部條件！該結局屬於補完內容，解鎖後即可觀看完整終章。';
+          // 若是 true_case_end，提供「選擇 Secret End」快速路徑
+          if (lockedBetter.ending_id === 'true_case_end') {
+            betterText += '（下次重玩時也可選擇隱藏終章——解鎖後在結局頁選擇即可啟動。）';
+          }
+          document.getElementById('locked-better-text').textContent = betterText;
+        }
+
+        // 免費結局的補完導購文案（upsell_text 有值且尚未被截斷提示佔用）
+        if (ending.upsell_text && !ending.unlock_required_for_full_content) {
+          document.getElementById('upsell-box').classList.remove('hidden');
+          document.getElementById('upsell-text').textContent = ending.upsell_text;
+        }
+
+        // Secret End 選擇按鈕：已解鎖 secret pack 且尚未 requested 時顯示
+        var replayCount = RD.storageGet('replayCount', 0);
+        var secretRequested = RD.storageGet('secretRouteRequested', false);
+        var secretUnlocked = RD.isSecretEndUnlocked(unlockedPaid || []);
+        if (secretUnlocked && !secretRequested && ending.ending_id !== 'secret_end') {
+          var secretBtn = document.createElement('button');
+          secretBtn.className = 'btn btn-ghost';
+          secretBtn.textContent = '下一局選擇隱藏終章（Secret End）';
+          secretBtn.addEventListener('click', function () {
+            RD.requestSecretRoute();
+            secretBtn.textContent = '已設定：下一局將優先判定隱藏終章';
+            secretBtn.disabled = true;
+          });
+          document.getElementById('ending-after').insertBefore(
+            secretBtn,
+            document.getElementById('replay-btn')
+          );
+        }
+
+        // 本周目紀錄
+        var statsEl = document.getElementById('final-stats');
+        var defs = (story && story.stats) || {};
+        var parts = [];
+        Object.keys(defs).forEach(function (k) {
+          parts.push((defs[k].label || k) + ' ' + (typeof stats[k] === 'number' ? stats[k] : 0));
+        });
+        statsEl.textContent = parts.join('｜');
+
+        document.getElementById('clue-count').textContent = '取得線索：' + clues.length + ' / 14';
+        var list = document.getElementById('clue-list');
+        clues.forEach(function (c) {
+          var li = document.createElement('li');
+          li.textContent = RD.clueDisplayName(c);
+          list.appendChild(li);
+        });
+
+        document.getElementById('completed-endings').textContent =
+          '已抵達的結局：' + completed.length + ' / 5（' + completed.join('、') + '）';
+
+        // 重新開始
+        document.getElementById('replay-btn').addEventListener('click', function () {
+          var ok = window.confirm('重新開始將清除目前進度（已解鎖內容與結局紀錄會保留），確定嗎？');
+          if (!ok) return;
+          RD.resetProgress();
+          window.location.href = 'game.html';
+        });
+      }
+
+      Promise.all([RD.loadStory(), RD.loadEndings()]).then(function (results) {
+        story = results[0];
+        endingsData = results[1];
+        if (!story || !endingsData) { showError(); return; }
+
+        var currentDay = RD.storageGet('currentDay', 1);
+        var totalDays = story.days.length;
+        if (currentDay <= totalDays && !RD.storageGet('testMode', false)) {
+          var panel = document.getElementById('not-finished-panel');
+          panel.classList.remove('hidden');
+          document.getElementById('force-judge-btn').addEventListener('click', runJudgement);
+        } else {
+          runJudgement();
+        }
+      });
+    })();
+  </script>
+</body>
+</html>

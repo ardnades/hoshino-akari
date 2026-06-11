@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>補完內容 — 雨夜偵探社：第七封情書</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <header class="center">
+      <h1>補完內容</h1>
+      <p class="dim">主線（Day1-7 與兩種免費結局）永遠免費。<br>付費內容只是「補完」：更深的真相、更多的雨夜。</p>
+    </header>
+
+    <div class="notice">
+      目前為 MVP 示範版：所有商品按鈕皆為「即將開放」，<strong>不會連接任何真實金流</strong>。
+      可使用示範解鎖碼 <strong>DEMO-TRUE</strong> 體驗解鎖後的完整內容。
+    </div>
+
+    <!-- 解鎖碼 -->
+    <section class="panel">
+      <h2>輸入解鎖碼</h2>
+      <p class="dim">持有解鎖碼（購買取得，或二周目通關獲贈）即可開啟對應內容。</p>
+      <input type="text" id="code-input" class="code-input" placeholder="例如：DEMO-TRUE" autocomplete="off">
+      <button id="unlock-btn" class="btn btn-primary">解鎖</button>
+      <p id="unlock-feedback" class="hidden"></p>
+    </section>
+
+    <!-- 商品清單 -->
+    <section class="panel">
+      <h2>補完內容清單</h2>
+      <div id="product-list">
+        <p class="dim">載入中……</p>
+      </div>
+    </section>
+
+    <div class="center">
+      <a class="btn btn-ghost" href="index.html">回首頁</a>
+      <a class="btn btn-ghost" href="game.html">回到遊戲</a>
+    </div>
+
+    <footer class="footer">
+      <p><a href="privacy.html">隱私政策</a>｜<a href="terms.html">服務條款</a></p>
+      <p>所有價格皆為示意文案，非真實商品。</p>
+    </footer>
+  </div>
+
+  <script src="app.js"></script>
+  <script>
+    'use strict';
+    (function () {
+      var RD = window.RainyDetective;
+      var endingsData = null;
+
+      function renderProducts(story) {
+        var listEl = document.getElementById('product-list');
+        listEl.textContent = '';
+        var unlocked = RD.storageGet('unlockedPaidContent', []) || [];
+        var products = (story && story.paid_content) || [];
+
+        if (!products.length) {
+          var p = document.createElement('p');
+          p.className = 'dim';
+          p.textContent = '無法載入商品清單。';
+          listEl.appendChild(p);
+          return;
+        }
+
+        products.forEach(function (item) {
+          var card = document.createElement('div');
+          card.className = 'product-card';
+
+          var h3 = document.createElement('h3');
+          h3.textContent = item.name;
+          card.appendChild(h3);
+
+          var price = document.createElement('p');
+          price.className = 'product-price';
+          price.textContent = item.price_copy || '';
+          card.appendChild(price);
+
+          var desc = document.createElement('p');
+          desc.className = 'product-desc';
+          desc.textContent = item.unlock_description || '';
+          card.appendChild(desc);
+
+          if (unlocked.indexOf(item.id) !== -1) {
+            var ok = document.createElement('p');
+            ok.className = 'product-unlocked';
+            ok.textContent = '✔ 已解鎖';
+            card.appendChild(ok);
+          } else {
+            // placeholder：不連真實金流
+            var buy = document.createElement('a');
+            buy.className = 'btn btn-ghost btn-small';
+            buy.href = '#';
+            buy.textContent = '即將開放';
+            buy.addEventListener('click', function (e) { e.preventDefault(); });
+            card.appendChild(buy);
+          }
+          listEl.appendChild(card);
+        });
+      }
+
+      var storyCache = null;
+
+      document.getElementById('unlock-btn').addEventListener('click', function () {
+        var code = document.getElementById('code-input').value;
+        var result = RD.tryUnlockCode(code, endingsData);
+        var fb = document.getElementById('unlock-feedback');
+        fb.classList.remove('hidden');
+        fb.className = result.ok ? 'feedback-ok' : 'feedback-err';
+        fb.textContent = result.message;
+        if (result.ok) renderProducts(storyCache);
+      });
+
+      Promise.all([RD.loadStory(), RD.loadEndings()]).then(function (results) {
+        storyCache = results[0];
+        endingsData = results[1];
+        renderProducts(storyCache);
+      });
+    })();
+  </script>
+</body>
+</html>

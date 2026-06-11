@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>遊戲中 — 雨夜偵探社：第七封情書</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- 頂部：Day 與四項數值 -->
+  <div class="topbar">
+    <div class="topbar-inner">
+      <div class="topbar-row">
+        <div>
+          <span class="day-label" id="day-label">Day -</span>
+          <span class="day-title" id="day-title"></span>
+        </div>
+        <label class="testmode-row" title="測試模式：忽略日期限制，直接解鎖全部章節">
+          <input type="checkbox" id="testmode-toggle"> 測試模式
+        </label>
+      </div>
+      <div class="stats-bar" id="stats-bar"></div>
+    </div>
+  </div>
+
+  <div class="container">
+    <!-- 載入錯誤 -->
+    <section id="error-panel" class="panel hidden">
+      <h2>載入失敗</h2>
+      <p class="dim">無法載入劇本資料（story.json）。請以本機伺服器開啟本頁（直接以 file:// 開啟會無法讀取資料）。</p>
+      <a class="btn btn-ghost" href="index.html">回首頁</a>
+    </section>
+
+    <!-- 首次：偵探搭檔選擇 -->
+    <section id="setup-panel" class="panel hidden">
+      <h2>雨夜裡，敲門的人是——</h2>
+      <p class="dim">選擇你的偵探搭檔。這個選擇會決定整段故事中與你並肩的人。</p>
+      <div class="partner-options">
+        <button type="button" class="partner-option" data-partner="ren" id="opt-ren">
+          <span class="partner-kana">🌧️ 蓮</span>
+          撐黑傘的年輕男人（26）
+        </button>
+        <button type="button" class="partner-option" data-partner="mio" id="opt-mio">
+          <span class="partner-kana">🌧️ 澪</span>
+          拎著濕外套的年輕女人（26）
+        </button>
+      </div>
+      <label class="dim" for="partner-name-input">自訂稱呼（可留空，預設用上方名字）</label>
+      <input type="text" id="partner-name-input" class="code-input" maxlength="12" placeholder="例如：蓮、澪，或你想叫的名字">
+      <button id="setup-confirm-btn" class="btn btn-primary" disabled>決定。開門。</button>
+    </section>
+
+    <!-- 章節未解鎖 -->
+    <section id="locked-panel" class="panel hidden center">
+      <h2 id="locked-title">本章尚未解鎖</h2>
+      <p class="dim" id="locked-text"></p>
+      <p class="dim">想立刻測試全部章節，可開啟右上角的「測試模式」。</p>
+      <a class="btn btn-ghost" href="index.html">回首頁</a>
+    </section>
+
+    <!-- 聊天區 -->
+    <main id="chat-area" class="chat-area" aria-live="polite"></main>
+
+    <!-- 選項區 -->
+    <div id="choices-area" class="choices-area"></div>
+
+    <!-- 每日結尾 -->
+    <section id="endday-panel" class="endday-panel hidden">
+      <h2 id="endday-heading">— 本日終了 —</h2>
+      <p class="cliffhanger" id="cliffhanger-text"></p>
+      <p class="tomorrow-hook" id="tomorrow-hook-text"></p>
+      <div class="share-box" id="daily-share-text"></div>
+      <button id="copy-share-btn" class="btn btn-ghost">複製分享文案</button>
+      <p class="dim center hidden" id="copy-feedback">已複製！</p>
+      <button id="next-day-btn" class="btn btn-primary hidden"></button>
+      <p class="dim center" id="next-day-info"></p>
+      <a class="btn btn-ghost" href="index.html">回首頁</a>
+    </section>
+  </div>
+
+  <script src="app.js"></script>
+  <script>
+    'use strict';
+    (function () {
+      var RD = window.RainyDetective;
+
+      // 未通過 18+ 確認 → 回首頁
+      if (!RD.storageGet('ageConfirmed', false)) {
+        window.location.replace('index.html');
+        return;
+      }
+
+      var story = null;
+      var statsDef = {};
+      var state = {
+        currentDay: RD.storageGet('currentDay', 1),
+        currentScene: RD.storageGet('currentScene', null),
+        stats: RD.storageGet('stats', null),
+        clues: RD.storageGet('obtainedClues', [])
+      };
+      var partner = RD.storageGet('partner', null);
+      var partnerName = RD.storageGet('partner_name', null);
+
+      var chatArea = document.getElementById('chat-area');
+      var choicesArea = document.getElementById('choices-area');
+
+      function saveState() {
+        RD.storageSet('currentDay', state.currentDay);
+        RD.storageSet('currentScene', state.currentScene);
+        RD.storageSet('stats', state.stats);
+        RD.storageSet('obtainedClues', state.clues);
+      }
+
+      // ===== 頂部數值列 =====
+      function renderStatsBar() {
+        var bar = document.getElementById('stats-bar');
+        bar.textContent = '';
+        Object.keys(statsDef).forEach(function (key) {
+          var pill = document.createElement('span');
+          pill.className = 'stat-pill';
+          pill.id = 'stat-pill-' + key;
+          var label = document.createElement('span');
+          label.textContent = statsDef[key].label || key;
+          var value = document.createElement('span');
+          value.className = 'stat-value';
+          value.textContent = String(state.stats[key]);
+          pill.appendChild(label);
+          pill.appendChild(value);
+          bar.appendChild(pill);
+        });
+      }
+
+      function updateStatsBar(changedKeys) {
+        Object.keys(statsDef).forEach(function (key) {
+          var pill = document.getElementById('stat-pill-' + key);
+          if (!pill) return;
+          pill.querySelector('.stat-value').textContent = String(state.stats[key]);
+          if (changedKeys && changedKeys.indexOf(key) !== -1) {
+            pill.classList.add('stat-flash');
+            setTimeout(function () { pill.classList.remove('stat-flash'); }, 900);
+          }
+        });
+      }
+
+      function updateDayHeader(day) {
+        document.getElementById('day-label').textContent = 'Day ' + day.day;
+        document.getElementById('day-title').textContent = '「' + day.title + '」';
+      }
+
+      // ===== 訊息與線索 =====
+      function showMessages(messages) {
+        return RD.renderMessagesSequentially(chatArea, messages, story, partnerName, 650);
+      }
+
+      function addClue(clueId) {
+        if (state.clues.indexOf(clueId) !== -1) return;
+        state.clues.push(clueId);
+        RD.appendSystemNote(chatArea, '🔍 取得線索：' + RD.clueDisplayName(clueId));
+      }
+
+      function grantAutoClues(day, sceneId) {
+        (day.clue_updates || []).forEach(function (cu) {
+          if (cu.how === 'auto' && cu.scene_id === sceneId) addClue(cu.clue_id);
+        });
+      }
+
+      function applyDelta(delta) {
+        if (!delta) return;
+        RD.applyStatDelta(state.stats, delta, statsDef);
+        updateStatsBar(Object.keys(delta));
+      }
+
+      // ===== 流程 =====
+      function getDayData(dayNumber) {
+        for (var i = 0; i < story.days.length; i++) {
+          if (story.days[i].day === dayNumber) return story.days[i];
+        }
+        return null;
+      }
+
+      function beginDay() {
+        var totalDays = story.days.length;
+        if (state.currentDay > totalDays) {
+          window.location.href = 'ending.html';
+          return;
+        }
+        var day = getDayData(state.currentDay);
+        if (!day) {
+          window.location.href = 'ending.html';
+          return;
+        }
+        updateDayHeader(day);
+        if (!RD.isDayUnlocked(day.day)) {
+          showLockedPanel(day);
+          return;
+        }
+        document.getElementById('locked-panel').classList.add('hidden');
+        playDay(day);
+      }
+
+      function showLockedPanel(day) {
+        var panel = document.getElementById('locked-panel');
+        panel.classList.remove('hidden');
+        document.getElementById('locked-title').textContent = 'Day ' + day.day + '「' + day.title + '」尚未解鎖';
+        document.getElementById('locked-text').textContent =
+          '本章將於 ' + RD.dayUnlockDateString(day.day) + '（JST）解鎖。今天是 ' + RD.jstTodayString() + '（JST）。';
+      }
+
+      function playDay(day) {
+        chatArea.textContent = '';
+        choicesArea.textContent = '';
+        document.getElementById('endday-panel').classList.add('hidden');
+
+        if (!state.currentScene) {
+          saveState();
+          showMessages(day.opening_messages || []).then(function () {
+            if (day.scenes && day.scenes.length) {
+              enterScene(day, day.scenes[0].scene_id);
+            } else {
+              endOfDay(day);
+            }
+          });
+        } else {
+          // 從中斷的場景接續（場景由頭重播）
+          enterScene(day, state.currentScene);
+        }
+      }
+
+      function findScene(day, sceneId) {
+        for (var i = 0; i < (day.scenes || []).length; i++) {
+          if (day.scenes[i].scene_id === sceneId) return day.scenes[i];
+        }
+        return null;
+      }
+
+      function enterScene(day, sceneId) {
+        var scene = findScene(day, sceneId);
+        if (!scene) { endOfDay(day); return; }
+        state.currentScene = sceneId;
+        saveState();
+        grantAutoClues(day, sceneId);
+        showMessages(scene.messages || []).then(function () {
+          showChoices(day, scene);
+        });
+      }
+
+      function showChoices(day, scene) {
+        choicesArea.textContent = '';
+        var choices = scene.choices || [];
+        if (!choices.length) { endOfDay(day); return; }
+
+        // Day1 開門場景：若已先選定搭檔，只顯示對應的那個選項
+        var hasPartnerFlag = choices.some(function (c) { return c.set_flag && c.set_flag.partner; });
+        if (hasPartnerFlag && partner) {
+          var matched = choices.filter(function (c) { return c.set_flag && c.set_flag.partner === partner; });
+          if (matched.length) choices = matched;
+        }
+
+        choices.forEach(function (choice) {
+          var btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = 'choice-btn';
+          btn.textContent = RD.fillPartnerName(choice.label, partnerName);
+          btn.addEventListener('click', function () { handleChoice(day, choice); });
+          choicesArea.appendChild(btn);
+        });
+        RD.scrollToBottom(chatArea);
+      }
+
+      function handleChoice(day, choice) {
+        choicesArea.textContent = '';
+
+        // 玩家選擇以自己的氣泡回顯
+        showMessages([{ speaker: 'player', text: choice.label }]).then(function () {
+          applyDelta(choice.stat_delta);
+          (choice.clues_gained || []).forEach(addClue);
+
+          if (choice.set_flag && choice.set_flag.partner && !partner) {
+            partner = choice.set_flag.partner;
+            partnerName = (story.partner_display_names || {})[partner] || '偵探';
+            RD.storageSet('partner', partner);
+            RD.storageSet('partner_name', partnerName);
+          }
+          saveState();
+
+          var after = choice.consequence_text
+            ? showMessages([{ speaker: 'narrator', text: choice.consequence_text }])
+            : Promise.resolve();
+
+          after.then(function () {
+            if (choice.next_scene === 'end_of_day' || !choice.next_scene) {
+              endOfDay(day);
+            } else {
+              enterScene(day, choice.next_scene);
+            }
+          });
+        });
+      }
+
+      function endOfDay(day) {
+        // 套用當日基礎數值變化
+        applyDelta(day.stat_delta);
+
+        var finishedDay = day.day;
+        state.currentScene = null;
+        state.currentDay = finishedDay + 1;
+        saveState();
+
+        var panel = document.getElementById('endday-panel');
+        panel.classList.remove('hidden');
+        document.getElementById('endday-heading').textContent = '— Day ' + finishedDay + '「' + day.title + '」終了 —';
+        document.getElementById('cliffhanger-text').textContent = RD.fillPartnerName(day.cliffhanger || '', partnerName);
+        document.getElementById('tomorrow-hook-text').textContent = RD.fillPartnerName(day.tomorrow_hook || '', partnerName);
+
+        var shareTemplate = (story.share_templates && story.share_templates.daily) || '{{sns_share_line}}';
+        var shareText = RD.fillTemplate(shareTemplate, {
+          day: finishedDay,
+          sns_share_line: day.sns_share_line || ''
+        });
+        document.getElementById('daily-share-text').textContent = shareText;
+
+        var copyBtn = document.getElementById('copy-share-btn');
+        copyBtn.onclick = function () {
+          RD.copyTextToClipboard(shareText).then(function (ok) {
+            var fb = document.getElementById('copy-feedback');
+            fb.textContent = ok ? '已複製！' : '複製失敗，請手動選取文字。';
+            fb.classList.remove('hidden');
+          });
+        };
+
+        var nextBtn = document.getElementById('next-day-btn');
+        var nextInfo = document.getElementById('next-day-info');
+        var totalDays = story.days.length;
+
+        if (finishedDay >= totalDays) {
+          nextBtn.textContent = '前往最終結局判定';
+          nextBtn.classList.remove('hidden');
+          nextBtn.onclick = function () { window.location.href = 'ending.html'; };
+          nextInfo.textContent = '七天結束了。雨，會停嗎？';
+        } else if (RD.isDayUnlocked(finishedDay + 1)) {
+          nextBtn.textContent = '繼續：Day ' + (finishedDay + 1);
+          nextBtn.classList.remove('hidden');
+          nextBtn.onclick = function () { window.location.reload(); };
+          nextInfo.textContent = '';
+        } else {
+          nextBtn.classList.add('hidden');
+          nextInfo.textContent = 'Day ' + (finishedDay + 1) + ' 將於 ' +
+            RD.dayUnlockDateString(finishedDay + 1) + '（JST）解鎖。明晚再見。';
+        }
+        RD.scrollToBottom(chatArea);
+      }
+
+      // ===== 首次搭檔選擇 =====
+      function showSetupPanel() {
+        var panel = document.getElementById('setup-panel');
+        panel.classList.remove('hidden');
+        var selected = null;
+        var confirmBtn = document.getElementById('setup-confirm-btn');
+        var options = panel.querySelectorAll('.partner-option');
+
+        options.forEach(function (opt) {
+          opt.addEventListener('click', function () {
+            options.forEach(function (o) { o.classList.remove('selected'); });
+            opt.classList.add('selected');
+            selected = opt.getAttribute('data-partner');
+            confirmBtn.disabled = false;
+          });
+        });
+
+        confirmBtn.addEventListener('click', function () {
+          if (!selected) return;
+          partner = selected;
+          var defaultName = (story.partner_display_names || {})[selected] || '偵探';
+          var custom = document.getElementById('partner-name-input').value.trim();
+          partnerName = custom || defaultName;
+          RD.storageSet('partner', partner);
+          RD.storageSet('partner_name', partnerName);
+          panel.classList.add('hidden');
+          beginDay();
+        });
+      }
+
+      // ===== 測試模式開關 =====
+      var testToggle = document.getElementById('testmode-toggle');
+      testToggle.checked = RD.storageGet('testMode', false);
+      testToggle.addEventListener('change', function () {
+        RD.storageSet('testMode', testToggle.checked);
+        window.location.reload();
+      });
+
+      // ===== 啟動 =====
+      RD.loadStory().then(function (loaded) {
+        if (!loaded) {
+          document.getElementById('error-panel').classList.remove('hidden');
+          return;
+        }
+        story = loaded;
+        statsDef = story.stats || {};
+        if (!state.stats) state.stats = RD.initStats(story);
+        renderStatsBar();
+
+        if (!partner) {
+          showSetupPanel();
+        } else {
+          beginDay();
+        }
+      });
+    })();
+  </script>
+</body>
+</html>

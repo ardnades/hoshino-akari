@@ -1,0 +1,360 @@
+[
+  {
+    "ending_id": "secret_end",
+    "name": "隱藏終章：第八個寄信人",
+    "free_or_paid": "paid_or_second_play",
+    "trigger_condition": "完成 true_case_end 或二周目，且 truth >= 70、trust >= 60、suspicion <= 50，持有 c03、c06、c07、c09、c11、c14 全部六條線索及 c05 或 c13 至少一項，並輸入解鎖碼 DEMO-TRUE。此結局不自動覆蓋其他結局，需玩家明確選擇觸發。",
+    "required_stats": {
+      "truth": { "gte": 70 },
+      "trust": { "gte": 60 },
+      "suspicion": { "lte": 50 }
+    },
+    "required_clues": [
+      "c03_ink_smudge",
+      "c06_memory_consent",
+      "c07_seventh_letter",
+      "c09_library_stamp",
+      "c11_handwriting_report",
+      "c14_burner_phone"
+    ],
+    "required_clues_any_of": [
+      "c05_clinic_keycard",
+      "c13_rainy_night_news"
+    ],
+    "requires_completed_ending": "true_case_end",
+    "requires_replay": true,
+    "requires_secret_route_flag": true,
+    "explicit_only": true,
+    "unlock_code": "DEMO-TRUE",
+    "priority": 2,
+    "ending_summary": "true_case_end 之後的隱藏終章。千夏被捕後，偵探整理她留下的診所檔案時發現：檔案的編號並不連續——當年流出的不只一批。某個深夜，偵探社信箱出現第八封信，筆跡既不是玩家的，也不是千夏的。寫信的人，從頭到尾都在看著這場雨。Season 2 的傘，已經撐開了。",
+    "final_chat_messages": [
+      {
+        "speaker": "narrator",
+        "text": "（一週後。雨停了三天，又開始下。偵探社的燈，今晚亮著。）"
+      },
+      {
+        "speaker": "partner",
+        "text": "千夏的檔案我重新編了號。……有件事不太對。"
+      },
+      {
+        "speaker": "player",
+        "text": "哪裡不對？"
+      },
+      {
+        "speaker": "partner",
+        "text": "診所流出的檔案編號到 047。她手上的，最大只到 031。中間少的那一批——不在她那裡，也不在警方那裡。"
+      },
+      {
+        "speaker": "player",
+        "text": "……你的意思是，還有人拿走了一批？"
+      },
+      {
+        "speaker": "partner",
+        "text": "她攤牌那天說過一句話，我一直沒告訴你。她說：『我不是唯一一個讀過那些信的人。』"
+      },
+      {
+        "speaker": "narrator",
+        "text": "（樓下信箱發出金屬聲。一封信。沒有郵戳，沒有署名。信封是乾的——在這樣的雨夜裡。）"
+      },
+      {
+        "speaker": "partner",
+        "text": "……{{partner_name}}收信三年，第一次看到這種筆跡。不是你的，不是她的。"
+      },
+      {
+        "speaker": "player",
+        "text": "信上寫了什麼？"
+      },
+      {
+        "speaker": "partner",
+        "text": "只有一行——『第七封信結束了你們的謊。那麼第八封，就從我的真相開始吧。』"
+      },
+      {
+        "speaker": "narrator",
+        "text": "（窗外，雨聲裡混進一把傘收起的聲音。Season 1・完——而有人，才正要登場。）"
+      }
+    ],
+    "truth_revealed": "診所流出的檔案不只千夏持有的一批；存在第八個寄信人，此人完整讀過玩家的七封信並知曉一切，動向不明。千夏只是真相的第一層。",
+    "romance_resolution": "延續 true_case_end 的關係：兩人以「重新開始的搭檔」並肩面對新的謎團，曖昧已落地為明確的羈絆。",
+    "share_line": "「第七封信結束了我們的謊。那麼第八封，會從誰的真相開始？」 #雨夜偵探社 #隱藏終章",
+    "upsell_text": ""
+  },
+  {
+    "ending_id": "true_case_end",
+    "name": "真相結局：這個謊，由我來結束",
+    "free_or_paid": "paid",
+    "trigger_condition": "Day7 判定時：truth >= 70 且 trust >= 60 且 suspicion <= 50；並持有 c03、c06、c07、c09、c11、c14 全部六條線索，且持有 c05 或 c13 至少一項。",
+    "required_stats": {
+      "truth": { "gte": 70 },
+      "trust": { "gte": 60 },
+      "suspicion": { "lte": 50 }
+    },
+    "required_clues": [
+      "c03_ink_smudge",
+      "c06_memory_consent",
+      "c07_seventh_letter",
+      "c09_library_stamp",
+      "c11_handwriting_report",
+      "c14_burner_phone"
+    ],
+    "required_clues_any_of": [
+      "c05_clinic_keycard",
+      "c13_rainy_night_news"
+    ],
+    "unlock_required_for_full_content": true,
+    "priority": 2,
+    "ending_summary": "診所舊址，玩家以完整證據鏈當眾指認千夏：描摹的起筆停頓、左手運筆的鑑定、圖書館的借閱章、冒名購機的身影、結衣的指證——環環相扣，無可辯駁。接著玩家做了千夏沒料到的事：親口讀完第七封信，當眾承認「遺忘是我自己選的」，把偵探背了三年的罪卸下。千夏被捕，結衣獲救，真相以玩家自己選擇的方式公開。雨停之前，謊言由寫下它的人親手結束。",
+    "final_chat_messages": [
+      {
+        "speaker": "narrator",
+        "text": "（螢窗診所舊址。雨敲著破掉的天窗。千夏站在七封信的原稿前，很平靜。）"
+      },
+      {
+        "speaker": "npc_shirase_chinatsu",
+        "text": "請吧。當著偵探的面，把第七封信讀完。讓全世界聽聽，你們的謊有多溫柔。"
+      },
+      {
+        "speaker": "player",
+        "text": "我會讀。但在那之前——白瀨千夏小姐，先讓我把『你的』部分說完。"
+      },
+      {
+        "speaker": "player",
+        "text": "情書每一個字的起筆都有描摹的停頓，墨水是圖書館的事務用墨。筆跡鑑定指向左手運筆的女性。借閱章證明你每週三和結衣見面。冒名真壁買預付手機的，是監視器裡左手提袋的嬌小女性。結衣的留言，指證的『她』——就是你。"
+      },
+      {
+        "speaker": "npc_shirase_chinatsu",
+        "text": "……噓。我說過的吧，連謊言都要小聲一點。可是你說的這些，一句都不是謊呢。我從頭到尾，沒有對你說過一句謊。說謊的，是你們兩個。"
+      },
+      {
+        "speaker": "player",
+        "text": "對。所以這個謊——由我來結束。"
+      },
+      {
+        "speaker": "narrator",
+        "text": "（玩家展開第七封信，一字一句讀完。「不是你弄丟了我——是我，自己選擇放開你的手。」雨聲忽然很遠。）"
+      },
+      {
+        "speaker": "player",
+        "text": "刪掉記憶是我自己要求的。簽同意書的是我，寫這七封信的也是我。{{partner_name}}沒有背叛任何人——他只是替我守了三年的約。"
+      },
+      {
+        "speaker": "partner",
+        "text": "……笨蛋。我都背得好好的了，你幹嘛現在拿回去。"
+      },
+      {
+        "speaker": "npc_shirase_chinatsu",
+        "text": "……弟弟到最後都沒能想起我。而你，把忘掉的全部撿回來了。……真好啊。真的，真好。"
+      },
+      {
+        "speaker": "narrator",
+        "text": "（警笛聲靠近。千夏沒有逃，只是輕輕把七封信的原稿推向玩家——「物歸原主」。結衣在短租公寓被安全尋獲。）"
+      },
+      {
+        "speaker": "partner",
+        "text": "雨要停了。……三年前我答應過不再出現在你面前。這個約，現在正式作廢——接下來換你習慣我天天都在，可以吧？"
+      }
+    ],
+    "truth_revealed": "全部真相公開：七封信是玩家三年前親筆所寫；刪除記憶是玩家本人要求（c06 親簽＋L7 全文佐證）；偵探守諾背罪三年；千夏因弟弟白瀨遼之死策畫一切，以偽造筆跡、安排自願失蹤、冒名栽贓逼真相公開，最終被捕。",
+    "romance_resolution": "玩家親手替偵探卸罪，兩人的羈絆從「被守護的謊」變成「共同承擔的真相」；偵探宣告解除「不再出現」的誓言，關係正式重新開始。",
+    "share_line": "「刪得掉記憶，刪不掉我喜歡你這件事。這個謊，由我來結束。」 #雨夜偵探社 #第七封情書 #真相結局",
+    "upsell_text": ""
+  },
+  {
+    "ending_id": "romance_end",
+    "name": "戀愛結局：換我先說喜歡你",
+    "free_or_paid": "paid",
+    "trigger_condition": "Day7 判定時：affection >= 70 且 trust >= 55 且 truth >= 40；並持有 c06、c10 兩條線索。（若同時滿足 true_case_end 條件，依優先序先進 true_case_end。）",
+    "required_stats": {
+      "affection": { "gte": 70 },
+      "trust": { "gte": 55 },
+      "truth": { "gte": 40 }
+    },
+    "required_clues": [
+      "c06_memory_consent",
+      "c10_yui_voicemail"
+    ],
+    "unlock_required_for_full_content": true,
+    "priority": 3,
+    "ending_summary": "診所舊址，玩家手上的證據不足以拼出完整動機，卻足以做出選擇：不公開全部真相，而是擋在偵探身前，選擇「保護這個替我守了三年謊的人」。結衣的留言讓警方鎖定千夏，案件以非法拘禁低調落幕，記憶處置的往事未被攤上媒體。雨夜的屋簷下，這次換玩家先開口——「這次，換我先說喜歡你。」",
+    "final_chat_messages": [
+      {
+        "speaker": "narrator",
+        "text": "（螢窗診所舊址。千夏要求玩家當眾讀信、向媒體公開一切。偵探向前一步，想把一切攬下。）"
+      },
+      {
+        "speaker": "partner",
+        "text": "夠了，要審判就審判我一個。安排處置的是我，守了三年謊的也是我——"
+      },
+      {
+        "speaker": "player",
+        "text": "（擋到{{partner_name}}身前）不行。三年前你替我擋，擋到把自己活成一個謊。今天這一邊，換我站。"
+      },
+      {
+        "speaker": "npc_shirase_chinatsu",
+        "text": "……你連全部的真相都還沒拼出來，就要替這個人擋？"
+      },
+      {
+        "speaker": "player",
+        "text": "同意書上的簽名是我的。結衣的留言我也聽了。我不知道全部，但我知道夠了——這個人說的每一個謊，都是為了我。"
+      },
+      {
+        "speaker": "narrator",
+        "text": "（警笛聲由遠而近。結衣的語音留言早已交給警方，短租公寓的位置鎖定了千夏。她看著兩人，輕輕地、幾乎是溫柔地嘆了一口氣。）"
+      },
+      {
+        "speaker": "npc_shirase_chinatsu",
+        "text": "弟弟說過，忘記的人是不會痛的。……他錯了呢。你們兩個，明明都痛成這樣。"
+      },
+      {
+        "speaker": "narrator",
+        "text": "（事件低調落幕。一週後的雨夜，偵探社的屋簷下，兩個人，一把傘。）"
+      },
+      {
+        "speaker": "partner",
+        "text": "……信裡那句話，你還記得嗎。『雨停的時候，我一定說。』結果這座城市的雨根本不會停，害我等了三年。"
+      },
+      {
+        "speaker": "player",
+        "text": "那就不等雨停了。{{partner_name}}，這次，換我先說——我喜歡你。三年前的我喜歡你，忘掉一切的我，又喜歡了你一次。"
+      },
+      {
+        "speaker": "partner",
+        "text": "……刪得掉記憶，刪不掉這個。你自己寫的，可不准再反悔了。"
+      },
+      {
+        "speaker": "narrator",
+        "text": "（傘往玩家那邊斜了過去。雨還在下，但肩膀上有一塊，一直是乾的。）"
+      }
+    ],
+    "truth_revealed": "部分真相：玩家確認刪除記憶出於本人簽署的同意（c06），並由結衣的留言（c10）確認主謀是千夏、結衣安全獲救；但七封信的完整脈絡與千夏的全部動機未被公開，案件以非法拘禁低調偵結。",
+    "romance_resolution": "完全落地：玩家選擇保護偵探而非公開真相，並主動告白「這次換我先說喜歡你」；兩人正式在一起，呼應 L1「傘往你那邊斜」與 L4「雨停的時候我一定說」。",
+    "share_line": "「忘掉一切的我，又喜歡了你一次。這次，換我先說。」 #雨夜偵探社 #第七封情書 #戀愛結局",
+    "upsell_text": ""
+  },
+  {
+    "ending_id": "bad_end",
+    "name": "壞結局：熄燈的偵探社",
+    "free_or_paid": "free",
+    "trigger_condition": "Day7 判定時：truth < 35，或 suspicion >= 70，或未持有 c06_memory_consent（任一成立即觸發；無論其他數值多高）。",
+    "required_stats": {
+      "any_of": [
+        { "truth": { "lt": 35 } },
+        { "suspicion": { "gte": 70 } },
+        { "missing_clues": ["c06_memory_consent"] }
+      ]
+    },
+    "required_clues": [],
+    "priority": 5,
+    "ending_summary": "證據殘缺、或懷疑壓過了一切。診所舊址上，玩家公開指認了錯的人——偵探，或真壁。被指認的人沒有辯解。千夏靜靜看完這場她寫好的審判，然後消失在雨裡，全身而退。結衣平安回來了，但有些東西回不來：商店街二樓的那盞燈，從此再也沒有亮過。",
+    "final_chat_messages": [
+      {
+        "speaker": "narrator",
+        "text": "（螢窗診所舊址。手上的線索拼不成一個完整的形狀，但所有的箭頭，都指向同一個方向。）"
+      },
+      {
+        "speaker": "player",
+        "text": "情書的筆跡、診所的門卡、簽過的文件……都是你。從頭到尾，都是你吧。"
+      },
+      {
+        "speaker": "partner",
+        "text": "……是嗎。你想的話，就報警吧。我說過的，我不會跑。"
+      },
+      {
+        "speaker": "player",
+        "text": "到了這一步，你還是連一句『不是我』都不肯說？"
+      },
+      {
+        "speaker": "partner",
+        "text": "說了的話——有個人三年前的願望，就白費了。算了，你不會懂的。這樣也好。"
+      },
+      {
+        "speaker": "narrator",
+        "text": "（陰影裡，千夏輕輕鼓了三下掌，安靜得像在圖書館。）"
+      },
+      {
+        "speaker": "npc_shirase_chinatsu",
+        "text": "噓——到最後都要小聲一點喔。看吧，我沒有說過一句謊。把一切弄成這樣的，是你們自己。"
+      },
+      {
+        "speaker": "narrator",
+        "text": "（她把一束白花放在診所門口——給弟弟的——然後撐傘走進雨裡，沒有人來得及攔住她。）"
+      },
+      {
+        "speaker": "npc_hayama_yui",
+        "text": "前輩，對不起、對不起……我以為只是演一場戲……欸，前輩？偵探先生呢？"
+      },
+      {
+        "speaker": "narrator",
+        "text": "（一個月後。結衣回到了公司，城市恢復了日常。只有商店街二樓的那扇窗，再也沒有亮過燈。桌上留著一張字條。）"
+      },
+      {
+        "speaker": "partner",
+        "text": "「委託結案。費用不收了——畢竟我遲到了三年，這次，又沒能趕上。再見。」"
+      }
+    ],
+    "truth_revealed": "幾乎沒有：玩家未能取得記憶處置同意書（或被懷疑淹沒），誤認偵探或真壁為主謀；七封信的真正執筆者、刪除記憶的真相、千夏的動機全部未揭明，千夏全身而退。",
+    "romance_resolution": "斷裂：偵探承受了錯誤的指認、不辯解地離開，偵探社永久熄燈；那句沒說出口的話，和三年前一樣被留在雨裡。",
+    "share_line": "「全世界都說是他寫的。只有他自己，連『不是我』都不肯說。」 #雨夜偵探社 #第七封情書",
+    "upsell_text": "也許哪裡走錯了——【免費重玩一次】，重走一次雨夜，你會看見不一樣的線索。（若想直接看完整答案，《完整案件檔案》也在結局後選單裡，不限時、不會消失。）"
+  },
+  {
+    "ending_id": "normal_end",
+    "name": "普通結局：下次別再收陌生人的信了",
+    "free_or_paid": "free",
+    "trigger_condition": "fallback：以上四個結局條件皆不符合時必定觸發，無任何數值或線索要求，保證玩家不會無結局可進。",
+    "required_stats": { "fallback": true },
+    "required_clues": [],
+    "priority": 4,
+    "ending_summary": "診所舊址的對峙中，結衣的證言與部分物證讓警方當場逮捕千夏，結衣平安獲救——案件「破了」。但玩家始終沒能拼出全貌：信為什麼是自己的筆跡風格、同意書折角那行小字、偵探為何熟悉自己的一切。偵探什麼都沒解釋，只在雨夜裡留下一句「下次別再收陌生人的信了」，再次消失。完整、自洽，留下淡淡的遺憾。",
+    "final_chat_messages": [
+      {
+        "speaker": "narrator",
+        "text": "（螢窗診所舊址。結衣的留言早已轉交警方。千夏被銬上手銬時，仍然輕聲細語，像在整理一排還沒歸位的書。）"
+      },
+      {
+        "speaker": "npc_shirase_chinatsu",
+        "text": "案子破了呢。可是你什麼都還沒想起來——這樣的『破案』，也算數嗎？"
+      },
+      {
+        "speaker": "player",
+        "text": "……什麼意思？我該想起什麼？"
+      },
+      {
+        "speaker": "npc_shirase_chinatsu",
+        "text": "噓。圖書館的規矩——答案要自己查。期限是，下一個雨季之前。"
+      },
+      {
+        "speaker": "narrator",
+        "text": "（她沒有再說話。警車的紅光掃過廢墟的牆，七封信被收進證物袋，玩家始終沒能讀到最後一封。）"
+      },
+      {
+        "speaker": "npc_hayama_yui",
+        "text": "前輩！嗚……對不起啦，害你擔心了……欸，你受傷了嗎？沒事吧？"
+      },
+      {
+        "speaker": "player",
+        "text": "沒事就好。真的，你平安就好。"
+      },
+      {
+        "speaker": "narrator",
+        "text": "（幾天後，雨夜。商店街二樓的燈最後一次亮著。偵探站在門口，像第一天晚上那樣。）"
+      },
+      {
+        "speaker": "player",
+        "text": "案子結束了，你也要走了嗎？……欸，至少告訴我，你為什麼知道我不吃香菜？"
+      },
+      {
+        "speaker": "partner",
+        "text": "偵探的基本功，觀察而已。……喂，最後一個忠告。下次別再收陌生人的信了——說不定哪一封，是你最不該忘記的人寄的。"
+      },
+      {
+        "speaker": "narrator",
+        "text": "（傘的影子融進雨裡。玩家低頭，發現口袋裡多了一張偵探社的名片——背面用很舊的字跡寫著：「雨夜營業。隨時。」）"
+      }
+    ],
+    "truth_revealed": "表層真相：千夏被捕、結衣獲救、失蹤案偵結；但七封信的執筆者、玩家被刪除的記憶、偵探守了三年的約定全部未揭明，玩家帶著「想不起來的違和感」回到日常。",
+    "romance_resolution": "未完成：偵探再次選擇消失以守住約定，只留下名片與一句忠告；曖昧停在「總有一天還會在雨夜重逢」的餘韻。",
+    "share_line": "「他說，下次別再收陌生人的信了。可是那封信的字，為什麼讓我那麼想哭？」 #雨夜偵探社 #第七封情書",
+    "upsell_text": "案子結了，但有七封信你還沒有讀完。解鎖《完整案件檔案》與真相結局，看看同意書折角那行小字寫了什麼——以及偵探守了三年的那個約定。"
+  }
+]

@@ -1,0 +1,971 @@
+{
+  "game_title": "雨夜偵探社：第七封情書",
+  "version": "1.0.0",
+  "language": "zh-TW",
+  "age_notice": "本作品含懸疑、微驚悚、情感拉扯，以及創傷與失憶相關之虛構情節，所有登場角色均為 18 歲以上之成年人，適合 18 歲以上玩家遊玩。若你正處於情緒低潮，請斟酌遊玩節奏、適時休息。",
+  "fictional_notice": "本作品為純虛構互動故事。所有人物、地名、機構、事件均屬虛構，與現實無關。對話皆為預先寫成的劇本，沒有任何即時 AI 在與你交談。",
+  "safety_flags": {
+    "age_18_plus": true,
+    "fictional": true,
+    "no_realtime_ai": true
+  },
+  "stats": {
+    "affection": { "label": "好感", "start": 10, "min": 0, "max": 100, "description": "對偵探的好感" },
+    "trust": { "label": "信任", "start": 20, "min": 0, "max": 100, "description": "對偵探的信任" },
+    "truth": { "label": "真相", "start": 0, "min": 0, "max": 100, "description": "真相揭明度" },
+    "suspicion": { "label": "懷疑", "start": 10, "min": 0, "max": 100, "description": "對偵探的懷疑" }
+  },
+  "partner_display_names": { "ren": "蓮", "mio": "澪" },
+  "speaker_map": {
+    "narrator": null,
+    "player": "player",
+    "partner": "ren_or_mio",
+    "npc_kosaka_minato": "kosaka_minato",
+    "npc_makabe_osamu": "makabe_osamu",
+    "npc_shirase_chinatsu": "shirase_chinatsu",
+    "npc_hayama_yui": "hayama_yui"
+  },
+  "characters": [
+    { "character_id": "player", "display_name": "我", "age": 25, "avatar": "assets/avatars/player.png", "role": "主角，丸庭設計事務所上班族" },
+    { "character_id": "ren_or_mio", "display_name": "{{partner_name}}", "age": 26, "avatar": "assets/avatars/partner.png", "role": "雨夜偵探社的偵探搭檔（蓮／澪）" },
+    { "character_id": "hayama_yui", "display_name": "葉山結衣", "age": 24, "avatar": "assets/avatars/yui.png", "role": "玩家的同事兼好友，失蹤者" },
+    { "character_id": "kosaka_minato", "display_name": "高坂湊", "age": 27, "avatar": "assets/avatars/minato.png", "role": "咖啡店「汀屋」店長" },
+    { "character_id": "makabe_osamu", "display_name": "真壁修", "age": 45, "avatar": "assets/avatars/makabe.png", "role": "前刑警、徵信社調查員" },
+    { "character_id": "shirase_chinatsu", "display_name": "白瀨千夏", "age": 29, "avatar": "assets/avatars/chinatsu.png", "role": "市立圖書館員" },
+    { "character_id": "shirase_ryo", "display_name": "白瀨遼", "age": 26, "avatar": "assets/avatars/ryo.png", "role": "千夏之弟（歿年 26 歲，僅存在於紀錄與回憶中）" }
+  ],
+  "days": [
+    {
+      "day": 1,
+      "title": "雨夜，第一封信",
+      "summary": "2026-06-11（JST）。玩家收到匿名情書，信末預告葉山結衣將消失。深夜，自稱偵探的蓮／澪敲響玩家家門。",
+      "stat_delta": { "truth": 4 },
+      "opening_messages": [
+        { "speaker": "narrator", "text": "2026 年 6 月 11 日，星期四。汐見市，夜，雨。" },
+        { "speaker": "player", "text": "二十五歲的人生，平凡得像連續陰天。每天下班、淋雨、回家。" },
+        { "speaker": "player", "text": "……可是今天，信箱裡多了一封信。沒有郵票、沒有署名。" },
+        { "speaker": "narrator", "text": "信紙被雨水沾濕了一角。上面是極其工整的手寫字。" },
+        { "speaker": "player", "text": "「給總是在雨夜出現的你」——這是……情書？" }
+      ],
+      "clue_updates": [
+        { "clue_id": "c01_love_letter", "how": "auto", "scene_id": "d1s2" }
+      ],
+      "scenes": [
+        {
+          "scene_id": "d1s1",
+          "messages": [
+            { "speaker": "narrator", "text": "晚上十一點。敲門聲，三下。不急，但很確定。" },
+            { "speaker": "narrator", "text": "「雨夜偵探社。有人委託我，注意你的信箱。」門外的聲音這麼說。" },
+            { "speaker": "player", "text": "雨夜偵探社……商店街二樓那塊只在雨夜亮燈的招牌？" },
+            { "speaker": "narrator", "text": "你透過門上的貓眼看出去。站在雨裡的，是——" }
+          ],
+          "choices": [
+            {
+              "choice_id": "d1s1c1",
+              "label": "一個撐黑傘的年輕男人。你開了門。",
+              "stat_delta": { "affection": 2 },
+              "set_flag": { "partner": "ren" },
+              "next_scene": "d1s2",
+              "consequence_text": "「蓮。二十六歲，無業遊民兼偵探。」他收傘的動作，熟練得像來過這裡一百次。"
+            },
+            {
+              "choice_id": "d1s1c2",
+              "label": "一個拎著濕外套的年輕女人。你開了門。",
+              "stat_delta": { "affection": 2 },
+              "set_flag": { "partner": "mio" },
+              "next_scene": "d1s2",
+              "consequence_text": "「澪。二十六歲，無業遊民兼偵探。」她甩了甩傘上的雨，熟練得像來過這裡一百次。"
+            }
+          ]
+        },
+        {
+          "scene_id": "d1s2",
+          "messages": [
+            { "speaker": "partner", "text": "信，給我看看。匿名情書這種東西，浪漫是浪漫——" },
+            { "speaker": "partner", "text": "但寫情書的人預告別人失蹤，這就不叫浪漫，叫犯罪預告了吧。" },
+            { "speaker": "player", "text": "預告……？什麼預告？" },
+            { "speaker": "narrator", "text": "偵探指著信末，一行被你忽略的小字——「明天，葉山結衣會消失。」" },
+            { "speaker": "player", "text": "結衣……？為什麼會有結衣的名字……" }
+          ],
+          "choices": [
+            {
+              "choice_id": "d1s2c1",
+              "label": "把整封信交給偵探：「拜託你，查清楚。」",
+              "stat_delta": { "trust": 3, "truth": 2 },
+              "next_scene": "d1s3",
+              "consequence_text": "偵探接過信，眼神在某一行停了很久。「……字很工整。工整得，有點刻意。」"
+            },
+            {
+              "choice_id": "d1s2c2",
+              "label": "故作鎮定開玩笑：「偵探先生／小姐，你比情書還準時。」",
+              "stat_delta": { "affection": 4 },
+              "next_scene": "d1s3",
+              "consequence_text": "偵探愣了一下，隨即低聲笑了。「……你還是老樣子。」——老樣子？"
+            },
+            {
+              "choice_id": "d1s2c3",
+              "label": "警戒後退：「等等，你怎麼證明你不是寫信的人？」",
+              "stat_delta": { "suspicion": 4 },
+              "next_scene": "d1s3",
+              "consequence_text": "偵探沒有辯解，只是把信放回桌上。「懷疑是好習慣。留著它，會救你的命。」"
+            }
+          ]
+        },
+        {
+          "scene_id": "d1s3",
+          "messages": [
+            { "speaker": "narrator", "text": "偵探環視你的房間，目光在廚房的外帶餐盒上停住。" },
+            { "speaker": "partner", "text": "……你點的湯麵，香菜挑掉了。你不吃香菜，對吧。" },
+            { "speaker": "player", "text": "（我從來沒有跟這個人說過這件事。）" },
+            { "speaker": "partner", "text": "明天，葉山結衣可能真的會出事。手機開著，有事傳訊息給我。" },
+            { "speaker": "narrator", "text": "離開前，偵探背對著你，在門口停了一秒。" },
+            { "speaker": "partner", "text": "「這次，我不會遲到。」" }
+          ],
+          "choices": [
+            {
+              "choice_id": "d1s3c1",
+              "label": "追問：「『這次』是什麼意思？你到底是誰？」",
+              "stat_delta": { "truth": 2, "suspicion": 2 },
+              "next_scene": "end_of_day",
+              "consequence_text": "偵探的肩膀僵了一下。「……口誤。」門關上了。可是那不像口誤。"
+            },
+            {
+              "choice_id": "d1s3c2",
+              "label": "心跳漏了一拍，什麼都沒說，只說「路上小心」。",
+              "stat_delta": { "affection": 4, "trust": 1 },
+              "next_scene": "end_of_day",
+              "consequence_text": "偵探回頭看了你一眼，欲言又止。雨聲裡，腳步聲很久才走遠。"
+            },
+            {
+              "choice_id": "d1s3c3",
+              "label": "冷淡送客：「偵探的工作結束了的話，請回吧。」",
+              "stat_delta": { "suspicion": 3, "affection": -2 },
+              "next_scene": "end_of_day",
+              "consequence_text": "「……嗯。打擾了。」門關上的瞬間，你莫名覺得，自己好像關上過這扇門很多次。"
+            }
+          ]
+        }
+      ],
+      "romance_moment": "偵探對玩家的生活習慣熟悉得反常——記得玩家不吃香菜。",
+      "conflict": "匿名情書的浪漫，被信末的失蹤預告凍結。",
+      "cliffhanger": "偵探離開前低聲說：「這次，我不會遲到。」",
+      "tomorrow_hook": "明天就是預告之日。結衣，真的會消失嗎？",
+      "sns_share_line": "收到情書的第一個晚上，我家門口站了一個偵探。"
+    },
+    {
+      "day": 2,
+      "title": "消失的星期五",
+      "summary": "2026-06-12（JST）。結衣未到班、失聯，預告成真。玩家與偵探查訪咖啡店「汀屋」與店長高坂湊，並將情書送鑑。",
+      "stat_delta": { "truth": 6 },
+      "opening_messages": [
+        { "speaker": "narrator", "text": "6 月 12 日，星期五。雨沒有停。" },
+        { "speaker": "player", "text": "結衣沒來上班。電話不通。訊息已送達，未讀。" },
+        { "speaker": "player", "text": "她是小我一歲的後輩，二十四歲，永遠嘻嘻哈哈的那種人……不會無故消失的。" },
+        { "speaker": "partner", "text": "預告成真了。從現在起，每一分鐘都算數。她最後出現在哪？" },
+        { "speaker": "player", "text": "汀屋。她每天早上都去那家咖啡店。" }
+      ],
+      "clue_updates": [
+        { "clue_id": "c04_cafe_receipt", "how": "choice", "via": "d2s1c1" },
+        { "clue_id": "c02_old_photo", "how": "choice", "via": "d2s2c1" },
+        { "clue_id": "c03_ink_smudge", "how": "choice", "via": "d2s3c1|d2s3c2" }
+      ],
+      "scenes": [
+        {
+          "scene_id": "d2s1",
+          "messages": [
+            { "speaker": "narrator", "text": "汀屋。咖啡香混著雨味。店長高坂湊——偵探的調查筆記上寫著「高坂湊，27」。" },
+            { "speaker": "npc_kosaka_minato", "text": "老樣子？熱拿鐵少糖——你看，有些事不用問我也記得。" },
+            { "speaker": "player", "text": "（……他為什麼知道我的「老樣子」？我才來過幾次而已。）" },
+            { "speaker": "partner", "text": "葉山結衣，昨天最後一次出現在這裡。要從哪裡查起，你決定。" }
+          ],
+          "choices": [
+            {
+              "choice_id": "d2s1c1",
+              "label": "和偵探一起調閱收據與監視器，追結衣最後的行蹤。",
+              "stat_delta": { "truth": 3, "trust": 3 },
+              "clues_gained": ["c04_cafe_receipt"],
+              "next_scene": "d2s2",
+              "consequence_text": "監視器裡，一個陌生女人連續多日與結衣同桌。湊低聲說：「那位的眼神不像在聊天，像在核對清單。」"
+            },
+            {
+              "choice_id": "d2s1c2",
+              "label": "不安到發抖。先靠近偵探：「……她會沒事的，對吧？」",
+              "stat_delta": { "affection": 4, "trust": 1 },
+              "next_scene": "d2s2",
+              "consequence_text": "偵探沉默兩秒，把熱拿鐵推到你面前。「會。因為這次，有我在。」"
+            },
+            {
+              "choice_id": "d2s1c3",
+              "label": "慌了手腳：「這種事交給警察就好了吧！」",
+              "stat_delta": { "truth": -2, "suspicion": 2 },
+              "next_scene": "d2s2",
+              "consequence_text": "「失蹤未滿二十四小時，警察不會動。」偵探的語氣冷了下來。「……而且這個案子，警察靠不住。」"
+            }
+          ]
+        },
+        {
+          "scene_id": "d2s2",
+          "messages": [
+            { "speaker": "narrator", "text": "偵探注意到，湊接電話時手機桌布閃過一張照片——他慌張地按熄了螢幕。" },
+            { "speaker": "partner", "text": "高坂先生。剛剛那張照片，再給我們看一次。" },
+            { "speaker": "npc_kosaka_minato", "text": "那個……不是、那不是你們想的那樣……" }
+          ],
+          "choices": [
+            {
+              "choice_id": "d2s2c1",
+              "label": "要求看他的手機。",
+              "stat_delta": { "truth": 3, "trust": 3 },
+              "clues_gained": ["c02_old_photo"],
+              "next_scene": "d2s3",
+              "consequence_text": "照片裡是你——和偵探並肩站著，在雨裡笑。可是你完全不記得拍過這張照片。偵探一把沒收：「這個，跟案子無關。」"
+            },
+            {
+              "choice_id": "d2s2c2",
+              "label": "比起手機，你更在意偵探瞬間僵硬的側臉。",
+              "stat_delta": { "affection": 5, "trust": 2 },
+              "next_scene": "d2s3",
+              "consequence_text": "那是你第一次看到偵探露出「不像偵探」的表情——像是有什麼東西，當場碎掉了。"
+            },
+            {
+              "choice_id": "d2s2c3",
+              "label": "當場指責湊：「你在跟蹤結衣對吧！」",
+              "stat_delta": { "suspicion": 4, "truth": -1 },
+              "next_scene": "d2s3",
+              "consequence_text": "湊苦笑著沉默。偵探低聲說：「指責讓人閉嘴，提問才讓人開口。……記住。」"
+            }
+          ]
+        },
+        {
+          "scene_id": "d2s3",
+          "messages": [
+            { "speaker": "narrator", "text": "傍晚，偵探社。桌上攤著那封情書。窗外雨聲不斷。" },
+            { "speaker": "partner", "text": "情書是目前唯一的實物證據。要不要交給我做筆跡與墨水鑑定——你決定。" },
+            { "speaker": "player", "text": "（信上寫著「喜歡一個人原來是這樣的」……把它交出去，總覺得像交出什麼秘密。）" }
+          ],
+          "choices": [
+            {
+              "choice_id": "d2s3c1",
+              "label": "把情書交給偵探鑑定。",
+              "stat_delta": { "truth": 2, "trust": 4 },
+              "clues_gained": ["c03_ink_smudge"],
+              "next_scene": "end_of_day",
+              "consequence_text": "「……有意思。每個字的起筆都有停頓痕，像在描摹什麼。而且這種墨水——是事務用的。」"
+            },
+            {
+              "choice_id": "d2s3c2",
+              "label": "遞出信，輕聲說：「我相信你會找到她。」",
+              "stat_delta": { "affection": 3, "trust": 2 },
+              "clues_gained": ["c03_ink_smudge"],
+              "next_scene": "end_of_day",
+              "consequence_text": "偵探接信的指尖頓了一下。「……信任這種東西，別隨便給人。」語氣很兇，耳朵卻有點紅。深夜，偵探傳來訊息：「鑑定完了。每個字的起筆都有描摹停頓痕，墨水是事務用的。」"
+            },
+            {
+              "choice_id": "d2s3c3",
+              "label": "把信收回口袋：「這是寫給我的，不給任何人。」",
+              "stat_delta": { "truth": -2, "suspicion": 3 },
+              "next_scene": "end_of_day",
+              "consequence_text": "偵探盯著你的口袋看了很久。「……好。但別忘了，那封信的最後一行，不是情話。」"
+            }
+          ]
+        }
+      ],
+      "romance_moment": "偵探看到舊合照瞬間的失態——第一次露出「不像偵探」的表情。",
+      "conflict": "嫌疑人湊的手機裡有一張玩家與偵探的合照，但玩家毫無記憶；偵探卻把照片沒收了。",
+      "cliffhanger": "偵探把合照沒收：「這個，跟案子無關。」——可是照片裡的你，在笑。",
+      "tomorrow_hook": "明天，循著匿名指引去圖書館。三年前的舊報紙裡，藏著什麼？",
+      "sns_share_line": "嫌疑人的手機裡，有一張我不記得拍過的照片。照片裡我在笑。"
+    },
+    {
+      "day": 3,
+      "title": "不是第一次",
+      "summary": "2026-06-13（JST）。玩家依匿名指引到圖書館查三年前的新聞，調查結衣遺留的讀書會用書；歸途遇襲，偵探擋下，門卡掉出，並脫口說出「我不是第一次失去你」。",
+      "stat_delta": { "truth": 6 },
+      "opening_messages": [
+        { "speaker": "narrator", "text": "6 月 13 日，星期六。手機收到一則匿名簡訊：「想知道結衣在哪，去市立圖書館，2023 年 5 月的報紙。」" },
+        { "speaker": "player", "text": "匿名指引……是陷阱，還是好心人？" },
+        { "speaker": "partner", "text": "兩種都有可能。所以我跟你一起去。別離開我的視線範圍。" },
+        { "speaker": "narrator", "text": "出門前，汀屋的高坂湊在店門口攔住了你們，神情罕見地嚴肅。" },
+        { "speaker": "npc_kosaka_minato", "text": "昨天那張照片……背面有字。「拜託了」——是三年前，一個渾身濕透的偵探把照片塞給我時寫下的。" },
+        { "speaker": "npc_kosaka_minato", "text": "我不是在跟蹤你。是受託，遠遠看著你而已。這三年，我只做了這一件事。" },
+        { "speaker": "player", "text": "（受託……看著我？我下意識看向身旁的偵探——對方撇開了視線，什麼也沒說。）" },
+        { "speaker": "narrator", "text": "市立圖書館。櫃檯的館員輕聲細語，員工名牌上印著——「白瀨千夏（29）」。" },
+        { "speaker": "npc_shirase_chinatsu", "text": "噓——圖書館裡，連謊言都要小聲一點喔。……開玩笑的。請問需要找什麼呢？" }
+      ],
+      "clue_updates": [
+        { "clue_id": "c02_old_photo", "how": "auto", "scene_id": "d3s1", "update": "reversed" },
+        { "clue_id": "c13_rainy_night_news", "how": "choice", "via": "d3s1c1" },
+        { "clue_id": "c09_library_stamp", "how": "choice", "via": "d3s2c1" },
+        { "clue_id": "c05_clinic_keycard", "how": "auto", "scene_id": "d3s3" }
+      ],
+      "scenes": [
+        {
+          "scene_id": "d3s1",
+          "messages": [
+            { "speaker": "narrator", "text": "舊報紙閱覽區。2023 年 5 月的合訂本就放在那裡，像在等你。" },
+            { "speaker": "player", "text": "（三年前的 5 月……匿名簡訊要我看什麼？）" },
+            { "speaker": "partner", "text": "……喂。那本就算了吧。舊聞而已，跟結衣沒關係。" },
+            { "speaker": "player", "text": "（偵探的聲音，在發緊。）" }
+          ],
+          "choices": [
+            {
+              "choice_id": "d3s1c1",
+              "label": "無視勸阻，和偵探一起翻開 2023-05-09 的報紙。",
+              "stat_delta": { "truth": 3, "trust": 3 },
+              "clues_gained": ["c13_rainy_night_news"],
+              "next_scene": "d3s2",
+              "consequence_text": "「螢窗診所倉庫火災，一死一重傷」。重傷者的姓名被人用墨塗黑了。偵探一句話都沒說。"
+            },
+            {
+              "choice_id": "d3s1c2",
+              "label": "先跟那位溫柔的館員聊聊結衣的事。",
+              "stat_delta": { "affection": 4, "trust": 1 },
+              "next_scene": "d3s2",
+              "consequence_text": "「結衣？啊……讀書會的那孩子。」千夏微笑著。「願她平安。」偵探在你身後盯著她，看了很久。"
+            },
+            {
+              "choice_id": "d3s1c3",
+              "label": "越想越毛。匿名指引絕對有問題，掉頭就走。",
+              "stat_delta": { "truth": -2, "suspicion": 3 },
+              "next_scene": "d3s2",
+              "consequence_text": "走出門口時你回頭看了一眼。閱覽區的那本合訂本，不知何時已被人翻開，停在 5 月 9 日那頁。"
+            }
+          ]
+        },
+        {
+          "scene_id": "d3s2",
+          "messages": [
+            { "speaker": "narrator", "text": "結衣公司置物櫃裡的包包，被同事轉交給你。裡面有一本讀書會用書。" },
+            { "speaker": "partner", "text": "書是圖書館的藏書。……結衣失蹤前，固定參加讀書會？" },
+            { "speaker": "player", "text": "她說過，讀書會有一位「很懂她的姊姊」。" }
+          ],
+          "choices": [
+            {
+              "choice_id": "d3s2c1",
+              "label": "仔細檢查書末的借閱紀錄章。",
+              "stat_delta": { "truth": 3, "trust": 3 },
+              "clues_gained": ["c09_library_stamp"],
+              "next_scene": "d3s3",
+              "consequence_text": "借閱章顯示：結衣和「白瀨千夏」每週三固定借同系列的書。——白瀨千夏？今天櫃檯那位館員？"
+            },
+            {
+              "choice_id": "d3s2c2",
+              "label": "摸著結衣的包包紅了眼眶。偵探默默遞來面紙。",
+              "stat_delta": { "affection": 5, "trust": 2 },
+              "next_scene": "d3s3",
+              "consequence_text": "「哭完了就站起來。」偵探的話很冷，遞面紙的手卻一直沒收回去。「……找回她，比眼淚有用。」"
+            },
+            {
+              "choice_id": "d3s2c3",
+              "label": "「該不會……是結衣自導自演吧？」",
+              "stat_delta": { "suspicion": 4, "truth": -1 },
+              "next_scene": "d3s3",
+              "consequence_text": "「懷疑朋友的滋味不好受吧。」偵探看著你。「但記住這個感覺——等你哪天懷疑我的時候，會用得上。」"
+            }
+          ]
+        },
+        {
+          "scene_id": "d3s3",
+          "messages": [
+            { "speaker": "narrator", "text": "歸途。雨巷。一個高大的人影忽然從暗處逼近——" },
+            { "speaker": "narrator", "text": "偵探一把將你拉到身後，肩膀撞上牆。人影迅速退進雨幕。你的手肘擦傷了。" },
+            { "speaker": "narrator", "text": "混亂中，一張卡片從偵探的外套口袋掉出來——舊的門禁卡，印著「螢窗診所」。" },
+            { "speaker": "partner", "text": "……我不是第一次失去你。所以這次，輪不到任何人從我眼前把你帶走。" },
+            { "speaker": "player", "text": "（不是第一次……失去我？可是我，明明是第一次遇見這個人。）" }
+          ],
+          "choices": [
+            {
+              "choice_id": "d3s3c1",
+              "label": "撿起門卡：「螢窗診所。解釋一下，現在。」",
+              "stat_delta": { "truth": 2, "suspicion": 3 },
+              "next_scene": "end_of_day",
+              "consequence_text": "偵探收回門卡，閉上眼。「……現在不行。再給我一點時間。」那不是拒絕的表情，是疼痛的表情。"
+            },
+            {
+              "choice_id": "d3s3c2",
+              "label": "握住偵探發抖的手：「先處理傷口，笨蛋。」",
+              "stat_delta": { "affection": 3, "trust": 2 },
+              "next_scene": "end_of_day",
+              "consequence_text": "替你包紮的手，一直在輕微地抖。明明受傷的是你，看起來快碎掉的卻是對方。"
+            },
+            {
+              "choice_id": "d3s3c3",
+              "label": "把疑問吞下去：「……等你想說的時候，再說。」",
+              "stat_delta": { "trust": 4, "truth": 2 },
+              "next_scene": "end_of_day",
+              "consequence_text": "偵探猛地抬頭看你，像是聽到了什麼不可置信的話。「……你連等人的方式，都跟以前一樣。」"
+            }
+          ]
+        }
+      ],
+      "romance_moment": "擦傷處理的近距離；偵探包紮的手在發抖。",
+      "conflict": "偵探拒絕解釋螢窗診所的門卡，以及「不是第一次失去你」這句話。",
+      "cliffhanger": "舊報紙上被塗黑的重傷者姓名——筆畫數，和你的名字一樣。",
+      "tomorrow_hook": "第二封情書，正在路上。而這一次，筆跡會指向誰？",
+      "sns_share_line": "他說，他不是第一次失去我。可是我，明明是第一次遇見他。"
+    },
+    {
+      "day": 4,
+      "title": "筆跡",
+      "summary": "2026-06-14（JST）。第二封情書出現在玩家公司桌上。前刑警真壁修現身，塞給玩家指向偵探的調查檔案。筆跡比對下，偵探成為頭號嫌疑人，卻拒絕辯解。",
+      "stat_delta": { "truth": 6 },
+      "opening_messages": [
+        { "speaker": "narrator", "text": "6 月 14 日，星期日。你臨時進公司拿資料——桌上放著第二封信。同樣的字跡，同樣沒有署名。" },
+        { "speaker": "player", "text": "「比起世界上所有的謎，我更想解開的，一直都是你。」……為什麼。為什麼這些句子，讀起來這麼痛。" },
+        { "speaker": "narrator", "text": "公司大樓外，一個菸嗓的中年男人攔住你。" },
+        { "speaker": "npc_makabe_osamu", "text": "別查了。這案子三年前就該結束，是有人不讓它結束。" },
+        { "speaker": "npc_makabe_osamu", "text": "……真壁修。幹了二十年警察，四十五歲被組織踢出來。現在，徵信社。" }
+      ],
+      "clue_updates": [
+        { "clue_id": "c12_makabe_file", "how": "auto", "scene_id": "d4s2" },
+        { "clue_id": "c08_ryo_record", "how": "choice", "via": "d4s2c1" }
+      ],
+      "scenes": [
+        {
+          "scene_id": "d4s1",
+          "messages": [
+            { "speaker": "narrator", "text": "你把第二封信拍照傳給偵探。已讀。沒有回覆。" },
+            { "speaker": "player", "text": "（已讀不回……昨天明明還說「別離開我的視線範圍」的。）" },
+            { "speaker": "narrator", "text": "雨更大了。兩封信並排放在你面前，字跡如出一轍。" }
+          ],
+          "choices": [
+            {
+              "choice_id": "d4s1c1",
+              "label": "冷靜下來，自己動手比對兩封信的細節。",
+              "stat_delta": { "truth": 3, "trust": 3 },
+              "next_scene": "d4s2",
+              "consequence_text": "第二封的字，流暢多了——但起筆的描摹停頓還在。寫的人在「進步」。像在練習模仿誰。"
+            },
+            {
+              "choice_id": "d4s1c2",
+              "label": "比起信，更擔心已讀不回的偵探。直接衝去偵探社。",
+              "stat_delta": { "affection": 4, "trust": 1 },
+              "next_scene": "d4s2",
+              "consequence_text": "偵探社的門沒鎖。偵探坐在黑暗裡，桌上攤著和你手中一模一樣的信的影本。「……你不該現在來的。」"
+            },
+            {
+              "choice_id": "d4s1c3",
+              "label": "背脊發涼。能放信到我桌上的人……開始懷疑身邊所有人。",
+              "stat_delta": { "suspicion": 4, "truth": -1 },
+              "next_scene": "d4s2",
+              "consequence_text": "湊、真壁、那位館員、甚至偵探——每一張臉都閃過你的腦海。懷疑像雨一樣，下進每一個縫隙。"
+            }
+          ]
+        },
+        {
+          "scene_id": "d4s2",
+          "messages": [
+            { "speaker": "narrator", "text": "真壁把一個牛皮紙袋塞進你懷裡，轉身就走。" },
+            { "speaker": "npc_makabe_osamu", "text": "那個偵探，簽過診所的文件。白紙黑字。你還要信？" },
+            { "speaker": "narrator", "text": "檔案裡：螢窗診所的內部文件影本，偵探的簽名赫然在列。還有一份受害者名單的索引。" },
+            { "speaker": "npc_makabe_osamu", "text": "……傘拿去。淋雨查案是笨蛋幹的事，我當年就是那個笨蛋。" }
+          ],
+          "choices": [
+            {
+              "choice_id": "d4s2c1",
+              "label": "追上真壁，循受害者名單往下查。",
+              "stat_delta": { "truth": 3, "suspicion": 2 },
+              "clues_gained": ["c08_ryo_record"],
+              "next_scene": "d4s3",
+              "consequence_text": "名單裡有一份病歷：「白瀨遼（歿年 26 歲，2025-11-30 病逝）。第三次記憶處置失敗。家屬欄：姊・白瀨千夏」。……白瀨？"
+            },
+            {
+              "choice_id": "d4s2c2",
+              "label": "把檔案推回去：「片面的文件，定不了任何人的罪。」",
+              "stat_delta": { "affection": 5, "trust": 2 },
+              "next_scene": "d4s3",
+              "consequence_text": "真壁瞇起眼看你。「……跟三年前的某人，說一模一樣的話。」他還是把檔案留下了。"
+            },
+            {
+              "choice_id": "d4s2c3",
+              "label": "盯著那個簽名，手開始發抖。",
+              "stat_delta": { "suspicion": 4 },
+              "next_scene": "d4s3",
+              "consequence_text": "簽名的筆跡，和情書……很像。不，是非常像。雨聲忽然變得很遠。"
+            }
+          ]
+        },
+        {
+          "scene_id": "d4s3",
+          "messages": [
+            { "speaker": "narrator", "text": "偵探社。你把檔案拍在桌上。窗外，雨夜的招牌在你們臉上明明滅滅。" },
+            { "speaker": "player", "text": "「情書的筆跡像你。診所的文件有你的簽名。……說話啊。說『不是我』啊。」" },
+            { "speaker": "partner", "text": "……。" },
+            { "speaker": "partner", "text": "你想報警的話，我不會跑。" },
+            { "speaker": "player", "text": "（為什麼。為什麼連一句辯解都不肯給我。）" }
+          ],
+          "choices": [
+            {
+              "choice_id": "d4s3c1",
+              "label": "「好。你不說，我就自己查。查到連你都藏不住為止。」",
+              "stat_delta": { "truth": 2, "trust": 4 },
+              "next_scene": "end_of_day",
+              "consequence_text": "偵探看著你，像在看很久以前的什麼人。「……嗯。這才像你。」那語氣，竟然有點驕傲。"
+            },
+            {
+              "choice_id": "d4s3c2",
+              "label": "「我相信你。不需要理由。」",
+              "stat_delta": { "affection": 3, "suspicion": -3 },
+              "next_scene": "end_of_day",
+              "consequence_text": "偵探別過頭。很久之後，用幾乎聽不見的聲音說：「……你這樣，會讓我捨不得認罪的。」"
+            },
+            {
+              "choice_id": "d4s3c3",
+              "label": "「你為什麼不辯解！」摔門離開。",
+              "stat_delta": { "suspicion": 4, "affection": -2 },
+              "next_scene": "end_of_day",
+              "consequence_text": "門摔上的瞬間，你聽見裡面傳來很輕的一句：「對不起。」——道歉的人，明明可以辯解的。"
+            }
+          ]
+        }
+      ],
+      "romance_moment": "最殘酷的一天——越喜歡，越無法理解他/她為什麼不辯解。",
+      "conflict": "偵探成為頭號嫌疑人。當面質問之下，偵探只說「你想報警的話，我不會跑」。",
+      "cliffhanger": "偵探社的燈，今夜沒有亮。",
+      "tomorrow_hook": "信或不信，明天必須做出選擇。而偵探社的檔案櫃裡，鎖著一份同意書。",
+      "sns_share_line": "全世界都說是他寫的。只有他自己，連「不是我」都不肯說。"
+    },
+    {
+      "day": 5,
+      "title": "同意書",
+      "summary": "2026-06-15（JST）。玩家面臨「相信或懷疑偵探」的核心抉擇，取得記憶處置同意書影本與筆跡鑑定。偵探承認：「三年前，刪掉你記憶的人，是我安排的。」",
+      "stat_delta": { "truth": 6 },
+      "opening_messages": [
+        { "speaker": "narrator", "text": "6 月 15 日，星期一。偵探社的燈整夜沒亮。你在門口站了很久，門卻沒鎖——像在等你進來。" },
+        { "speaker": "player", "text": "（結衣失蹤第四天。情書兩封。指向偵探的證據一疊。然後是那句「我不是第一次失去你」。）" },
+        { "speaker": "player", "text": "（今天，我必須決定——信，還是不信。）" },
+        { "speaker": "partner", "text": "……來了啊。坐吧。今天，你問什麼，我答什麼。" }
+      ],
+      "clue_updates": [
+        { "clue_id": "c06_memory_consent", "how": "choice", "via": "d5s2c1|d5s2c2" },
+        { "clue_id": "c11_handwriting_report", "how": "choice", "via": "d5s3c1|d5s3c2" }
+      ],
+      "scenes": [
+        {
+          "scene_id": "d5s1",
+          "messages": [
+            { "speaker": "partner", "text": "你想知道真相？可以啊。但先回答我——如果真相會讓你討厭我，你還要嗎？" },
+            { "speaker": "player", "text": "（這個問題，比任何證據都沉。）" }
+          ],
+          "choices": [
+            {
+              "choice_id": "d5s1c1",
+              "label": "「我選擇相信你。但我要的是全部的真相，一個字都不准少。」",
+              "stat_delta": { "trust": 4, "suspicion": -3 },
+              "next_scene": "d5s2",
+              "consequence_text": "偵探深吸一口氣，像是準備跳進深水。「……好。一個字都不少。但你要答應我，聽完再哭。」"
+            },
+            {
+              "choice_id": "d5s1c2",
+              "label": "「抱歉。……我現在，沒辦法相信你。」",
+              "stat_delta": { "suspicion": 4 },
+              "next_scene": "d5s2",
+              "consequence_text": "「嗯。不信是對的。」偵探居然點頭。「偵探教你的第一課不就是——證據比眼淚可信。」"
+            },
+            {
+              "choice_id": "d5s1c3",
+              "label": "什麼都不說，走過去，在偵探旁邊坐下。",
+              "stat_delta": { "affection": 4, "trust": 1 },
+              "next_scene": "d5s2",
+              "consequence_text": "雨聲填滿了沉默。過了很久，偵探輕聲說：「……你以前，也總是這樣坐在這個位置。」"
+            }
+          ]
+        },
+        {
+          "scene_id": "d5s2",
+          "messages": [
+            { "speaker": "narrator", "text": "偵探社深處，那個一直上著鎖的檔案櫃。鑰匙就放在桌上。" },
+            { "speaker": "partner", "text": "裡面有一份文件。看了它，你跟我，就再也回不去「偵探和委託人」了。" },
+            { "speaker": "player", "text": "（檔案櫃的鎖孔周圍，有無數細小的刮痕。像是有人，無數次想打開又停手。）" }
+          ],
+          "choices": [
+            {
+              "choice_id": "d5s2c1",
+              "label": "「把它拿出來。我們一起面對。」",
+              "stat_delta": { "truth": 3, "trust": 3 },
+              "clues_gained": ["c06_memory_consent"],
+              "next_scene": "d5s3",
+              "consequence_text": "「記憶處置同意書」。處置對象：你的名字。偵探低聲說：「三年前，刪掉你記憶的人，是我安排的。」"
+            },
+            {
+              "choice_id": "d5s2c2",
+              "label": "趁偵探接電話時，自行翻開檔案櫃。",
+              "stat_delta": { "truth": 3, "suspicion": 3 },
+              "clues_gained": ["c06_memory_consent"],
+              "next_scene": "d5s3",
+              "consequence_text": "「記憶處置同意書」——處置對象欄寫著你的名字。回過頭，偵探站在門口，沒有阻止，只是說：「……是我安排的。」"
+            },
+            {
+              "choice_id": "d5s2c3",
+              "label": "後退一步：「……我不想知道了。」",
+              "stat_delta": { "truth": -3, "affection": 1 },
+              "next_scene": "d5s3",
+              "consequence_text": "偵探的表情，一半是如釋重負，一半是說不出口的悲傷。「……好。那就，不知道吧。」檔案櫃重新上了鎖。"
+            }
+          ]
+        },
+        {
+          "scene_id": "d5s3",
+          "messages": [
+            { "speaker": "partner", "text": "情書的筆跡問題，需要一個了結。鑑定方式，你選。" },
+            { "speaker": "partner", "text": "我可以當著你的面寫字自證——或者，你拿去給不信任我的人鑑定也行。" },
+            { "speaker": "player", "text": "（認罪的人看起來，為什麼比我還痛。）" }
+          ],
+          "choices": [
+            {
+              "choice_id": "d5s3c1",
+              "label": "「在我面前寫。我自己看。」",
+              "stat_delta": { "truth": 2, "trust": 3 },
+              "clues_gained": ["c11_handwriting_report"],
+              "next_scene": "end_of_day",
+              "consequence_text": "筆壓、運筆，完全不同。倒是和圖書館的手寫索引卡——女性、左手——一致。偵探不是寫信的人。"
+            },
+            {
+              "choice_id": "d5s3c2",
+              "label": "把兩封信送去給真壁做第三方鑑定。",
+              "stat_delta": { "truth": 3, "suspicion": 2 },
+              "clues_gained": ["c11_handwriting_report"],
+              "next_scene": "end_of_day",
+              "consequence_text": "真壁的鑑定報告：「與偵探筆跡不符。書寫者推定為慣用左手的女性。」連真壁都皺起了眉。"
+            },
+            {
+              "choice_id": "d5s3c3",
+              "label": "「鑑定什麼的……已經不知道該信什麼了。」",
+              "stat_delta": { "suspicion": 4, "trust": -2 },
+              "next_scene": "end_of_day",
+              "consequence_text": "偵探沒有再勸。只是把那支筆，輕輕放回了筆筒。雨聲裡，有什麼東西錯過了。"
+            }
+          ]
+        }
+      ],
+      "romance_moment": "坦白後，偵探等待玩家審判的沉默；玩家第一次握有「傷害他/她」的權力。",
+      "conflict": "偵探承認安排了記憶刪除，卻隻字不提「是誰要求的」——獨自把罪扛下。",
+      "cliffhanger": "同意書的簽名欄折角處，隱約透出另一行小字——「申請人關係欄：本人」。",
+      "tomorrow_hook": "凌晨的手機即將震動。結衣的聲音，和第七封信，都在路上。",
+      "sns_share_line": "他承認刪掉了我的記憶。為什麼認罪的人看起來，比我還痛？"
+    },
+    {
+      "day": 6,
+      "title": "第七封信",
+      "summary": "2026-06-16（JST）。凌晨收到結衣的求救語音，確認主謀是女性。預付手機紀錄排除真壁。千夏的邀請函送達：七封信原稿與診所舊址的指定。玩家讀到 L7，得知遺忘是自己的選擇。",
+      "stat_delta": { "truth": 6 },
+      "opening_messages": [
+        { "speaker": "narrator", "text": "6 月 16 日，星期二，凌晨 3:47。手機震動。陌生號碼的語音留言。" },
+        { "speaker": "npc_hayama_yui", "text": "（語音）前輩……對不起、對不起，我以為只是幫忙演一場戲，沒有人會受傷的那種……" },
+        { "speaker": "npc_hayama_yui", "text": "（語音）她說的「討回公道」，跟我想的不一樣。前輩，快走，別讓她看到你——" },
+        { "speaker": "narrator", "text": "語音到此中斷。「她」。主謀，是女性。" },
+        { "speaker": "player", "text": "結衣還活著。被關著，但活著。……「她」是誰。" }
+      ],
+      "clue_updates": [
+        { "clue_id": "c10_yui_voicemail", "how": "auto", "scene_id": "d6s1" },
+        { "clue_id": "c14_burner_phone", "how": "choice", "via": "d6s2c1|d6s2c2" },
+        { "clue_id": "c07_seventh_letter", "how": "auto", "scene_id": "d6s3" }
+      ],
+      "scenes": [
+        {
+          "scene_id": "d6s1",
+          "messages": [
+            { "speaker": "partner", "text": "語音是備用舊手機發的。結衣自願參與後反悔，被收走手機、軟禁了。" },
+            { "speaker": "partner", "text": "「自願演出失蹤」……有人用一個冠冕堂皇的理由，說服了她。" },
+            { "speaker": "player", "text": "（演戲、討公道、她……碎片開始彼此咬合了。）" }
+          ],
+          "choices": [
+            {
+              "choice_id": "d6s1c1",
+              "label": "和偵探逐秒分析語音：背景音、用詞、「她」。",
+              "stat_delta": { "truth": 3, "trust": 3 },
+              "next_scene": "d6s2",
+              "consequence_text": "背景有規律的滴水聲與電車遠音——短租公寓、河沿線。偵探圈出了三個街區。「快了。」"
+            },
+            {
+              "choice_id": "d6s1c2",
+              "label": "對著語音哭了出來，回撥留言：「結衣，等我。」",
+              "stat_delta": { "affection": 4, "trust": 1 },
+              "next_scene": "d6s2",
+              "consequence_text": "偵探把外套披在你肩上。「哭吧。但只准哭到天亮。天亮以後——我們去把她帶回來。」"
+            },
+            {
+              "choice_id": "d6s1c3",
+              "label": "「等等……這段語音，會不會也是演的？」",
+              "stat_delta": { "suspicion": 4, "truth": -1 },
+              "next_scene": "d6s2",
+              "consequence_text": "「懷疑到朋友頭上，你也算出師了。」偵探搖頭。「但恐懼演不出來。她聲音裡的，是真的。」"
+            }
+          ]
+        },
+        {
+          "scene_id": "d6s2",
+          "messages": [
+            { "speaker": "narrator", "text": "白天。匿名訊息的發信源查到了：一支登記在「真壁修」名下的預付手機。" },
+            { "speaker": "npc_makabe_osamu", "text": "放屁。我這輩子沒買過那種東西。……查。給我查到底。" },
+            { "speaker": "partner", "text": "登記名義是他。但購買紀錄，要去販售店才調得到。" }
+          ],
+          "choices": [
+            {
+              "choice_id": "d6s2c1",
+              "label": "和偵探一起去販售店，調出購買時段的監視器。",
+              "stat_delta": { "truth": 3, "trust": 3 },
+              "clues_gained": ["c14_burner_phone"],
+              "next_scene": "d6s3",
+              "consequence_text": "監視器裡買手機的，是個左手提袋的嬌小女性。冒名栽贓。真壁，被排除了。——女性、左手。又是這兩個詞。"
+            },
+            {
+              "choice_id": "d6s2c2",
+              "label": "「拜託你去查。我守著電話等結衣的消息。」",
+              "stat_delta": { "trust": 2, "affection": 5 },
+              "clues_gained": ["c14_burner_phone"],
+              "next_scene": "d6s3",
+              "consequence_text": "深夜，偵探帶回紀錄：購買者是左手提袋的嬌小女性。「真壁是被栽贓的。……回來看到你還醒著，真好。」"
+            },
+            {
+              "choice_id": "d6s2c3",
+              "label": "「不用查了。名字都登記了，就是真壁。」",
+              "stat_delta": { "suspicion": 4 },
+              "next_scene": "d6s3",
+              "consequence_text": "偵探嘆氣。「登記名義是最容易偽造的東西。你在生活裡可以任性，在證據面前不行。」"
+            }
+          ]
+        },
+        {
+          "scene_id": "d6s3",
+          "messages": [
+            { "speaker": "narrator", "text": "傍晚。一個厚信封投進你的信箱。裡面是——七封信的原稿影本，和一行字：「明晚八點，螢窗診所舊址，請帶上偵探。」" },
+            { "speaker": "narrator", "text": "第七封信。「我請求你：帶我去那間診所，然後對忘記一切的我說謊，說我們不曾認識。」" },
+            { "speaker": "narrator", "text": "「不是你弄丟了我——是我，自己選擇放開你的手。」" },
+            { "speaker": "player", "text": "這個筆跡……是我的。七封信，全部都是……我寫的。" },
+            { "speaker": "player", "text": "三年前，要求刪掉記憶的人——是我自己。他/她只是，守了我的諾言三年。" },
+            { "speaker": "narrator", "text": "你抬起頭。偵探社的方向，燈亮了一下，又熄了。桌上留著字條：「別來。這是我的案子。」" }
+          ],
+          "choices": [
+            {
+              "choice_id": "d6s3c1",
+              "label": "讀完 L7，擦掉眼淚：「拼圖差最後一塊。我要親手放上去。」",
+              "stat_delta": { "truth": 2, "trust": 4 },
+              "next_scene": "end_of_day",
+              "consequence_text": "L7 的末句烙在你眼底——「這個謊就讓我來結束」。三年前的你留下的，原來是給今天的你的指令。"
+            },
+            {
+              "choice_id": "d6s3c2",
+              "label": "抱著七封信哭到不能呼吸：「這次，換我去找你。」",
+              "stat_delta": { "affection": 3, "trust": 2 },
+              "next_scene": "end_of_day",
+              "consequence_text": "三年來「不曾出現」就是那個人的告白方式。現在輪到你了——你的告白方式，是出現。"
+            },
+            {
+              "choice_id": "d6s3c3",
+              "label": "把信摔在地上：「你們所有人，都瞞著我……！」",
+              "stat_delta": { "suspicion": 4, "affection": -3 },
+              "next_scene": "end_of_day",
+              "consequence_text": "信紙散落一地。最上面那張，正好是 L7 的那句——「別愧疚，也別回來找我」。是你自己的字。"
+            }
+          ]
+        }
+      ],
+      "romance_moment": "玩家終於知道，三年來「不曾出現」就是偵探的告白方式。",
+      "conflict": "破案＝公開「玩家自選遺忘、偵探守諾背罪」——揭開真相，就是摧毀偵探用一生隱瞞的秘密。",
+      "cliffhanger": "偵探發現邀請函，搶先一步獨自前往診所舊址。",
+      "tomorrow_hook": "明晚八點，螢窗診所舊址。雨，會停嗎？",
+      "sns_share_line": "第七封情書是我寫的。原來我才是那個，先說了再見的人。"
+    },
+    {
+      "day": 7,
+      "title": "雨停之前",
+      "summary": "2026-06-17（JST）。螢窗診所舊址的最終對峙。千夏要求玩家當著偵探的面讀完第七封信並公開一切。結衣獲救。玩家面臨終極選擇：指認真相、保護對方，或離開。",
+      "stat_delta": { "truth": 6 },
+      "opening_messages": [
+        { "speaker": "narrator", "text": "6 月 17 日，星期三，晚上 7:58。螢窗診所舊址。鐵門半開——是用那張舊門卡打開的。" },
+        { "speaker": "narrator", "text": "大廳裡，偵探站在中央。對面，是圖書館的那位館員——白瀨千夏，29 歲，輕聲細語一如往常。" },
+        { "speaker": "npc_shirase_chinatsu", "text": "歡迎。兩位都到了，那就開始吧。……噓，不用緊張。圖書館員最擅長的，就是替人保管故事了。" },
+        { "speaker": "npc_shirase_chinatsu", "text": "葉山結衣小姐在河沿的公寓，平安無事。地址我已經傳給警方了。我要的從來就不是她。" },
+        { "speaker": "npc_shirase_chinatsu", "text": "我要的是——請你，當著這位偵探的面，把第七封信讀完。然後讓全世界知道，這裡發生過什麼。" }
+      ],
+      "clue_updates": [],
+      "scenes": [
+        {
+          "scene_id": "d7s1",
+          "messages": [
+            { "speaker": "partner", "text": "退後。這裡由我來。……你不該看到接下來的事。" },
+            { "speaker": "npc_shirase_chinatsu", "text": "看吧，又來了。三年了，你還在替這個人決定「該知道什麼」。" },
+            { "speaker": "npc_shirase_chinatsu", "text": "我沒有改寫那些信，我只是替三年前的你，把它們寄出去而已。你不謝謝我嗎？" }
+          ],
+          "choices": [
+            {
+              "choice_id": "d7s1c1",
+              "label": "站定，逐條陳述你查到的證據：墨水、借閱章、左手。",
+              "stat_delta": { "truth": 3, "trust": 2 },
+              "next_scene": "d7s2",
+              "consequence_text": "千夏聽完，輕輕鼓掌。「不愧是『那位偵探』教出來的。……三年前的你，也是這樣說話的喔。」"
+            },
+            {
+              "choice_id": "d7s1c2",
+              "label": "走到偵探身前，張開手臂擋住。",
+              "stat_delta": { "affection": 4, "trust": 2 },
+              "next_scene": "d7s2",
+              "consequence_text": "身後的偵探屏住了呼吸。千夏瞇起眼：「三年前，擋在前面的是另一邊呢。你們真是……學不乖。」"
+            },
+            {
+              "choice_id": "d7s1c3",
+              "label": "看向偵探，聲音發抖：「她說的……是真的嗎？」",
+              "stat_delta": { "suspicion": 4 },
+              "next_scene": "d7s2",
+              "consequence_text": "偵探閉上眼，沒有否認。千夏輕聲說：「你看。沉默，就是這個人說『是』的方式。」"
+            }
+          ]
+        },
+        {
+          "scene_id": "d7s2",
+          "messages": [
+            { "speaker": "npc_shirase_chinatsu", "text": "我的弟弟，白瀨遼。死的時候二十六歲。在這間診所，被同一種技術刪成了廢墟。" },
+            { "speaker": "npc_shirase_chinatsu", "text": "弟弟忘了我的名字之後，又活了七百多天。你呢？你忘得乾乾淨淨，還順便談了場戀愛。" },
+            { "speaker": "npc_shirase_chinatsu", "text": "「姊，妳是……哪位？」——他最後那兩年，每天都這樣問我。每天，都是初次見面。" },
+            { "speaker": "narrator", "text": "她的語速沒有變。從頭到尾，都是圖書館櫃檯那種音量。這才是最可怕的。" }
+          ],
+          "choices": [
+            {
+              "choice_id": "d7s2c1",
+              "label": "「你弟弟的痛是真的。但它不該由結衣的恐懼、和另一場遺忘來償還。」",
+              "stat_delta": { "truth": 3, "trust": 3 },
+              "next_scene": "d7s3",
+              "consequence_text": "千夏第一次沉默了。三秒。「……你跟三年前一樣，總是說出最不留情面的正確答案。」"
+            },
+            {
+              "choice_id": "d7s2c2",
+              "label": "看著偵探的眼睛：「我想起來的不是記憶——是心情。它沒被刪掉。一次都沒有。」",
+              "stat_delta": { "affection": 5, "trust": 2 },
+              "next_scene": "d7s3",
+              "consequence_text": "偵探的眼眶紅了。L7 寫的是真的——刪得掉記憶，刪不掉喜歡一個人這件事。"
+            },
+            {
+              "choice_id": "d7s2c3",
+              "label": "「也許……她說得對。被瞞著的人，一直只有我。」",
+              "stat_delta": { "suspicion": 4, "trust": -2 },
+              "next_scene": "d7s3",
+              "consequence_text": "千夏溫柔地點頭：「對。所以站過來這邊吧。被謊言圍起來的人，應該彼此扶持才對。」"
+            }
+          ]
+        },
+        {
+          "scene_id": "d7s3",
+          "messages": [
+            { "speaker": "npc_shirase_chinatsu", "text": "選吧。讀完信、公開一切，讓守謊的人被審判——或者，繼續當一個幸福的、被刪乾淨的人。" },
+            { "speaker": "npc_shirase_chinatsu", "text": "我從頭到尾，沒有對你說過一句謊。說謊的，是你們兩個。" },
+            { "speaker": "partner", "text": "……不用管我。你選的答案，就是我的答案。三年前是這樣，現在也是。" },
+            { "speaker": "narrator", "text": "遠處傳來警笛聲。雨，好像小了一點。第七封信，就在你手裡。" }
+          ],
+          "choices": [
+            {
+              "choice_id": "d7s3c1",
+              "label": "讀完 L7，抬起頭：「遺忘是我自己選的。——這個謊，由我來結束。」",
+              "stat_delta": { "truth": 2, "trust": 3 },
+              "next_scene": "end_of_day",
+              "consequence_text": "你一個字、一個字地，把三年前的自己接了回來。雨聲裡，有什麼終於落地了。"
+            },
+            {
+              "choice_id": "d7s3c2",
+              "label": "把信收進懷裡，握住偵探的手：「這次，換我先說喜歡你。」",
+              "stat_delta": { "affection": 3, "trust": 2 },
+              "next_scene": "end_of_day",
+              "consequence_text": "真相可以再等一個雨夜。但這句話，你已經讓它等了三年。"
+            },
+            {
+              "choice_id": "d7s3c3",
+              "label": "把信放回地上，轉身：「……我需要時間。對不起。」",
+              "stat_delta": { "suspicion": 3, "affection": -2 },
+              "next_scene": "end_of_day",
+              "consequence_text": "沒有人追上來。背後只有雨聲，和兩個都選擇尊重你的人。"
+            }
+          ]
+        }
+      ],
+      "romance_moment": "「不用管我。你選的答案，就是我的答案。三年前是這樣，現在也是。」",
+      "conflict": "公開真相＝把偵探推上審判台；保護偵探＝讓千夏的控訴永遠懸而未決。",
+      "cliffhanger": "千夏最後的話——「我從頭到尾，沒有對你說過一句謊。說謊的，是你們兩個。」",
+      "tomorrow_hook": "（結局後語）雨停之後的事，由你抵達的結局決定。",
+      "sns_share_line": "她說她沒有說謊。最可怕的是，她說得對。"
+    }
+  ],
+  "endings": [
+    {
+      "ending_id": "secret_end",
+      "priority": 1,
+      "free_or_paid": "paid",
+      "required_stats": null,
+      "required_clues": [],
+      "unlock_code": "DEMO-TRUE",
+      "summary": "true_case 之後的隱藏終章：診所檔案不只一批，第八個寄信人正在看著他們（Season 2 鉤子）。"
+    },
+    {
+      "ending_id": "true_case_end",
+      "priority": 2,
+      "free_or_paid": "paid",
+      "required_stats": { "truth": { "gte": 70 }, "trust": { "gte": 60 }, "suspicion": { "lte": 50 } },
+      "required_clues": ["c03_ink_smudge", "c06_memory_consent", "c07_seventh_letter", "c09_library_stamp", "c11_handwriting_report", "c14_burner_phone"],
+      "required_clues_any_of": ["c05_clinic_keycard", "c13_rainy_night_news"],
+      "summary": "玩家以完整證據鏈指認千夏、當眾說出「遺忘是我自己選的」，親手替偵探卸罪。"
+    },
+    {
+      "ending_id": "romance_end",
+      "priority": 3,
+      "free_or_paid": "paid",
+      "required_stats": { "affection": { "gte": 70 }, "trust": { "gte": 55 }, "truth": { "gte": 40 } },
+      "required_clues": ["c06_memory_consent", "c10_yui_voicemail"],
+      "summary": "玩家選擇保護對方而非公開全部真相；案件低調落幕，「這次，換我先說喜歡你」。"
+    },
+    {
+      "ending_id": "bad_end",
+      "priority": 4,
+      "free_or_paid": "free",
+      "required_stats_any_of": { "truth": { "lt": 35 }, "suspicion": { "gte": 70 } },
+      "missing_clue_triggers": ["c06_memory_consent"],
+      "summary": "玩家指認了錯的人，千夏全身而退；偵探不辯解地承受，偵探社永久熄燈。"
+    },
+    {
+      "ending_id": "normal_end",
+      "priority": 5,
+      "free_or_paid": "free",
+      "required_stats": null,
+      "required_clues": [],
+      "fallback": true,
+      "summary": "結衣獲救、千夏被捕，但玩家未拼出全貌；偵探在雨夜中再次消失。"
+    }
+  ],
+  "paid_content": [
+    {
+      "id": "pack_true_case",
+      "name": "真相終章：這個謊由我來結束",
+      "price_copy": "NT$90（示意文案，非真實商品）",
+      "unlock_description": "解鎖 true_case_end 完整終章：完整證據鏈指認演出、偵探卸罪場景、千夏的最後告白。"
+    },
+    {
+      "id": "pack_romance",
+      "name": "戀愛終章：換我先說喜歡你",
+      "price_copy": "NT$60（示意文案，非真實商品）",
+      "unlock_description": "解鎖 romance_end 完整終章：重拍三年前同款合照的後日談。"
+    },
+    {
+      "id": "pack_secret",
+      "name": "隱藏終章：第八個寄信人",
+      "price_copy": "NT$120（示意文案，非真實商品）／二周目通關亦可獲得解鎖碼",
+      "unlock_description": "解鎖碼 DEMO-TRUE。true_case 之後的隱藏終章與 Season 2 伏筆：流出的另一批診所檔案。"
+    },
+    {
+      "id": "pack_diary",
+      "name": "偵探的三年日記",
+      "price_copy": "NT$45（示意文案，非真實商品）",
+      "unlock_description": "偵探視角的補完日記：守諾三年間，那些「不曾出現」的雨夜各自發生了什麼。"
+    },
+    {
+      "id": "pack_case_file",
+      "name": "螢窗診所完整案件檔案",
+      "price_copy": "NT$45（示意文案，非真實商品）",
+      "unlock_description": "14 條線索的完整考據版案件檔案：時間線、筆跡鑑定全文、白瀨姊弟的過去。"
+    }
+  ],
+  "share_templates": {
+    "daily": "《雨夜偵探社：第七封情書》Day{{day}}——「{{sns_share_line}}」 #雨夜偵探社 #第七封情書",
+    "ending_normal": "我在《雨夜偵探社：第七封情書》迎來了【平凡的雨夜】結局。偵探消失在雨裡，留下一句「下次別再收陌生人的信了」。 #雨夜偵探社",
+    "ending_bad": "我在《雨夜偵探社：第七封情書》迎來了【熄燈】結局。我指認了錯的人，而那個人連辯解都沒有。 #雨夜偵探社",
+    "ending_true_case": "我在《雨夜偵探社：第七封情書》親手結束了那個謊。「遺忘是我自己選的。」 #雨夜偵探社 #真相終章",
+    "ending_romance": "我在《雨夜偵探社：第七封情書》說出了等了三年的那句話。「這次，換我先說喜歡你。」 #雨夜偵探社 #戀愛終章",
+    "ending_secret": "《雨夜偵探社》的故事還沒結束——第八個寄信人，正在看著我們。 #雨夜偵探社 #SEASON2"
+  }
+}
