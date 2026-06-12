@@ -151,16 +151,22 @@ button{font-family:inherit;cursor:pointer;border:none;color:var(--ink);backgroun
   #textbox{min-height:26vh}
 }
 
-/* ---- 輕量場景標籤（每場景轉換用；取代全板場景卡，柔順淡入上方膠囊）---- */
-#sceneTag{position:absolute;left:0;right:0;top:15%;z-index:3;display:flex;flex-direction:column;
-  align-items:center;gap:7px;pointer-events:none;opacity:0;transform:translateY(-10px);
-  transition:opacity .6s ease,transform .7s cubic-bezier(.2,.7,.2,1)}
-#sceneTag.show{opacity:1;transform:none}
-#sceneTag .st-time{color:var(--accent);letter-spacing:.36em;font-size:12px;
-  text-shadow:0 1px 6px rgba(0,0,0,.6)}
-#sceneTag .st-place{font-size:clamp(15px,4vw,20px);letter-spacing:.16em;color:var(--ink);
-  background:rgba(10,13,18,.5);border:1px solid var(--line);border-radius:999px;
-  padding:7px 22px;backdrop-filter:blur(6px);box-shadow:0 6px 26px rgba(0,0,0,.35)}
+/* ---- 場景轉換（VN 標準 fade/dissolve 風）：中央 scrim 淡入＋標籤上滑＋底線展開。
+       中央暗、邊緣透出場景＝比換日全黑大卡輕，但清楚可見。 ---- */
+#sceneTag{position:absolute;inset:0;z-index:4;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:11px;pointer-events:none;opacity:0;
+  transition:opacity .45s ease;
+  background:radial-gradient(62% 44% at 50% 50%,rgba(6,8,11,.88),rgba(6,8,11,0) 78%)}
+#sceneTag.show{opacity:1}
+#sceneTag .st-time{color:var(--accent);letter-spacing:.4em;font-size:13px;
+  opacity:0;transform:translateY(8px);transition:opacity .55s .12s ease,transform .55s .12s ease}
+#sceneTag .st-line{width:0;height:1px;background:var(--accent);opacity:.65;
+  transition:width .7s .26s cubic-bezier(.2,.7,.2,1)}
+#sceneTag .st-place{font-size:clamp(18px,5.2vw,27px);letter-spacing:.2em;color:var(--ink);
+  opacity:0;transform:translateY(10px);text-shadow:0 2px 12px rgba(0,0,0,.6);
+  transition:opacity .6s .2s ease,transform .6s .2s cubic-bezier(.2,.7,.2,1)}
+#sceneTag.show .st-time,#sceneTag.show .st-place{opacity:1;transform:none}
+#sceneTag.show .st-line{width:66px}
 
 /* ---- 章節卡全幅暗底：讓日切換像「淡出 → 章節卡 → 淡入」---- */
 #sceneCard:has(.day-card){background:#06080b}

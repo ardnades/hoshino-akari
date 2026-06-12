@@ -103,19 +103,20 @@
     $("textbox").style.visibility = "visible";
   }
 
-  // 場景轉換（輕量）：背景柔順 crossfade ＋ 上方淡入一條地點時間膠囊標籤，不蓋全板、不藏文字框。
-  // （換日 showDayCard 才用全板大卡，兩者明顯區隔。）
+  // 場景轉換（VN 標準 fade/dissolve）：中央 scrim 淡入蓋住 → scrim 下換背景 → scrim 淡出露出新場景，
+  // 配地點/時間標籤上滑＋底線展開。比換日全黑大卡輕，但清楚可見。（換日 showDayCard 才用全板大卡。）
   async function showScene(node) {
     clearCG(); setExpr("");
-    if (node.mood) setMood(node.mood);
     const el = $("sceneTag");
-    if (!el) return;
-    el.innerHTML = `${node.time ? `<span class="st-time">${node.time}</span>` : ""}<span class="st-place">${node.place || ""}</span>`;
+    if (!el) { if (node.mood) setMood(node.mood); return; }
+    el.innerHTML = `${node.time ? `<span class="st-time">${node.time}</span>` : ""}<span class="st-line"></span><span class="st-place">${node.place || ""}</span>`;
     $("speaker").classList.add("hidden"); $("dialogue").textContent = ""; $("advanceHint").classList.remove("show");
-    el.classList.remove("hidden"); void el.offsetWidth; el.classList.add("show");   // 淡入＋微微下滑歸位
-    await Promise.race([delay(skipMode ? 4 : 1400), waitAdvance(0)]);
-    el.classList.remove("show");                                                     // 柔和淡出
-    await delay(skipMode ? 4 : 460);
+    el.classList.remove("hidden"); void el.offsetWidth; el.classList.add("show");   // scrim＋標籤上滑＋底線展開
+    await delay(skipMode ? 4 : 240);
+    if (node.mood) setMood(node.mood);                                               // 在 scrim 下換背景，露出時已是新場景（dissolve 感）
+    await Promise.race([delay(skipMode ? 4 : 1000), waitAdvance(0)]);
+    el.classList.remove("show");                                                     // 柔和淡出，露出新場景
+    await delay(skipMode ? 4 : 480);
     el.classList.add("hidden");
   }
 
