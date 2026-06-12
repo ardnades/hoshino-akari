@@ -49,7 +49,7 @@
     {
       "id": "key_visual_portrait",
       "name": "插畫風格研究 / 主視覺草案",
-      "prompt_suffix": "closer crop, cropped composition, not full body, face and cap larger in frame, upper body leaning forward toward viewer, knees in foreground, holding a fountain pen, looking at viewer, intimate close framing, key visual illustration, single character",
+      "prompt_suffix": "closer crop, cropped composition, not full body, face and cap larger in frame, upper body leaning forward toward viewer, knees in foreground, holding a ballpoint pen, looking at viewer, intimate close framing, key visual illustration, single character",
       "extra_negative": "multiple people, group, full body character sheet, full body pose, plain sitting pose, feet focus, legs focus, foot close-up, reference sheet, headshot only",
       "width": 896,
       "height": 1344,

@@ -453,10 +453,11 @@ def test_api_diagnostics_loras_found_missing(client, monkeypatch):
     data = client.get("/api/diagnostics").json()
     loras = data["loras"]
     assert "dogma_animaV1.6.safetensors" in loras["available"]
-    # anima_airbrush_editorial（D 版）需要 gpt-image-2 + dogma：dogma found、gpt-image-2 missing
+    # anima_airbrush_editorial（觸發詞還原版）需要 gpt-image-2 + NSS + dogma：
+    # 此 mock 只有 dogma → 其餘兩個 missing
     assert "gpt-image-2_anima-base1_v1.safetensors" in loras["missing"]
+    assert "AnimaNEWNSS8.safetensors" in loras["missing"]
     assert "dogma_animaV1.6.safetensors" not in loras["missing"]
-    assert "AnimaNEWNSS8.safetensors" not in loras["required"]   # D 版已移除 NSS
     assert "anima_airbrush_editorial" in [b["id"] for b in loras["by_style"]]
     # 缺 LoRA 不影響 can_generate（此處 False 是因無 checkpoint，與 lora 無關）
     assert data["config"]["can_generate"] is False
