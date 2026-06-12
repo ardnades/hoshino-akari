@@ -87,3 +87,27 @@ wf = {
 - `pytest`：114 passed。
 - 端到端：`POST /api/generate`（8 張）→ job completed → 8 候選 → adopt 1 → `generated_count=8`、`adopted_count=1` → `/assets` 200。
 - 不變性：玩家端程式碼 6 檔 + 故事 JSON 2 檔 md5 全與基線一致。
+
+---
+
+## Restart Verification（2026-06-13，ComfyUI 崩潰並重啟後）
+
+**背景：** 首輪 8 張完成後，ComfyUI 進程於閒置時原生崩潰（exit code 4294967295，Python log 無 traceback、無 CUDA/OOM 訊息 → 環境層崩潰，與 pipeline 程式無關，產物未受損）。使用者重啟 ComfyUI 後，執行縮小範圍的單張重啟驗證。
+
+**結果：✅ 通過（縮小範圍，未擴 scope）**
+
+| # | 項目 | 結果 |
+|---|------|------|
+| 1 | 啟動 art_tool server 8099 | ✅ |
+| 2 | diagnostics green / can_generate=true / comfy online | ✅ |
+| 3 | 生成 **1 張**（soft_romance_avg + hoshino_akari + character_rough） | ✅ |
+| 4 | job queued → running → completed | ✅（POST 回 running，~5s 後 completed） |
+| 5 | `generated_count` 8 → **9** | ✅ |
+| 6 | adopt 1 張 → `characters/hoshino_akari/character_rough_1920d07d_v001.png` | ✅ |
+| 7 | `adopted_count` 1 → **2**；`/assets` 讀 adopted 圖 | ✅ HTTP 200, 749851 bytes |
+| 8 | pytest | ✅ 114 passed |
+| 9 | 玩家端程式碼 + 故事 JSON 不變 | ✅ md5 一致 |
+
+**ComfyUI 崩潰：本次單張驗證未重現**（~5s 乾淨完成）。依約定暫不另開穩定性修復；若日後反覆重現再評估（混合 GPU 鎖 NVIDIA / 動態 VRAM 記憶體策略 / 驅動 TDR）。
+
+**收尾：** 驗證完成後關閉殘留的 art_tool server（8099）；in-memory job 隨進程釋放。產物（9 候選 + 2 adopted + metadata）持久化於硬碟。
