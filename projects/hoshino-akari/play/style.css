@@ -66,7 +66,7 @@ button{font-family:inherit;cursor:pointer;border:none;color:var(--ink);backgroun
 #cgLayer .cg-cap{position:absolute;bottom:14px;left:0;right:0;text-align:center;
   color:var(--ink-dim);font-size:12px;letter-spacing:.2em}
 
-#exprBadge{position:absolute;right:12px;top:12px;z-index:4;font-size:12px;color:var(--akari);
+#exprBadge{position:absolute;left:12px;top:12px;z-index:4;font-size:12px;color:var(--akari);
   border:1px solid rgba(255,217,168,.4);border-radius:20px;padding:4px 11px;background:rgba(20,16,12,.7);
   letter-spacing:.1em}
 
@@ -151,22 +151,15 @@ button{font-family:inherit;cursor:pointer;border:none;color:var(--ink);backgroun
   #textbox{min-height:26vh}
 }
 
-/* ---- 場景轉換（VN 標準 fade/dissolve 風）：中央 scrim 淡入＋標籤上滑＋底線展開。
-       中央暗、邊緣透出場景＝比換日全黑大卡輕，但清楚可見。 ---- */
-#sceneTag{position:absolute;inset:0;z-index:4;display:flex;flex-direction:column;
-  align-items:center;justify-content:center;gap:11px;pointer-events:none;opacity:0;
-  transition:opacity .45s ease;
-  background:radial-gradient(62% 44% at 50% 50%,rgba(6,8,11,.88),rgba(6,8,11,0) 78%)}
-#sceneTag.show{opacity:1}
-#sceneTag .st-time{color:var(--accent);letter-spacing:.4em;font-size:13px;
-  opacity:0;transform:translateY(8px);transition:opacity .55s .12s ease,transform .55s .12s ease}
-#sceneTag .st-line{width:0;height:1px;background:var(--accent);opacity:.65;
-  transition:width .7s .26s cubic-bezier(.2,.7,.2,1)}
-#sceneTag .st-place{font-size:clamp(18px,5.2vw,27px);letter-spacing:.2em;color:var(--ink);
-  opacity:0;transform:translateY(10px);text-shadow:0 2px 12px rgba(0,0,0,.6);
-  transition:opacity .6s .2s ease,transform .6s .2s cubic-bezier(.2,.7,.2,1)}
-#sceneTag.show .st-time,#sceneTag.show .st-place{opacity:1;transform:none}
-#sceneTag.show .st-line{width:66px}
+/* ---- 場景地點/時間卡：中央放大讀取 → 縮小滑向右上角 → 停 5 秒 → 淡出 ---- */
+#sceneTag{position:absolute;inset:0;z-index:4;pointer-events:none}
+#sceneTag .st-card{position:absolute;top:12px;right:12px;transform-origin:center;
+  display:flex;flex-direction:column;align-items:center;gap:5px;white-space:nowrap;
+  padding:8px 18px;border-radius:14px;background:rgba(10,13,18,.62);border:1px solid var(--line);
+  backdrop-filter:blur(6px);box-shadow:0 8px 28px rgba(0,0,0,.45);opacity:0;transition:opacity .45s ease}
+#sceneTag.show .st-card{opacity:1}
+#sceneTag .st-time{color:var(--accent);letter-spacing:.34em;font-size:12px}
+#sceneTag .st-place{font-size:15px;letter-spacing:.14em;color:var(--ink);text-shadow:0 2px 10px rgba(0,0,0,.6)}
 
 /* ---- 章節卡全幅暗底：讓日切換像「淡出 → 章節卡 → 淡入」---- */
 #sceneCard:has(.day-card){background:#06080b}

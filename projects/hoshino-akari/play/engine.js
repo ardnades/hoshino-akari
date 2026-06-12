@@ -10,6 +10,7 @@
   let cleared = new Set(JSON.parse(localStorage.getItem(ENDK) || "[]"));
   let chapterCleared = new Set(JSON.parse(localStorage.getItem(CH) || "[]"));
   let autoMode = false, skipMode = false;
+  let sceneTimer = null;   // 角落地點卡的停留/淡出計時器
 
   // ---- 素材解析（assets.js manifest；缺素材一律 fallback，不報錯）----
   const A = () => (H.assets || {});
@@ -103,20 +104,37 @@
     $("textbox").style.visibility = "visible";
   }
 
-  // 場景轉換（VN 標準 fade/dissolve）：中央 scrim 淡入蓋住 → scrim 下換背景 → scrim 淡出露出新場景，
-  // 配地點/時間標籤上滑＋底線展開。比換日全黑大卡輕，但清楚可見。（換日 showDayCard 才用全板大卡。）
+  function hideSceneTag() {
+    if (sceneTimer) { clearTimeout(sceneTimer); sceneTimer = null; }
+    const e = $("sceneTag"); if (e) { e.classList.remove("show"); e.classList.add("hidden"); }
+  }
+
+  // 場景轉換：地點/時間卡先在「中央放大」夠久能讀 → 一邊縮小一邊滑向「右上角」→ 停約 5 秒 → 淡出。
+  // 停留期間旁白照常進行（非阻塞），所以時間看得清又不卡節奏。
   async function showScene(node) {
     clearCG(); setExpr("");
     const el = $("sceneTag");
     if (!el) { if (node.mood) setMood(node.mood); return; }
-    el.innerHTML = `${node.time ? `<span class="st-time">${node.time}</span>` : ""}<span class="st-line"></span><span class="st-place">${node.place || ""}</span>`;
+    if (sceneTimer) { clearTimeout(sceneTimer); sceneTimer = null; }
+    el.innerHTML = `<div class="st-card">${node.time ? `<span class="st-time">${node.time}</span>` : ""}<span class="st-place">${node.place || ""}</span></div>`;
     $("speaker").classList.add("hidden"); $("dialogue").textContent = ""; $("advanceHint").classList.remove("show");
-    el.classList.remove("hidden"); void el.offsetWidth; el.classList.add("show");   // scrim＋標籤上滑＋底線展開
-    await delay(skipMode ? 4 : 200);
-    if (node.mood) setMood(node.mood);                                               // 在 scrim 下換背景（dissolve 感）
-    await Promise.race([delay(skipMode ? 4 : 520), waitAdvance(0)]);                 // 較短的停留
-    el.classList.remove("show");                                                     // 開始淡出——但不等它淡完
-    setTimeout(() => el.classList.add("hidden"), skipMode ? 4 : 460);                // 讓地點卡淡出與下一句旁白「同時發生」，更爽快、不拖重複
+    el.classList.remove("hidden");
+    const card = el.querySelector(".st-card");
+    // FLIP：量出「角落停泊位」的位置，算出移到中央＋放大的位移，先瞬間擺到中央
+    const sr = ($("stage").getBoundingClientRect && $("stage").getBoundingClientRect()) || { left: 0, top: 0, width: 0, height: 0 };
+    const cr = (card && card.getBoundingClientRect && card.getBoundingClientRect()) || { left: 0, top: 0, width: 0, height: 0 };
+    const dx = (sr.left + sr.width / 2) - (cr.left + cr.width / 2);
+    const dy = (sr.top + sr.height / 2) - (cr.top + cr.height / 2);
+    if (card) { card.style.transition = "none"; card.style.transform = `translate(${dx}px,${dy}px) scale(1.9)`; void card.offsetWidth; }
+    el.classList.add("show");
+    if (node.mood) setMood(node.mood);
+    await Promise.race([delay(skipMode ? 4 : 950), waitAdvance(0)]);                 // 中央停留：夠時間看清時間
+    if (card) { card.style.transition = "transform .7s cubic-bezier(.2,.7,.2,1)"; card.style.transform = "none"; }  // 一邊縮小一邊滑向右上角
+    // 角落停約 5 秒後淡出——非阻塞，旁白此時已接著跑
+    sceneTimer = setTimeout(() => {
+      el.classList.remove("show");
+      sceneTimer = setTimeout(() => el.classList.add("hidden"), 600);
+    }, skipMode ? 4 : 5000);
   }
 
   // 章節卡（Day Start／Day End）。標題缺省時仍可運作（只顯示 Day 編號）
@@ -238,7 +256,7 @@
     state.day = d; if (!opts.replay) persist();      // 章節回想不覆蓋正式存檔
     const info = dayInfo(d);
     $("dayTag").textContent = "Day " + d + (info.title ? "　" + info.title : "") + (opts.replay ? "（回想）" : ""); refreshDbg();
-    clearCG(); setExpr(""); setSprite(null, null); hideSNS(); setBlack(false);
+    clearCG(); setExpr(""); setSprite(null, null); hideSNS(); setBlack(false); hideSceneTag();
     setMood("night");
     await showDayCard(d, "start");                  // 必做1：每日章節標題卡
     await playNodes(chapterOf(d).intro || []);      // 必做3：當日極短引子
