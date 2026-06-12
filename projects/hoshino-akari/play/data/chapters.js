@@ -4,7 +4,7 @@
    只強化章節節奏，不改原劇情。intro/outro 皆為 node 陣列（通常 1 句 narration）。 */
 window.HOSHINO.chapters = {
   1: {
-    intro: [{ type: "line", who: "narration", text: "凌晨一點，加班後的便利店。本來，只是普通的一晚。", speed: "slow", pause: 0.4 }],
+    intro: [{ type: "line", who: "narration", text: "加班後的便利店，本來只是普通的一晚。", speed: "slow", pause: 0.4 }],
     outro: [{ type: "line", who: "narration", text: "那天晚上，我手裡多了一支，本來不該屬於我的護唇膏。", speed: "slow", pause: 0.6 }],
   },
   2: {

@@ -2,7 +2,7 @@
 window.HOSHINO.days[1] = [
   { type: "scene", place: "深夜・便利商店 後巷", time: "凌晨一點", mood: "night" },
 
-  { type: "line", who: "narration", text: "凌晨一點。我拎著剛買的關東煮，從便利商店側門繞出來。", bgm: "night" },
+  { type: "line", who: "narration", text: "我拎著剛買的關東煮，從便利商店側門繞出來。", bgm: "night" },
   { type: "line", who: "narration", text: "雨剛停，地上的水窪映著招牌的紅光。" },
   { type: "line", who: "narration", text: "然後——有個人從巷子另一頭，全速朝我撞了過來。", speed: "instant", se: "rush" },
   { type: "line", who: "akari", text: "「抱歉借過——！」", speed: "instant" },

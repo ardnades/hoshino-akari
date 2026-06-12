@@ -26,7 +26,7 @@ window.HOSHINO.meta = {
 
   // 章節中繼資料：Day Start／Day End 卡、dayTag、存檔顯示共用；engine 依此自動播放章節卡
   days: {
-    1: { title: "後巷相遇", subtitle: "凌晨一點，一隻很急的貓。" },
+    1: { title: "後巷相遇", subtitle: "一隻很急的貓，撞進這個夜晚。" },
     2: { title: "兩塊油豆腐", subtitle: "她第一次自己選的東西。" },
     3: { title: "焦糖布丁", subtitle: "久違的便利店，自己選，自己付。" },
     4: { title: "赴約的代價", subtitle: "停車場販賣機的兩聲咚。" },
