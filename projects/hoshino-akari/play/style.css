@@ -52,6 +52,13 @@ button{font-family:inherit;cursor:pointer;border:none;color:var(--ink);backgroun
 #sceneCard .sc-time{color:var(--accent);letter-spacing:.34em;font-size:14px}
 #sceneCard .sc-place{font-size:clamp(20px,5.4vw,30px);letter-spacing:.22em}
 #sceneCard .sc-rule{width:54px;height:1px;background:var(--accent);opacity:.6}
+/* 章節卡（Day Start / Day End）*/
+#sceneCard .day-card{display:flex;flex-direction:column;align-items:center;gap:12px;text-align:center;padding:0 24px}
+#sceneCard .dc-no{color:var(--accent);letter-spacing:.4em;font-size:15px}
+#sceneCard .dc-rule{width:54px;height:1px;background:var(--accent);opacity:.6}
+#sceneCard .dc-title{font-size:clamp(24px,6.4vw,38px);letter-spacing:.2em}
+#sceneCard .dc-sub{color:var(--ink-dim);font-size:clamp(13px,3.6vw,16px);letter-spacing:.18em}
+#sceneCard .day-end .dc-tail{color:var(--ink-dim);letter-spacing:.4em;font-size:16px}
 
 #cgLayer{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
   z-index:2;background:rgba(5,7,10,.55)}
@@ -143,3 +150,23 @@ button{font-family:inherit;cursor:pointer;border:none;color:var(--ink);backgroun
 @media(min-width:720px){
   #textbox{min-height:26vh}
 }
+
+/* ---- 章節卡全幅暗底：讓日切換像「淡出 → 章節卡 → 淡入」---- */
+#sceneCard:has(.day-card){background:#06080b}
+#sceneCard .day-card{position:absolute;inset:0;justify-content:center}
+
+/* ---- 立繪層（素材接入；無圖時隱藏，由 expr 徽章與旁白演出 fallback）---- */
+#spriteLayer{position:absolute;inset:0;display:flex;align-items:flex-end;justify-content:center;z-index:1;pointer-events:none}
+#spriteLayer .sprite{max-height:92%;max-width:82%;object-fit:contain;filter:drop-shadow(0 6px 24px rgba(0,0,0,.5))}
+
+/* ---- 真實 CG 圖（manifest 有 url 時取代 SVG）---- */
+#cgLayer .cg-img{max-width:min(82vw,360px);max-height:78%;border-radius:10px;box-shadow:0 8px 30px rgba(0,0,0,.5)}
+
+/* ---- 回想室・章節回想格 ---- */
+.ch-cell{flex-direction:column;gap:5px;text-align:center;padding:6px}
+.ch-cell .ch-no{color:var(--accent);font-size:11px;letter-spacing:.2em}
+.ch-cell .ch-ti{font-size:13px;letter-spacing:.06em;line-height:1.45}
+
+/* ---- 開發者跳天：改為整列、顯示日標題 ---- */
+#dbgPanel .jump{flex-direction:column}
+#dbgPanel .jump button{width:100%;text-align:left;flex:0 0 auto}

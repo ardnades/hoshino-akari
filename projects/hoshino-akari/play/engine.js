@@ -2,13 +2,37 @@
 (function () {
   const H = window.HOSHINO, M = H.meta, ART = window.ART;
   const $ = (id) => document.getElementById(id);
-  const SAVE = "HOSHINO_SAVE", GAL = "HOSHINO_GAL", ENDK = "HOSHINO_END";
+  const SAVE = "HOSHINO_SAVE", GAL = "HOSHINO_GAL", ENDK = "HOSHINO_END", CH = "HOSHINO_CH";
 
   // ---- 狀態 ----
   let state = { day: 1, scores: { ...M.initScores }, flags: {} };
   let unlocked = new Set(JSON.parse(localStorage.getItem(GAL) || "[]"));
   let cleared = new Set(JSON.parse(localStorage.getItem(ENDK) || "[]"));
+  let chapterCleared = new Set(JSON.parse(localStorage.getItem(CH) || "[]"));
   let autoMode = false, skipMode = false;
+
+  // ---- 素材解析（assets.js manifest；缺素材一律 fallback，不報錯）----
+  const A = () => (H.assets || {});
+  function assetUrl(group, key) { const g = A()[group]; return (g && key != null && g[key]) || null; }
+  let bgmAudio = null, bgmCur = null;
+  function playBGM(m) {
+    const en = A().enabled || {}; if (!en.bgm) return;                 // 未啟用音訊 → 靜音 fallback
+    const url = assetUrl("bgm", m);
+    if (m === "stop" || !url) { if (bgmAudio) { try { bgmAudio.pause(); } catch (e) {} } bgmCur = null; return; }
+    if (url === bgmCur) return;
+    try { if (!bgmAudio) { bgmAudio = new Audio(); bgmAudio.loop = true; bgmAudio.volume = 0.5; } bgmAudio.src = url; bgmAudio.play().catch(() => {}); bgmCur = url; } catch (e) {}
+  }
+  function playSE(key) {
+    const en = A().enabled || {}; const url = en.se ? assetUrl("se", key) : null;
+    if (url) { try { const a = new Audio(url); a.volume = 0.6; a.play().catch(() => {}); } catch (e) {} }
+    flashSE();                                                          // 視覺脈衝永遠保留（即使沒音檔）
+  }
+  function setSprite(who, expr) {
+    const el = $("spriteLayer"); if (!el) return;
+    const c = A().characters || {}; const url = (expr != null && c[who]) ? c[who][expr] : null;
+    if (url) { el.innerHTML = `<img class="sprite" src="${url}" alt="" onerror="this.parentNode.classList.add('hidden')">`; el.classList.remove("hidden"); }
+    else { el.classList.add("hidden"); el.innerHTML = ""; }
+  }
 
   // ---- 前進控制（點擊 / 鍵盤 / auto / skip）----
   let pendingAdvance = null, typing = false, finishTyping = null;
@@ -36,7 +60,12 @@
   }
 
   // ---- 舞台繪製 ----
-  function setMood(m) { if (m) $("moodbg").className = m; }
+  function setMood(m) {
+    if (!m) return;
+    const bg = $("moodbg"); bg.className = m;
+    const url = assetUrl("background", m); bg.style.backgroundImage = url ? `url(${url})` : "";  // 無圖 → CSS 漸層
+    playBGM(m);
+  }
   function flashSE() { const f = $("seFlash"); f.classList.remove("pulse"); void f.offsetWidth; f.classList.add("pulse"); }
   function setExpr(e) {
     const b = $("exprBadge");
@@ -46,7 +75,9 @@
     if (!key || key === "clear") { $("cgLayer").classList.add("hidden"); return; }
     unlockCG(key);
     const cap = capFor(key);
-    $("cgLayer").innerHTML = (ART[key] ? ART[key]() : "") + (cap ? `<div class="cg-cap">${cap}</div>` : "");
+    const url = assetUrl("cg", key);                                    // 有真 CG 用圖，否則 inline SVG
+    const art = url ? `<img class="cg-img" src="${url}" alt="" onerror="this.outerHTML=''">` : (ART[key] ? ART[key]() : "");
+    $("cgLayer").innerHTML = art + (cap ? `<div class="cg-cap">${cap}</div>` : "");
     $("cgLayer").classList.remove("hidden");
   }
   function clearCG() { $("cgLayer").classList.add("hidden"); $("cgLayer").innerHTML = ""; }
@@ -61,16 +92,32 @@
     blackout.style.opacity = on ? "1" : "0";
   }
 
+  // 場景卡 / 章節卡共用的淡入淡出
+  async function fadeCard(html, hold) {
+    const c = $("sceneCard");
+    c.innerHTML = html;
+    c.classList.remove("hidden"); c.style.opacity = 0; c.style.transition = "opacity 1s"; void c.offsetWidth; c.style.opacity = 1;
+    $("textbox").style.visibility = "hidden";
+    await Promise.race([delay(hold), waitAdvance(0)]);
+    c.style.opacity = 0; await delay(skipMode ? 4 : 600); c.classList.add("hidden");
+    $("textbox").style.visibility = "visible";
+  }
+
   async function showScene(node) {
     clearCG(); setExpr("");
     if (node.mood) setMood(node.mood);
-    const c = $("sceneCard");
-    c.innerHTML = `${node.time ? `<div class="sc-time">${node.time}</div>` : ""}<div class="sc-rule"></div><div class="sc-place">${node.place || ""}</div><div class="sc-rule"></div>`;
-    c.classList.remove("hidden"); c.style.opacity = 0; c.style.transition = "opacity 1s"; void c.offsetWidth; c.style.opacity = 1;
-    $("textbox").style.visibility = "hidden";
-    await Promise.race([delay(1500), waitAdvance(0)]);
-    c.style.opacity = 0; await delay(skipMode ? 4 : 600); c.classList.add("hidden");
-    $("textbox").style.visibility = "visible";
+    await fadeCard(`${node.time ? `<div class="sc-time">${node.time}</div>` : ""}<div class="sc-rule"></div><div class="sc-place">${node.place || ""}</div><div class="sc-rule"></div>`, 1500);
+  }
+
+  // 章節卡（Day Start／Day End）。標題缺省時仍可運作（只顯示 Day 編號）
+  function dayInfo(d) { return (M.days && M.days[d]) || { title: "", subtitle: "" }; }
+  async function showDayCard(d, kind) {
+    const info = dayInfo(d);
+    const tail = d >= M.dayCount ? "全七日　終" : "本日終";              // Day7 終章感
+    const html = kind === "end"
+      ? `<div class="day-card day-end"><div class="dc-no">Day ${d}</div><div class="dc-rule"></div><div class="dc-tail">${tail}</div></div>`
+      : `<div class="day-card"><div class="dc-no">Day ${d}</div><div class="dc-rule"></div><div class="dc-title">${info.title}</div>${info.subtitle ? `<div class="dc-sub">${info.subtitle}</div>` : ""}</div>`;
+    await fadeCard(html, kind === "end" ? 1400 : 1900);
   }
 
   async function showSNS(line) {
@@ -109,8 +156,8 @@
     else if (node.screen === "clear") setBlack(false);
     if (node.bgm) setMood(node.bgm);
     if (node.cg !== undefined) showCG(node.cg);
-    if (node.expr !== undefined) setExpr(node.expr);
-    if (node.se) flashSE();
+    if (node.expr !== undefined) { setExpr(node.expr); setSprite(node.who, node.expr); }
+    if (node.se) playSE(node.se);
     if (node.shake) { $("stage").classList.add("shake"); setTimeout(() => $("stage").classList.remove("shake"), 420); }
 
     const nm = M.names[node.who] || M.names.narration;
@@ -173,12 +220,23 @@
     unlocked.add(key); localStorage.setItem(GAL, JSON.stringify([...unlocked]));
   }
 
-  async function runDay(d) {
-    state.day = d; persist();
-    $("dayTag").textContent = "Day " + d; refreshDbg();
-    clearCG(); setExpr(""); hideSNS(); setBlack(false);
+  function chapterOf(d) { return (H.chapters && H.chapters[d]) || {}; }
+  function markChapterCleared(d) { chapterCleared.add(d); localStorage.setItem(CH, JSON.stringify([...chapterCleared])); }
+
+  async function runDay(d, opts) {
+    opts = opts || {};
+    state.day = d; if (!opts.replay) persist();      // 章節回想不覆蓋正式存檔
+    const info = dayInfo(d);
+    $("dayTag").textContent = "Day " + d + (info.title ? "　" + info.title : "") + (opts.replay ? "（回想）" : ""); refreshDbg();
+    clearCG(); setExpr(""); setSprite(null, null); hideSNS(); setBlack(false);
     setMood("night");
+    await showDayCard(d, "start");                  // 必做1：每日章節標題卡
+    await playNodes(chapterOf(d).intro || []);      // 必做3：當日極短引子
     await playNodes(H.days[d] || [{ type: "line", who: "narration", text: "（Day" + d + " 尚未實裝）" }]);
+    await playNodes(chapterOf(d).outro || []);      // 必做4：當日極短收束
+    if (!opts.replay) markChapterCleared(d);
+    await showDayCard(d, "end");                     // 必做2：Day End 轉場（含 Day7 終章卡）
+    if (opts.replay) { openGallery(); return; }      // 回想：只重看一日，不續播、不進結局
     if (d < M.dayCount) { await runDay(d + 1); }
     else { await finale(); }
   }
@@ -225,11 +283,28 @@
         el.appendChild(c);
       });
     };
+    // 章節回想（必做5）：每格顯示 Day X + 標題；該日通關後解鎖，可重看
+    const chEl = $("galChapters");
+    if (chEl) {
+      chEl.innerHTML = "";
+      for (let d = 1; d <= M.dayCount; d++) {
+        const info = dayInfo(d), open = chapterCleared.has(d);
+        const c = document.createElement("div");
+        c.className = "gal-cell ch-cell" + (open ? "" : " locked");
+        if (open) { c.innerHTML = `<div class="ch-no">Day ${d}</div><div class="ch-ti">${info.title}</div>`; c.onclick = () => replayChapter(d); }
+        else c.textContent = "🔒";
+        chEl.appendChild(c);
+      }
+    }
     const endItems = Object.keys(M.endingMeta).map((k) => ({ key: M.endingMeta[k].badge, cap: M.endingMeta[k].title, note: M.endingMeta[k].note }));
     fill("galEndings", endItems);
     fill("galAnchors", M.gallery.anchors);
     fill("galSigns", M.gallery.signs);
     fill("galHidden", M.gallery.hidden);
+  }
+  function replayChapter(d) {
+    state = { day: d, scores: { ...M.initScores }, flags: {} };  // 章節回想＝從該日重看（不影響正式存檔分數）
+    showScreen("game"); runDay(d, { replay: true });
   }
   function openView(it) {
     $("galViewArt").innerHTML = ART[it.key] ? ART[it.key]() : "";
@@ -256,19 +331,33 @@
        <div style="margin-top:6px;color:#6b7785">flags: ${flags.join(", ") || "（無）"}</div>
        <div class="jump"></div>`;
     const j = p.querySelector(".jump");
-    for (let d = 1; d <= 7; d++) { const b = document.createElement("button"); b.textContent = "D" + d; b.onclick = () => { closeMenu(); runDay(d); }; j.appendChild(b); }
+    for (let d = 1; d <= M.dayCount; d++) {
+      const info = dayInfo(d);
+      const b = document.createElement("button");
+      b.innerHTML = `Day ${d}　<span style="color:var(--ink-dim)">${info.title}</span>`;  // 跳天也顯示日標題
+      b.onclick = () => { closeMenu(); runDay(d); };
+      j.appendChild(b);
+    }
   }
 
   // ---- 選單 ----
-  function openMenu() { $("menuModal").classList.remove("hidden"); refreshDbg(); }
+  function openMenu() {
+    $("menuModal").classList.remove("hidden");
+    const info = dayInfo(state.day);
+    $("mRestartDay").textContent = "重玩本日（Day " + state.day + "　" + info.title + "）";  // 必做5：重玩顯示日標題
+    refreshDbg();
+  }
   function closeMenu() { $("menuModal").classList.add("hidden"); }
 
   // ---- 綁定 ----
   function boot() {
     $("titleArt").innerHTML = ART.title();
     const save = JSON.parse(localStorage.getItem(SAVE) || "null");
-    if (save) { $("contDay").textContent = save.day; $("btnContinue").disabled = false; }
-    else $("btnContinue").disabled = true;
+    if (save) {
+      const info = dayInfo(save.day);
+      $("contLabel").textContent = "　Day " + save.day + (info.title ? "《" + info.title + "》" : "");
+      $("btnContinue").disabled = false;
+    } else { $("contLabel").textContent = "　（尚無進度）"; $("btnContinue").disabled = true; }
 
     $("btnStart").onclick = () => { state = { day: 1, scores: { ...M.initScores }, flags: {} }; showScreen("game"); runDay(1); };
     $("btnContinue").onclick = () => { if (!save) return; state = { day: save.day, scores: save.scores, flags: save.flags }; showScreen("game"); runDay(save.day); };

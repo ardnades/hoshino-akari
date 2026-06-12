@@ -17,7 +17,24 @@
 window.HOSHINO = { days: {}, endings: {}, meta: {} };
 
 window.HOSHINO.meta = {
+  // 專案標記（為未來 multi-game 預留；目前 runtime 僅讀不依賴）
+  gameId: "hoshino-akari",
+  version: "1.0.0",
+  schemaVersion: 1,
+
   dayCount: 7,
+
+  // 章節中繼資料：Day Start／Day End 卡、dayTag、存檔顯示共用；engine 依此自動播放章節卡
+  days: {
+    1: { title: "後巷相遇", subtitle: "凌晨一點，一隻很急的貓。" },
+    2: { title: "兩塊油豆腐", subtitle: "她第一次自己選的東西。" },
+    3: { title: "焦糖布丁", subtitle: "久違的便利店，自己選，自己付。" },
+    4: { title: "赴約的代價", subtitle: "停車場販賣機的兩聲咚。" },
+    5: { title: "她不在的那天", subtitle: "人缺席，痕跡卻留下。" },
+    6: { title: "並肩的雨棚", subtitle: "不能被同一個鏡頭看成一組人。" },
+    7: { title: "最後一次藉口", subtitle: "要還的，從不是那支護唇膏。" },
+  },
+
   names: {
     akari: { label: "星野灯", cls: "akari" },
     me: { label: "我", cls: "me" },

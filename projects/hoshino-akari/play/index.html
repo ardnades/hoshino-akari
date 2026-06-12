@@ -16,7 +16,7 @@
     <p class="subtitle">凌晨一點的便利店</p>
     <div class="title-menu">
       <button id="btnStart">開始遊戲</button>
-      <button id="btnContinue">繼續（第 <span id="contDay">1</span> 天）</button>
+      <button id="btnContinue">繼續<span id="contLabel"></span></button>
       <button id="btnGallery">回想室</button>
     </div>
     <p class="title-note">含虛構角色。全角色 18 歲以上。<br>本作為非營利同人試玩版。</p>
@@ -36,6 +36,7 @@
 
     <div id="stage">
       <div id="moodbg"></div>
+      <div id="spriteLayer" class="hidden"></div>
       <div id="cgLayer" class="hidden"></div>
       <div id="sceneCard" class="hidden"></div>
       <div id="snsLayer" class="hidden"></div>
@@ -72,6 +73,7 @@
       <span>回想室</span>
       <div class="top-right"></div>
     </div>
+    <div class="gal-section"><h3>章節回想</h3><div id="galChapters" class="gal-grid"></div></div>
     <div class="gal-section"><h3>結局徽記</h3><div id="galEndings" class="gal-grid"></div></div>
     <div class="gal-section"><h3>四記憶錨點</h3><div id="galAnchors" class="gal-grid"></div></div>
     <div class="gal-section"><h3>貓圖暗號圖鑑</h3><div id="galSigns" class="gal-grid"></div></div>
@@ -84,6 +86,8 @@
 <!-- 資料 -->
 <script src="art.js"></script>
 <script src="data/meta.js"></script>
+<script src="data/assets.js"></script>
+<script src="data/chapters.js"></script>
 <script src="data/day1.js"></script>
 <script src="data/day2.js"></script>
 <script src="data/day3.js"></script>
