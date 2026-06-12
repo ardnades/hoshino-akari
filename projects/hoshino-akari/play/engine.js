@@ -10,7 +10,7 @@
   let cleared = new Set(JSON.parse(localStorage.getItem(ENDK) || "[]"));
   let chapterCleared = new Set(JSON.parse(localStorage.getItem(CH) || "[]"));
   let autoMode = false, skipMode = false;
-  let sceneTimer = null, sceneFadeTimer = null;   // 角落地點卡的停留/淡出計時器（兩段分開，避免互相清掉）
+  // 場景/時間/小標題覆蓋層由下方 OverlayDirector 統一管理（單一元素、單一 timer、dedup）
 
   // ---- 素材解析（assets.js manifest；缺素材一律 fallback，不報錯）----
   const A = () => (H.assets || {});
@@ -68,9 +68,8 @@
     playBGM(m);
   }
   function flashSE() { const f = $("seFlash"); f.classList.remove("pulse"); void f.offsetWidth; f.classList.add("pulse"); }
-  function setExpr(e) {
-    const b = $("exprBadge");
-    if (e) { b.textContent = e; b.classList.remove("hidden"); } else { b.classList.add("hidden"); }
+  function setExpr() {
+    const b = $("exprBadge"); if (b) b.classList.add("hidden");   // 表情改整合進角色名牌，不再用浮動徽章
   }
   function showCG(key) {
     if (!key || key === "clear") { $("cgLayer").classList.add("hidden"); return; }
@@ -104,39 +103,61 @@
     $("textbox").style.visibility = "visible";
   }
 
-  function hideSceneTag() {
-    if (sceneTimer) { clearTimeout(sceneTimer); sceneTimer = null; }
-    if (sceneFadeTimer) { clearTimeout(sceneFadeTimer); sceneFadeTimer = null; }
-    const e = $("sceneTag"); if (e) { e.classList.remove("show"); e.classList.add("hidden"); }
+  // ---- OverlayDirector：統一管理場景/時間/小標題覆蓋，杜絕重疊與競態（畫面上永遠最多一張）----
+  const Overlay = (function () {
+    let holdT = null, fadeT = null, lastSig = null;
+    function clearTimers() { if (holdT) { clearTimeout(holdT); holdT = null; } if (fadeT) { clearTimeout(fadeT); fadeT = null; } }
+    function node() { return $("sceneTag"); }
+    function hide() { clearTimers(); const e = node(); if (e) { e.className = "hidden"; e.innerHTML = ""; } }
+    function resetDay() { lastSig = null; hide(); }                       // 切日：清 dedup 記號＋殘留卡＋timer
+    // Normal scene transition：小型頂部 toast，不蓋對白，dedup，停約 1.8 秒
+    function scene(place, time, mood) {
+      const label = sceneLabel(place, time);
+      if (!label || label === lastSig) return;                           // dedup：同地點同語意時間 → 不再彈
+      lastSig = label;
+      clearTimers();
+      const e = node(); if (!e) return;
+      e.className = "scene-toast";                                        // className 整個覆蓋＝永遠單一卡
+      e.innerHTML = `<div class="ov-strip">${label}</div>`;
+      void e.offsetWidth; e.classList.add("show");
+      holdT = setTimeout(() => { e.classList.remove("show"); fadeT = setTimeout(() => { e.className = "hidden"; }, 450); }, skipMode ? 4 : 1800);
+    }
+    return { scene, resetDay, hide };
+  })();
+
+  // 精確時間 → 語意時間（UI 一律顯示語意，避免「凌晨一點」反覆出現）
+  function semanticTime(time) {
+    const t = String(time || "");
+    if (/午休/.test(t)) return "午休";
+    if (/放學/.test(t)) return "放學後";
+    if (/黃昏|傍晚|17:|18:/.test(t)) return "黃昏";
+    if (/清晨|早晨|破曉/.test(t)) return "清晨";
+    if (/午後|下午/.test(t)) return "午後";
+    if (/白天|上午|午前|中午/.test(t)) return "白天";
+    if (/凌晨|深夜|半夜|零點|一點|二點|三點|0[0-3]:|2[0-3]:|當晚/.test(t)) return "深夜";
+    return t;
+  }
+  // place 常為「時間・地點」，取「・」後的真正地點，與語意時間組成 label
+  function sceneLabel(place, time) {
+    const p = String(place || "").trim();
+    let loc;
+    if (p.includes("・")) {                                   // place 可能是「時間・地點」或「地點・時間」，取非時間段
+      const parts = p.split("・").map((s) => s.trim());
+      loc = parts.find((s) => !/白天|深夜|半夜|凌晨|傍晚|黃昏|下午|午後|午休|清晨|早晨|當晚|零點|[一二三]點|\d{1,2}:/.test(s)) || parts[parts.length - 1];
+    } else loc = p;
+    loc = loc.split(/[ 　]/)[0];                              // 主要地點，去掉次區域（同店多次移動 → dedup 只彈一次）
+    const st = semanticTime(time);
+    if (loc && st) return `${st}　${loc}`;
+    return loc || st || "";
   }
 
-  // 場景轉換：地點/時間卡先在「中央放大」夠久能讀 → 一邊縮小一邊滑向「右上角」→ 停約 5 秒 → 淡出。
-  // 停留期間旁白照常進行（非阻塞），所以時間看得清又不卡節奏。
+  // 場景轉換（Normal）：換背景 + 小型 toast（非阻塞、不蓋對白、dedup）。Day 卡才用中央 eyecatch。
   async function showScene(node) {
     clearCG(); setExpr("");
-    const el = $("sceneTag");
-    if (!el) { if (node.mood) setMood(node.mood); return; }
-    if (sceneTimer) { clearTimeout(sceneTimer); sceneTimer = null; }
-    if (sceneFadeTimer) { clearTimeout(sceneFadeTimer); sceneFadeTimer = null; }
-    el.innerHTML = `<div class="st-card">${node.time ? `<span class="st-time">${node.time}</span>` : ""}<span class="st-place">${node.place || ""}</span></div>`;
-    $("speaker").classList.add("hidden"); $("dialogue").textContent = ""; $("advanceHint").classList.remove("show");
-    el.classList.remove("hidden");
-    const card = el.querySelector(".st-card");
-    // FLIP：量出「角落停泊位」的位置，算出移到中央＋放大的位移，先瞬間擺到中央
-    const sr = ($("stage").getBoundingClientRect && $("stage").getBoundingClientRect()) || { left: 0, top: 0, width: 0, height: 0 };
-    const cr = (card && card.getBoundingClientRect && card.getBoundingClientRect()) || { left: 0, top: 0, width: 0, height: 0 };
-    const dx = (sr.left + sr.width / 2) - (cr.left + cr.width / 2);
-    const dy = (sr.top + sr.height / 2) - (cr.top + cr.height / 2);
-    if (card) { card.style.transition = "none"; card.style.transform = `translate(${dx}px,${dy}px) scale(1.9)`; void card.offsetWidth; }
-    el.classList.add("show");
     if (node.mood) setMood(node.mood);
-    await Promise.race([delay(skipMode ? 4 : 950), waitAdvance(0)]);                 // 中央停留：夠時間看清時間
-    if (card) { card.style.transition = "transform .7s cubic-bezier(.2,.7,.2,1)"; card.style.transform = "none"; }  // 一邊縮小一邊滑向右上角
-    // 角落停約 5 秒後淡出——非阻塞，旁白此時已接著跑
-    sceneTimer = setTimeout(() => {
-      el.classList.remove("show");
-      sceneFadeTimer = setTimeout(() => el.classList.add("hidden"), 600);
-    }, skipMode ? 4 : 5000);
+    Overlay.scene(node.place, node.time, node.mood);
+    $("speaker").classList.add("hidden"); $("dialogue").textContent = ""; $("advanceHint").classList.remove("show");
+    await delay(skipMode ? 4 : 220);                                      // 一個小呼吸，讓背景 crossfade 起頭
   }
 
   // 章節卡（Day Start／Day End）。標題缺省時仍可運作（只顯示 Day 編號）
@@ -194,8 +215,11 @@
 
     const nm = M.names[node.who] || M.names.narration;
     const sp = $("speaker");
-    if (nm.label) { sp.textContent = nm.label; sp.className = nm.cls; sp.classList.remove("hidden"); }
-    else sp.classList.add("hidden");
+    if (nm.label) {
+      const note = (node.expr && node.who !== "narration") ? ` <span class="sp-expr">${node.expr}</span>` : "";
+      sp.innerHTML = `<span class="sp-name">${nm.label}</span>${note}`;   // 表情整合進名牌（小型、低調）
+      sp.className = nm.cls; sp.classList.remove("hidden");
+    } else sp.classList.add("hidden");
     const dlg = $("dialogue"); dlg.className = node.who === "narration" ? "narration" : "";
     if (!skipMode && dlg.classList) { dlg.classList.add("swap"); setTimeout(() => dlg.classList.remove("swap"), 280); }
     $("advanceHint").classList.remove("show");
@@ -214,6 +238,7 @@
   function playChoice(node) {
     return new Promise((resolve) => {
       const box = $("choices");
+      Overlay.hide();                                   // 選項出現時，場景/時間卡讓位
       box.innerHTML = node.prompt ? `<div class="choice-prompt">${node.prompt}</div>` : "";
       $("advanceHint").classList.remove("show");
       const showHint = $("dbgChk") && $("dbgChk").checked;
@@ -266,7 +291,7 @@
     state.day = d; if (!opts.replay) persist();      // 章節回想不覆蓋正式存檔
     const info = dayInfo(d);
     $("dayTag").textContent = "Day " + d + (info.title ? "　" + info.title : "") + (opts.replay ? "（回想）" : ""); refreshDbg();
-    clearCG(); setExpr(""); setSprite(null, null); hideSNS(); setBlack(false); hideSceneTag();
+    clearCG(); setExpr(""); setSprite(null, null); hideSNS(); setBlack(false); Overlay.resetDay();
     setMood("night");
     await showDayCard(d, "start");                  // 必做1：每日章節標題卡
     await playNodes(chapterOf(d).intro || []);      // 必做3：當日極短引子
