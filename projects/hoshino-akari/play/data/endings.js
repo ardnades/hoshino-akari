@@ -1,5 +1,5 @@
 /* endings.js —— 四結局後日談（依結局調味；引擎依 tone 播放對應陣列）
-   骨架取材 Day7【後日談・幾天後】：電車訪談「焦糖布丁」→ 便利店甜點櫃 → 自己買下布丁、不要袋子
+   骨架取材 Day7【後日談・幾天後】：電車訪談「焦糖布丁」→ 便利商店甜點櫃 → 自己買下布丁、不要袋子
    → 落點「這一次，不是替誰買的。是我自己，選的。」（cg:"pudding"）；口袋肉球印紙片仍在。
    hidden_pov_tail 接在 warm_true 之後播；who 用 akari（灯內心第一人稱），收在半句留白。 */
 window.HOSHINO.endings = {
@@ -10,7 +10,7 @@ window.HOSHINO.endings = {
 
     { type: "line", who: "narration", text: "那之後，我沒有刻意找她的消息。", bgm: "warm" },
     { type: "line", who: "narration", text: "只是眼睛開始容易停在她的名字旁邊——招牌上、手機推薦欄、電車廂的廣告欄。" },
-    { type: "line", who: "narration", text: "回家路上，我路過那間便利店，沒有停。" },
+    { type: "line", who: "narration", text: "回家路上，我路過那間便利商店，沒有停。" },
     { type: "line", who: "narration", text: "路過那台販賣機，想起 Day5 放在取出口的那罐熱可可，不知道她後來有沒有拿到。" },
     { type: "line", who: "narration", text: "今天，我沒有多買油豆腐。因為那一份，已經真的還給她了。", pause: 0.6 },
 
@@ -20,11 +20,9 @@ window.HOSHINO.endings = {
     { type: "line", who: "akari", text: "「焦糖布丁。」", speed: "slow" },
     { type: "line", who: "manager", text: "「意外地普通呢。」", expr: "主持人" },
     { type: "line", who: "akari", text: "「普通的東西，有時候很貴。」", speed: "slow", pause: 0.6 },
-    { type: "line", who: "narration", text: "她也笑。一般觀眾聽不懂。", pause: 0.5 },
+    { type: "line", who: "narration", text: "她笑。觀眾沒聽懂。", pause: 0.5 },
     { type: "line", who: "narration", text: "只有我懂。", speed: "slow", pause: 0.8 },
-    { type: "line", who: "narration", text: "影片就停在那裡。" },
-
-    { type: "line", who: "narration", text: "下車之後，我走進車站旁的便利店。" },
+    { type: "line", who: "narration", text: "下車之後，我走進車站旁的便利商店。" },
     { type: "line", who: "narration", text: "走到甜點櫃前。焦糖布丁，還擺在老位置。" },
     { type: "line", who: "narration", text: "我拿起一個。", pause: 0.4 },
     { type: "line", who: "narration", text: "店員問我，要不要袋子。" },
@@ -40,7 +38,7 @@ window.HOSHINO.endings = {
 
     { type: "line", who: "narration", text: "那之後，我沒有刻意找她的消息。", bgm: "night" },
     { type: "line", who: "narration", text: "偷來的七天，安靜地還了回去。", speed: "slow", pause: 0.7 },
-    { type: "line", who: "narration", text: "回家路上，我路過那間便利店，沒有停。" },
+    { type: "line", who: "narration", text: "回家路上，我路過那間便利商店，沒有停。" },
     { type: "line", who: "narration", text: "路過那台販賣機，想起 Day5 放在取出口的那罐熱可可。" },
     { type: "line", who: "narration", text: "今天，我沒有多買油豆腐。那一份，已經還給她了。", pause: 0.5 },
 
@@ -49,9 +47,9 @@ window.HOSHINO.endings = {
     { type: "line", who: "narration", text: "星野灯想了一下。" },
     { type: "line", who: "akari", text: "「焦糖布丁。」" },
     { type: "line", who: "manager", text: "「意外地普通呢。」", expr: "主持人" },
-    { type: "line", who: "narration", text: "她也笑。影片一閃而過，就停在那裡。", pause: 0.5 },
+    { type: "line", who: "narration", text: "她笑。影片停在那裡。", pause: 0.5 },
 
-    { type: "line", who: "narration", text: "下車之後，我走進車站旁的便利店。" },
+    { type: "line", who: "narration", text: "下車之後，我走進車站旁的便利商店。" },
     { type: "line", who: "narration", text: "走到甜點櫃前。焦糖布丁，還擺在老位置。" },
     { type: "line", who: "narration", text: "我拿起一個。" },
     { type: "line", who: "narration", text: "店員問我，要不要袋子。" },
@@ -66,7 +64,7 @@ window.HOSHINO.endings = {
     { type: "scene", place: "幾天後・通勤電車", time: "傍晚", mood: "night" },
 
     { type: "line", who: "narration", text: "那之後，我沒有刻意找她的消息。", bgm: "night" },
-    { type: "line", who: "narration", text: "回家路上，我路過那間便利店，沒有停。" },
+    { type: "line", who: "narration", text: "回家路上，我路過那間便利商店，沒有停。" },
     { type: "line", who: "narration", text: "路過那台販賣機，想起 Day5 放在取出口的那罐熱可可。" },
     { type: "line", who: "narration", text: "今天，我沒有多買油豆腐。那一份，已經還給她了。", pause: 0.5 },
 
@@ -75,9 +73,9 @@ window.HOSHINO.endings = {
     { type: "line", who: "narration", text: "星野灯想了一下。" },
     { type: "line", who: "akari", text: "「焦糖布丁。」" },
     { type: "line", who: "manager", text: "「意外地普通呢。」", expr: "主持人" },
-    { type: "line", who: "narration", text: "她也笑。影片一閃而過。", pause: 0.5 },
+    { type: "line", who: "narration", text: "她笑。影片閃過。", pause: 0.5 },
 
-    { type: "line", who: "narration", text: "下車之後，我走進車站旁的便利店。" },
+    { type: "line", who: "narration", text: "下車之後，我走進車站旁的便利商店。" },
     { type: "line", who: "narration", text: "走到甜點櫃前。焦糖布丁，還擺在老位置。" },
     { type: "line", who: "narration", text: "我拿起一個。" },
     { type: "line", who: "narration", text: "店員問我，要不要袋子。" },

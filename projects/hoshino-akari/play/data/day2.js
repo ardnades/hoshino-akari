@@ -17,7 +17,7 @@ window.HOSHINO.days[2] = [
 
   { type: "line", who: "narration", text: "推開門，暖氣撲到臉上。", bgm: "store" },
   { type: "line", who: "narration", text: "關東煮的湯氣，把玻璃霧出一片白。", se: "heater" },
-  { type: "line", who: "narration", text: "我夾了竹輪、蘿蔔、蛋。手停在油豆腐上。最油的那塊。" },
+  { type: "line", who: "narration", text: "我夾了竹輪、蘿蔔、蛋。手停在油豆腐上。最大的那塊。" },
   { type: "line", who: "me", text: "「……多買一塊也還好。」" },
   { type: "line", who: "narration", text: "我夾了兩塊。" },
 
@@ -26,7 +26,7 @@ window.HOSHINO.days[2] = [
   { type: "line", who: "narration", text: "外面，呼出的氣是白的。我靠在牆邊。", bgm: "night" },
   { type: "line", who: "narration", text: "手裡那袋關東煮，是整條巷子唯一熱的東西。" },
   { type: "line", who: "narration", text: "一點零五分。一點零八分。沒有人來。" },
-  { type: "line", who: "narration", text: "我笑了一下。我在幹嘛。" },
+  { type: "line", who: "narration", text: "我看著自己的手。我在幹嘛。" },
   { type: "line", who: "narration", text: "一個國民偶像，會為了一支便利商店的護唇膏，半夜溜出來見一個陌生人？" },
   { type: "line", who: "narration", text: "一點十三分。指尖開始凍了。算了，回家。" },
   { type: "line", who: "narration", text: "轉身的瞬間——", speed: "instant" },
@@ -40,13 +40,13 @@ window.HOSHINO.days[2] = [
   { type: "line", who: "akari", text: "「你都沒拿出來。」" },
   { type: "line", who: "me", text: "「拿什麼？」" },
   { type: "line", who: "akari", text: "「手機。」" },
-  { type: "line", who: "narration", text: "我下意識摸了一下口袋。她看著這個動作，笑了一下。", se: "pat" },
+  { type: "line", who: "narration", text: "我下意識摸了一下口袋。她看著這個動作，視線停了一秒。", se: "pat" },
   { type: "line", who: "akari", text: "「也沒往那邊看。」" },
   { type: "line", who: "narration", text: "她朝街角輕輕抬了下下巴。我順著看過去。" },
   { type: "line", who: "narration", text: "街角那棟高樓頂上，亮著一塊飯店招牌。" },
   { type: "line", who: "me", text: "「……妳在看我？」" },
   { type: "line", who: "akari", text: "「嗯。」" },
-  { type: "line", who: "narration", text: "她答得很乾脆。乾脆到，我接不下去。" },
+  { type: "line", who: "narration", text: "她答得很乾脆。" },
   { type: "line", who: "akari", text: "「會跟過來的人，眼睛會先飄過去。」", speed: "slow" },
   { type: "line", who: "akari", text: "「你連看都沒看。」", speed: "instant" },
   { type: "line", who: "akari", text: "「別誤會。」", pause: 0.6, expr: "別過視線" },
@@ -55,22 +55,22 @@ window.HOSHINO.days[2] = [
   { type: "line", who: "akari", text: "「因為昨天，看到我這張臉的人裡——」" },
   { type: "line", who: "narration", text: "她停了一下。用鞋尖踢了踢地上的小石子。", se: "pebble", expr: "鬆動" },
   { type: "line", who: "akari", text: "「……你是唯一一個，什麼都沒做的。」", speed: "slow" },
-  { type: "line", who: "narration", text: "風從巷子裡穿過去。她呼出的氣，白白的一團，散掉。", se: "wind" },
+  { type: "line", who: "narration", text: "風吹過巷子。她呼出的氣散了。", se: "wind" },
 
   /* seen_through_flag 判定 → awareness 早鳥 */
   {
     type: "gate", cond: "flag:seen_through_flag",
     then: [
-      { type: "line", who: "narration", text: "她看的不是我的臉，是我的手、我的口袋。她在算我會不會變成下一個麻煩。", speed: "slow", add: { awareness: 1 } },
-      { type: "line", who: "narration", text: "她沒說破，只是默默把這點記下來。這一點，我也默默記下了。" },
+      { type: "line", who: "narration", text: "她看的不是我的臉，是我的手、我的口袋。", speed: "slow", add: { awareness: 1 } },
+      { type: "line", who: "narration", text: "她沒說破。我也沒說。" },
     ],
     else: [
-      { type: "line", who: "narration", text: "她說得淡，像在陳述一件早就確認過的事。" },
+      { type: "line", who: "narration", text: "她說得很淡。" },
     ],
   },
 
   /* ===== D2-S3　兩塊油豆腐 ===== */
-  { type: "line", who: "narration", text: "下一秒，她忽然抬頭，指向我手上的袋子。" },
+  { type: "line", who: "narration", text: "她抬頭，指向我手上的袋子。" },
   { type: "line", who: "akari", text: "「所以呢。」" },
   { type: "line", who: "me", text: "「所以什麼？」" },
   { type: "line", who: "akari", text: "「今天的貓糧——」" },
@@ -82,8 +82,6 @@ window.HOSHINO.days[2] = [
   { type: "line", who: "akari", text: "「……怎麼有兩塊。」", pause: 0.8 },
   { type: "line", who: "me", text: "「剛好買多了。」" },
   { type: "line", who: "akari", text: "「剛好。剛好多一塊，剛好是昨天那塊。」", speed: "slow", expr: "抓到把柄的笑" },
-  { type: "line", who: "narration", text: "我語塞。" },
-
   {
     type: "choice", id: "d2s3",
     prompt: "面對她戳破的那句「剛好」——",
@@ -107,7 +105,7 @@ window.HOSHINO.days[2] = [
         add: { distance: 1 },
         reaction: [
           { type: "line", who: "me", text: "「……當作沒這回事吧。」" },
-          { type: "line", who: "narration", text: "她沉默了半拍。", expr: "收笑" },
+          { type: "line", who: "narration", text: "她吸了口氣。", expr: "收笑" },
           { type: "line", who: "akari", text: "「……也好。」" },
         ],
       },
@@ -133,7 +131,6 @@ window.HOSHINO.days[2] = [
   { type: "line", who: "akari", text: "「所以才煩。」" },
   { type: "line", who: "narration", text: "她低頭，咬了一口油豆腐。" },
   { type: "line", who: "akari", text: "「大家夏天看到的笑臉，都是冬天餓出來的。」", speed: "slow", pause: 1.2 },
-  { type: "line", who: "narration", text: "她自己先抬起頭。" },
   { type: "line", who: "akari", text: "「所以——今天這塊，特別好吃。」", expr: "素顏微笑" },
 
   /* ===== D2-S5　她又一次沒拿走 ===== */
@@ -144,14 +141,14 @@ window.HOSHINO.days[2] = [
   { type: "line", who: "akari", text: "「……先放你那。」", pause: 0.6, expr: "別過視線" },
   { type: "line", who: "me", text: "「啊？昨天不是說好——」" },
   { type: "line", who: "akari", text: "「我改主意了。」" },
-  { type: "line", who: "narration", text: "她把帽子重新壓低，後退一步。然後看向便利店那扇亮著的玻璃門。" },
+  { type: "line", who: "narration", text: "她帽子壓更低。後退。看向便利商店那扇亮著的玻璃門。" },
   { type: "line", who: "akari", text: "「明天。」", pause: 0.6 },
   { type: "line", who: "me", text: "「明天怎樣？」" },
   { type: "line", who: "akari", text: "「裡面。」", pause: 0.6 },
-  { type: "line", who: "me", text: "「便利店？」" },
+  { type: "line", who: "me", text: "「便利商店？」" },
   { type: "line", who: "narration", text: "她點頭。" },
   { type: "line", who: "akari", text: "「我想自己買一次。」", speed: "slow", expr: "收起玩笑" },
-  { type: "line", who: "akari", text: "「學術考察。庶民便利店生態。」", speed: "instant", expr: "立刻嘴硬" },
+  { type: "line", who: "akari", text: "「學術考察。庶民便利商店生態。」", speed: "instant", expr: "立刻嘴硬" },
   { type: "line", who: "me", text: "「生態。」" },
   { type: "line", who: "akari", text: "「對。」" },
   { type: "line", who: "narration", text: "她轉身。" },
@@ -186,13 +183,13 @@ window.HOSHINO.days[2] = [
     ],
   },
 
-  { type: "line", who: "narration", text: "她走進巷子深處。走了幾步，沒回頭，丟下一句：", se: "step" },
+  { type: "line", who: "narration", text: "她走進巷子。沒回頭。丟下一句：", se: "step" },
 
   /* affection 門檻 → 結尾截圖句兩版 */
   {
     type: "gate", cond: "affection>=2",
     then: [
-      { type: "line", who: "narration", text: "招牌的光剛好掃過她半側的臉。沒有妝，只有一點被風吹紅的鼻尖。", expr: "素顏微笑" },
+      { type: "line", who: "narration", text: "招牌的光掃過她半側的臉。被風吹紅的鼻尖。", expr: "素顏微笑" },
       { type: "line", who: "akari", text: "「還有——謝謝你，記得那塊油豆腐。」", speed: "slow", pause: 1.2, expr: "素顏微笑" },
     ],
     else: [
@@ -200,8 +197,8 @@ window.HOSHINO.days[2] = [
     ],
   },
 
-  { type: "line", who: "narration", text: "聲音很小。小到差點被風蓋掉。", se: "wind", cg: "clear" },
+  { type: "line", who: "narration", text: "聲音很小，差點被風蓋掉。", se: "wind", cg: "clear" },
   { type: "line", who: "narration", text: "我站在原地，手裡捏著那支她又一次沒拿走的護唇膏。", screen: "black" },
-  { type: "line", who: "narration", text: "明天。便利店裡面。", pause: 0.8, bgm: "warm" },
+  { type: "line", who: "narration", text: "明天。便利商店裡面。", pause: 0.8, bgm: "warm" },
   { type: "line", who: "narration", text: "她說「自己買一次」的樣子，像在許願。", speed: "slow" },
 ];

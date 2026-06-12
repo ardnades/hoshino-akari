@@ -7,7 +7,7 @@ window.HOSHINO.days[7] = [
   { type: "line", who: "narration", text: "我知道。" },
   { type: "line", who: "narration", text: "今天下午的排程是空的。請假單上填的是「私用」。兩個字，寫起來很普通。" },
   { type: "line", who: "narration", text: "午休，我又摸到口袋裡的護唇膏。這幾天，它一直在那裡。" },
-  { type: "line", who: "narration", text: "便利店不能去了。販賣機不能去了。雨棚也用過一次，不能再用。" },
+  { type: "line", who: "narration", text: "便利商店不能去了。販賣機不能去了。雨棚也用過一次，不能再用。" },
   { type: "line", who: "narration", text: "那個凌晨一點的小世界，已經沒有入口。" },
   { type: "line", who: "narration", text: "但我還是把護唇膏，帶在身上。" },
   { type: "line", who: "narration", text: "今天不是去等她。今天是去把東西，還回去。" },
@@ -17,14 +17,14 @@ window.HOSHINO.days[7] = [
   { type: "line", who: "narration", text: "外殼上的標籤，有一角翹起來。", se: "paper" },
   { type: "line", who: "narration", text: "不太對。昨天還好好的。" },
   { type: "line", who: "narration", text: "我用指甲，從標籤的縫裡，挑出一小片捲起來的紙。", se: "paper", pause: 0.6 },
-  { type: "line", who: "narration", text: "捲得很緊。像是有人，匆忙又小心地塞進去的。" },
+  { type: "line", who: "narration", text: "捲得很緊。" },
   { type: "line", who: "narration", text: "攤開。", pause: 1.0 },
   { type: "line", who: "narration", text: "沒有字。", cg: "note", pause: 0.8 },
   { type: "line", who: "narration", text: "只有一個歪歪的肉球印。旁邊寫著一個數字：", pause: 0.4 },
   { type: "line", who: "narration", text: "17:40。", speed: "instant" },
   { type: "line", who: "narration", text: "肉球印下面，畫了一條斜斜的線。線的盡頭，點著一盞小小的燈。" },
   { type: "line", who: "narration", text: "我認得那條線。是雨棚。還有，雨棚到頭的那盞路燈。", speed: "slow" },
-  { type: "line", who: "narration", text: "不是便利店。也不是販賣機。是昨天，我們分開的那個地方。", speed: "slow", pause: 0.6 },
+  { type: "line", who: "narration", text: "昨天，我們分開的那個地方。", speed: "slow", pause: 0.6 },
   { type: "line", who: "narration", text: "我想起昨天，她把護唇膏塞回我手裡之前，握了好久。原來，是在做這個。" },
   { type: "line", who: "narration", text: "我把那片紙，收進口袋。", cg: "clear" },
   { type: "line", who: "narration", text: "17:40。冬天，差不多那時候，天就黑了。", speed: "slow" },
@@ -47,7 +47,7 @@ window.HOSHINO.days[7] = [
   { type: "line", who: "manager", text: "「外面冷。」" },
   { type: "line", who: "narration", text: "她頓了一下。" },
   { type: "line", who: "manager", text: "「十分鐘。」", pause: 0.6 },
-  { type: "line", who: "narration", text: "星野愣住。" },
+  { type: "line", who: "narration", text: "星野停住。" },
   { type: "line", who: "akari", text: "「……可以？」" },
   { type: "line", who: "manager", text: "「不是給妳約會。」", speed: "instant" },
   { type: "line", who: "akari", text: "「那是什麼？」" },
@@ -62,7 +62,6 @@ window.HOSHINO.days[7] = [
   { type: "line", who: "manager", text: "「十分鐘後沒回來，我會親自去抓妳。」", speed: "instant", set: { manager_warning_flag: false } },
   { type: "line", who: "narration", text: "說完，她沒有走遠。只退到工作車旁，和工作人員確認行程。" },
   { type: "line", who: "narration", text: "從那裡，她看得見星野的背影。但聽不見我們說話。" },
-  { type: "line", who: "narration", text: "那大概，就是她能讓出的最大距離。", speed: "slow", pause: 0.8 },
   { type: "line", who: "narration", text: "星野捏著那張房卡，還有那個暖暖包。然後，她朝雨棚這邊，走過來。" },
 
   /* ── S3 雨棚下・一步的距離：讀紙片判定 ── */
@@ -150,7 +149,7 @@ window.HOSHINO.days[7] = [
   { type: "line", who: "narration", text: "她縮了一下肩膀，又放鬆。" },
 
   /* ── S6 自由的味道 ── */
-  { type: "line", who: "akari", text: "「這七天，我沒有變自由。」" },
+  { type: "line", who: "akari", text: "「這七天，我沒有變得自由。」" },
   { type: "line", who: "me", text: "「嗯。」" },
   { type: "line", who: "akari", text: "「房卡還是別人保管。手機還是會響。明天，我就不在這裡了。」" },
   { type: "line", who: "narration", text: "她看著自己掌心裡的護唇膏。" },
@@ -171,7 +170,6 @@ window.HOSHINO.days[7] = [
         flag: { d7_food: "pudding" },
         reaction: [
           { type: "line", who: "me", text: "「下次再買布丁吧。」" },
-          { type: "line", who: "narration", text: "她沉默了一下。" },
           { type: "line", who: "akari", text: "「……你這人，說話很犯規。」" },
           { type: "line", who: "narration", text: "她別過臉。但握著護唇膏的手，握得更緊。" },
         ],
@@ -205,7 +203,7 @@ window.HOSHINO.days[7] = [
     type: "gate", cond: "warmth>=5 && awareness>=2 && regret<=2",
     then: [
       { type: "line", who: "akari", text: "「如果哪天，」", pause: 0.4 },
-      { type: "line", who: "akari", text: "「我真的可以，自己走進便利店。」" },
+      { type: "line", who: "akari", text: "「我真的可以，自己走進便利商店。」" },
       { type: "line", who: "akari", text: "「那時候，我會自己買兩塊油豆腐。」" },
       { type: "line", who: "me", text: "「一塊不夠？」" },
       { type: "line", who: "akari", text: "「一塊給貓。」" },
@@ -217,7 +215,7 @@ window.HOSHINO.days[7] = [
     ],
     else: [
       { type: "line", who: "akari", text: "「如果哪天，」", pause: 0.4 },
-      { type: "line", who: "akari", text: "「我真的可以，自己走進便利店。」" },
+      { type: "line", who: "akari", text: "「我真的可以，自己走進便利商店。」" },
       { type: "line", who: "akari", text: "「一塊給——」", speed: "slow", pause: 0.6 },
       { type: "line", who: "manager", text: "「灯，時間。」", speed: "instant", se: "call" },
       { type: "line", who: "narration", text: "經理人的聲音，從大路那頭傳過來。她沒有把那句說完。", speed: "slow" },
@@ -228,7 +226,7 @@ window.HOSHINO.days[7] = [
   /* ── S7 道別 ── */
   { type: "line", who: "narration", text: "她回頭，應了一聲：" },
   { type: "line", who: "akari", text: "「來了。」" },
-  { type: "line", who: "narration", text: "那一聲，和她平常嘴硬的語氣不一樣。是工作的聲音。" },
+  { type: "line", who: "narration", text: "那是工作的聲音。" },
   { type: "line", who: "narration", text: "她轉回來，看我。" },
   { type: "line", who: "akari", text: "「我走了。」", speed: "instant" },
   { type: "line", who: "me", text: "「嗯。」", speed: "instant" },
@@ -241,8 +239,8 @@ window.HOSHINO.days[7] = [
         label: "「再見。」",
         reaction: [
           { type: "line", who: "me", text: "「再見。」" },
-          { type: "line", who: "narration", text: "她笑了一下。笑得有點寂寞。" },
-          { type: "line", who: "narration", text: "但她點了點頭。" },
+          { type: "line", who: "narration", text: "她笑。有點寂寞。" },
+          { type: "line", who: "narration", text: "點了點頭。" },
           { type: "line", who: "akari", text: "「嗯。再見。」", expr: "寂寞笑", set: { lip_balm_flag: false } },
         ],
       },
@@ -272,7 +270,7 @@ window.HOSHINO.days[7] = [
   /* ── 回家路上 ── */
   { type: "scene", place: "深夜・回家路上", time: "當晚", mood: "store" },
 
-  { type: "line", who: "narration", text: "我路過那間便利店。沒有停。只看了一眼玻璃門。", bgm: "store" },
+  { type: "line", who: "narration", text: "我路過那間便利商店。沒有停。只看了一眼玻璃門。", bgm: "store" },
   { type: "line", who: "narration", text: "裡面很亮。關東煮的湯氣，還是把玻璃霧成一片白。", cg: "clear" },
   { type: "line", who: "narration", text: "走回停車場的方向，路過那台販賣機。" },
   { type: "line", who: "narration", text: "Day5，我把熱可可放在取出口。不知道她後來，有沒有拿到。", cg: "cocoa" },

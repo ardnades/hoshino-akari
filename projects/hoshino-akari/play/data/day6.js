@@ -20,9 +20,9 @@ window.HOSHINO.days[6] = [
     },
   },
 
-  { type: "line", who: "narration", text: "那間便利店的位置，被說出來了。", speed: "slow" },
+  { type: "line", who: "narration", text: "那間便利商店的位置，被說出來了。", speed: "slow" },
   { type: "line", who: "narration", text: "我把手機收進口袋。" },
-  { type: "line", who: "narration", text: "便利店不能去了。", speed: "slow", pause: 0.8 },
+  { type: "line", who: "narration", text: "便利商店不能去了。", speed: "slow", pause: 0.8 },
   { type: "line", who: "narration", text: "販賣機，也不能去了。", speed: "slow", pause: 0.8 },
   { type: "line", who: "narration", text: "那個只屬於我們兩個人的、凌晨一點的小小夜晚——", pause: 1.0 },
   { type: "line", who: "narration", text: "被世界，找到入口了。", speed: "slow", pause: 0.8 },
@@ -33,7 +33,7 @@ window.HOSHINO.days[6] = [
   { type: "line", who: "narration", text: "冬天的雨，又細又冷。", se: "rain" },
   { type: "line", who: "narration", text: "我沒有撐傘。" },
   { type: "line", who: "narration", text: "回家的路上有一段商店街，有長長的雨棚。" },
-  { type: "line", who: "narration", text: "便利店不能去。販賣機不能去。" },
+  { type: "line", who: "narration", text: "便利商店不能去。販賣機不能去。" },
   { type: "line", who: "narration", text: "那我還能去哪？", pause: 0.8 },
   { type: "line", who: "narration", text: "……哪裡都不去。", speed: "instant" },
   { type: "line", who: "narration", text: "就走平常那條，回家的路。", pause: 0.6 },
@@ -52,7 +52,7 @@ window.HOSHINO.days[6] = [
   { type: "line", who: "narration", text: "擦肩的那一瞬間，那個人沒有停。", se: "give", pause: 0.6 },
   { type: "line", who: "akari", text: "「不要回頭。」", speed: "slow", expr: "口罩圍巾" },
   { type: "line", who: "narration", text: "然後繼續往前走。" },
-  { type: "line", who: "narration", text: "我愣了半秒。", pause: 0.8 },
+  { type: "line", who: "narration", text: "我停了半秒。", pause: 0.8 },
   { type: "line", who: "narration", text: "那個聲音，我認得。", speed: "slow", pause: 0.6 },
 
   {
@@ -88,7 +88,7 @@ window.HOSHINO.days[6] = [
   /* ── D6-S3 雨棚・並肩：像剛好同路（同框風險名場面） ── */
   { type: "line", who: "narration", text: "她繞到我側後方，跟我隔著半步，往同一個方向走。" },
   { type: "line", who: "me", text: "「妳怎麼知道我會走這裡？」" },
-  { type: "line", who: "akari", text: "「便利店不能去，販賣機也不能去。」", expr: "" },
+  { type: "line", who: "akari", text: "「便利商店不能去，販賣機也不能去。」", expr: "" },
   { type: "line", who: "akari", text: "「你回家只剩這條路了。」" },
   { type: "line", who: "me", text: "「妳想到這個？」" },
   { type: "line", who: "akari", text: "「貓看到獵物，盯著不放。」", speed: "instant" },
@@ -135,12 +135,12 @@ window.HOSHINO.days[6] = [
   { type: "line", who: "narration", text: "我們並排走在雨棚下。" },
   { type: "line", who: "narration", text: "不看彼此。不叫名字。" },
   { type: "line", who: "narration", text: "像兩個剛好同路的陌生人。", pause: 0.6 },
-  { type: "line", who: "akari", text: "「便利店，不要去了。」" },
+  { type: "line", who: "akari", text: "「便利商店，不要去了。」" },
   { type: "line", who: "me", text: "「販賣機也？」" },
   { type: "line", who: "akari", text: "「也不要。」" },
 
   { type: "line", who: "narration", text: "前面，有個人舉起手機，對著雨棚拍了一張。", se: "flash" },
-  { type: "line", who: "narration", text: "星野立刻慢了半步。", expr: "" },
+  { type: "line", who: "narration", text: "她立刻慢了半步。", expr: "" },
   { type: "line", who: "narration", text: "我們之間，多出一個人的距離。", pause: 1.0 },
   { type: "line", who: "narration", text: "那個人收起手機，走遠了。" },
   { type: "line", who: "narration", text: "她才跟上來。", pause: 0.6 },
@@ -179,12 +179,11 @@ window.HOSHINO.days[6] = [
 
   { type: "line", who: "akari", text: "「明天，」" },
   { type: "line", who: "akari", text: "「最後一個工作。」" },
-  { type: "line", who: "narration", text: "我的腳步差點停下來。" },
+  { type: "line", who: "narration", text: "腳步差點停了。" },
   { type: "line", who: "akari", text: "「拍完，我就不住這邊了。」", speed: "slow" },
-  { type: "line", who: "me", text: "「那便利店呢？」" },
+  { type: "line", who: "me", text: "「那便利商店呢？」" },
   { type: "line", who: "akari", text: "「貓會搬家。」" },
   { type: "line", who: "akari", text: "「那條巷子，那台販賣機，都不能再用了。」" },
-  { type: "line", who: "narration", text: "很輕的一句。" },
   { type: "line", who: "narration", text: "但我知道，她說的不只是那些地方。" },
 
   {
@@ -206,7 +205,7 @@ window.HOSHINO.days[6] = [
         flag: { almost_confession_flag: true },
         reaction: [
           { type: "line", who: "me", text: "「那明天，還來嗎？」" },
-          { type: "line", who: "narration", text: "她沉默了一下。", pause: 0.6 },
+          { type: "line", who: "narration", text: "她沒接話。", pause: 0.6 },
           { type: "line", who: "akari", text: "「你問得太直了。」", speed: "slow", expr: "口罩圍巾" },
           { type: "line", who: "narration", text: "聲音壓得更低。" },
           { type: "line", who: "narration", text: "但她沒有說不來。" },
@@ -257,10 +256,10 @@ window.HOSHINO.days[6] = [
   { type: "line", who: "akari", text: "「明天再還一次。」", speed: "slow" },
   { type: "line", who: "akari", text: "「最後一次。」", speed: "slow" },
   { type: "line", who: "akari", text: "「真的，最後一次。」", speed: "slow" },
-  { type: "line", who: "narration", text: "我才發現，今天連這一次，我都沒能好好看她的臉。" },
+  { type: "line", who: "narration", text: "連這一次，都沒看到她的臉。" },
   { type: "line", who: "narration", text: "她把圍巾往上拉，遮住半張臉。", expr: "圍巾遮臉" },
   { type: "line", who: "narration", text: "走進大馬路的燈光裡。" },
-  { type: "line", who: "narration", text: "那團白氣跟在她身後，很快就散了。", expr: "", pause: 0.8 },
+  { type: "line", who: "narration", text: "白氣跟在身後。很快散了。", expr: "", pause: 0.8 },
 
   { type: "line", who: "narration", text: "我站在雨棚的盡頭。" },
   { type: "line", who: "narration", text: "我低頭看著掌心裡的護唇膏。", cg: "lipbalm" },
@@ -271,7 +270,7 @@ window.HOSHINO.days[6] = [
       { type: "line", who: "narration", text: "我又一次，什麼都沒說。", speed: "slow", pause: 1.0 },
     ],
     else: [
-      { type: "line", who: "narration", text: "原來一支這麼小的東西，", pause: 0.6 },
+      { type: "line", who: "narration", text: "一支這麼小的東西，", pause: 0.6 },
       { type: "line", who: "narration", text: "也能把明天留住。", speed: "slow", pause: 1.0 },
     ],
   },

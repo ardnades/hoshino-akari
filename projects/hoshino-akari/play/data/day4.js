@@ -4,7 +4,7 @@ window.HOSHINO.days[4] = [
   { type: "scene", place: "白天・公司", time: "午休", mood: "warm" },
 
   { type: "line", who: "narration", text: "我滑開手機。", bgm: "warm" },
-  { type: "line", who: "narration", text: "推薦欄裡，一個娛樂帳號轉貼了昨晚那張模糊照片。" },
+  { type: "line", who: "narration", text: "推薦欄裡，昨晚那張模糊照片，已經不只一個帳號在轉。" },
   {
     type: "line", who: "narration", text: "", ui: "sns",
     sns: {
@@ -53,9 +53,9 @@ window.HOSHINO.days[4] = [
   { type: "scene", place: "深夜・公司門口", time: "零點四十分", mood: "night" },
 
   { type: "line", who: "narration", text: "加班結束。", bgm: "night" },
-  { type: "line", who: "narration", text: "公司就在便利店兩條街外。" },
-  { type: "line", who: "narration", text: "凌晨一點的便利店，本來只是加班後的終點。" },
-  { type: "line", who: "narration", text: "不知道什麼時候，變成了另一件事的起點。" },
+  { type: "line", who: "narration", text: "公司就在便利商店兩條街外。" },
+  { type: "line", who: "narration", text: "凌晨一點的便利商店。本來只是加班後順路經過的地方。" },
+  { type: "line", who: "narration", text: "不知道從哪天起，我開始繞過去。" },
   { type: "line", who: "narration", text: "今天，我在門口站了一下。", pause: 0.8 },
   { type: "line", who: "narration", text: "去，還是不去。", speed: "slow", pause: 1.5 },
   { type: "line", who: "narration", text: "去了，萬一有人跟著她——" },
@@ -114,7 +114,7 @@ window.HOSHINO.days[4] = [
   { type: "line", who: "akari", text: "「別露出那種臉。」她打斷我，「我沒被抓。」", speed: "instant", expr: "直起身嘴硬" },
   { type: "line", who: "narration", text: "她直起身，拍了拍連帽衣。" },
   { type: "line", who: "akari", text: "「只是最近，路上的眼睛有點多。」", speed: "slow" },
-  { type: "line", who: "narration", text: "她看了一眼便利店的玻璃門。", expr: "看玻璃門眼神警戒" },
+  { type: "line", who: "narration", text: "她看了一眼便利商店的玻璃門。", expr: "看玻璃門眼神警戒" },
   { type: "line", who: "narration", text: "今天，她沒有說要進去。" },
   { type: "line", who: "akari", text: "「後面。」她朝店的另一側抬了下下巴。" },
   { type: "line", who: "me", text: "「後面？」" },
@@ -197,7 +197,6 @@ window.HOSHINO.days[4] = [
         add: { affection: 1 },
         reaction: [
           { type: "line", who: "me", text: "「不接也可以。」" },
-          { type: "line", who: "narration", text: "她愣了一下。" },
           { type: "line", who: "narration", text: "轉頭看我。" },
           { type: "line", who: "akari", text: "「……你這人，很會讓人變壞。」" },
           { type: "line", who: "me", text: "「我只是說可以。」" },
@@ -209,7 +208,6 @@ window.HOSHINO.days[4] = [
         reaction: [
           { type: "line", who: "me", text: "「不急的話，再吃一會。」" },
           { type: "line", who: "narration", text: "她的湯匙停在半空。" },
-          { type: "line", who: "narration", text: "沉默了幾秒。", pause: 0.6 },
           { type: "line", who: "akari", text: "「……我知道不急。」", expr: "低頭聲音小" },
           { type: "line", who: "narration", text: "聲音有點小。" },
           { type: "line", who: "narration", text: "她低下頭，把那口布丁吃掉了。" },
@@ -239,8 +237,8 @@ window.HOSHINO.days[4] = [
         reaction: [
           { type: "line", who: "me", text: "「今天想吃布丁？」" },
           { type: "line", who: "narration", text: "她點頭。" },
-          { type: "line", who: "narration", text: "點得很慢，很認真。" },
-          { type: "line", who: "narration", text: "像在承認一件很大的事。", expr: "認真點頭微笑" },
+          { type: "line", who: "narration", text: "點得很慢。" },
+          { type: "line", who: "narration", text: "她沒再多說。", expr: "認真點頭微笑" },
           { type: "line", who: "akari", text: "「嗯。想吃。」" },
           { type: "line", who: "me", text: "「然後呢？」" },
           { type: "line", who: "akari", text: "「很好吃。」" },
@@ -321,7 +319,7 @@ window.HOSHINO.days[4] = [
     se: "count",
   },
   { type: "line", who: "narration", text: "留言裡，有人開始比對街燈、招牌、路面的反光。" },
-  { type: "line", who: "narration", text: "還沒有人說出那間便利店的名字。" },
+  { type: "line", who: "narration", text: "還沒有人說出那間便利商店的名字。" },
   { type: "line", who: "narration", text: "但已經很近了。", speed: "slow", pause: 1.0 },
   { type: "line", who: "narration", text: "我關掉螢幕，看向桌上。", screen: "black" },
   { type: "line", who: "narration", text: "那支護唇膏，立在檯燈下。", cg: "lipbalm" },
