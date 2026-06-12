@@ -87,6 +87,26 @@ class QueueResult:
     raw: Optional[dict] = None
 
 
+@dataclass
+class WaitResult:
+    """wait_for_result 的結果。status 為 completed / timeout / error。
+
+    - completed：entry 為含 outputs 的 history entry。
+    - error：ComfyUI 執行失敗，message/node_id/node_type/error 帶可 debug 細節。
+    - timeout：輪詢用盡仍未完成。
+    """
+    status: str                       # "completed" | "timeout" | "error"
+    entry: Optional[dict] = None      # completed 時的 history entry
+    message: str = ""
+    node_id: Optional[str] = None
+    node_type: Optional[str] = None
+    error: Optional[str] = None       # error 時的 exception 摘要
+
+    @property
+    def ok(self) -> bool:
+        return self.status == "completed"
+
+
 # =====================================================================
 # 共用：安全取 JSON
 # =====================================================================
@@ -437,6 +457,58 @@ def queue_prompt(
 # =====================================================================
 # wait for result
 # =====================================================================
+def _extract_history_error(entry, prompt_id: str) -> Optional[WaitResult]:
+    """從 history entry 偵測 ComfyUI 執行錯誤。
+
+    命中（status_str=="error" 或 messages 內有 execution_error）→ 回 error WaitResult，
+    細節能抽多少抽多少（prompt_id / status / node_id / node_type / exception_type / exception_message）。
+    格式異常一律防禦處理、不丟例外；非錯誤狀態回 None。
+    """
+    if not isinstance(entry, dict):
+        return None
+    status = entry.get("status")
+    status_str = status.get("status_str") if isinstance(status, dict) else None
+    messages = status.get("messages") if isinstance(status, dict) else None
+
+    exec_err: dict = {}
+    if isinstance(messages, list):
+        for m in messages:
+            if (isinstance(m, (list, tuple)) and len(m) >= 2
+                    and m[0] == "execution_error" and isinstance(m[1], dict)):
+                exec_err = m[1]
+                break
+
+    if status_str != "error" and not exec_err:
+        return None
+
+    node_id = exec_err.get("node_id")
+    node_type = exec_err.get("node_type")
+    exc_type = exec_err.get("exception_type")
+    exc_msg = exec_err.get("exception_message")
+
+    parts = [f"prompt_id={prompt_id}", f"status={status_str}"]
+    if node_id is not None:
+        parts.append(f"node_id={node_id}")
+    if node_type:
+        parts.append(f"node_type={node_type}")
+    if exc_type:
+        parts.append(f"exception_type={exc_type}")
+    if exc_msg:
+        parts.append(f"exception_message={str(exc_msg).strip()}")
+    message = "ComfyUI 生成失敗：" + " | ".join(parts)
+
+    error_detail = None
+    if exc_type or exc_msg:
+        error_detail = f"{exc_type or ''}: {str(exc_msg or '').strip()}".strip(": ").strip()
+
+    return WaitResult(
+        status="error", entry=entry if isinstance(entry, dict) else None,
+        message=message,
+        node_id=str(node_id) if node_id is not None else None,
+        node_type=node_type, error=error_detail,
+    )
+
+
 def wait_for_result(
     url: str,
     prompt_id: str,
@@ -445,11 +517,13 @@ def wait_for_result(
     sleep: Callable[[float], None],
     timeout_seconds: float = 120.0,
     interval_seconds: float = 1.0,
-) -> Optional[dict]:
-    """輪詢 /history/{prompt_id}，回該筆 history（含 outputs）。
+) -> WaitResult:
+    """輪詢 /history/{prompt_id}，回 WaitResult（completed / error / timeout）。
 
-    sleep 可注入；測試不真等。timeout 後回 None + warning。
-    本步不下載圖、不呼叫 /view，只取到結果 metadata。
+    - 出現 outputs → completed（entry 帶 history）。
+    - ComfyUI 回報執行錯誤 → 立即回 error，不再空等到 timeout。
+    - 輪詢用盡 → timeout。
+    sleep 可注入；測試不真等。本步不下載圖、不呼叫 /view，只取到結果 metadata。
     """
     base = url.rstrip("/")
     target = f"{base}/history/{prompt_id}"
@@ -464,11 +538,17 @@ def wait_for_result(
             _warn(err)
         elif isinstance(data, dict) and prompt_id in data:
             entry = data[prompt_id]
+            # 先驗錯誤：ComfyUI 執行失敗時立即停止，不等 timeout。
+            err_result = _extract_history_error(entry, prompt_id)
+            if err_result is not None:
+                _warn(err_result.message)
+                return err_result
             if isinstance(entry, dict) and entry.get("outputs"):
-                return entry
+                return WaitResult(status="completed", entry=entry,
+                                  message=f"prompt_id={prompt_id} 完成。")
         if attempt < max_attempts - 1 and interval_seconds > 0:
             sleep(interval_seconds)
 
     msg = f"等待 prompt_id={prompt_id} 結果逾時（{timeout_seconds}s）。"
     _warn(msg)
-    return None
+    return WaitResult(status="timeout", message=msg)

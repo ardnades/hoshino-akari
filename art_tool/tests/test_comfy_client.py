@@ -391,12 +391,13 @@ def test_wait_returns_when_history_ready_on_second_poll():
         sleep=lambda s: sleeps.append(s),
         timeout_seconds=10, interval_seconds=1,
     )
-    assert result is not None
-    assert result["outputs"]["9"]["images"][0]["filename"] == "out_00001_.png"
+    assert result.status == "completed"
+    assert result.ok is True
+    assert result.entry["outputs"]["9"]["images"][0]["filename"] == "out_00001_.png"
     assert len(sleeps) >= 1  # 有等過一次（mock，不真睡）
 
 
-def test_wait_timeout_returns_none():
+def test_wait_timeout_returns_timeout_status():
     sleeps = []
     result = cc.wait_for_result(
         "http://127.0.0.1:8000", "p-x",
@@ -404,19 +405,21 @@ def test_wait_timeout_returns_none():
         sleep=lambda s: sleeps.append(s),
         timeout_seconds=3, interval_seconds=1,
     )
-    assert result is None
+    assert result.status == "timeout"
+    assert result.ok is False
     assert len(sleeps) >= 1                     # sleep 是 mock，沒真等
 
 
 def test_wait_does_not_sleep_after_last_attempt():
     sleeps = []
-    cc.wait_for_result(
+    result = cc.wait_for_result(
         "http://127.0.0.1:8000", "p-x",
         http_get=make_history_get([{}]),
         sleep=lambda s: sleeps.append(s),
         timeout_seconds=3, interval_seconds=1,
     )
     assert len(sleeps) == 2                      # 3 次嘗試之間只 sleep 2 次
+    assert result.status == "timeout"
 
 
 def test_wait_http_error_does_not_crash():
@@ -426,4 +429,63 @@ def test_wait_http_error_does_not_crash():
         sleep=lambda s: None,
         timeout_seconds=2, interval_seconds=1,
     )
-    assert result is None
+    assert result.status == "timeout"
+
+
+def test_wait_error_status_returns_immediately():
+    """ComfyUI 回報 execution_error → 立即 error，不空等到 timeout，含可 debug 細節。"""
+    pid = "p-err"
+    sleeps = []
+    error_entry = {pid: {
+        "status": {
+            "status_str": "error",
+            "completed": False,
+            "messages": [
+                ["execution_start", {"prompt_id": pid}],
+                ["execution_error", {
+                    "prompt_id": pid, "node_id": "7", "node_type": "CLIPTextEncode",
+                    "exception_type": "RuntimeError",
+                    "exception_message": "clip input is invalid: None",
+                }],
+            ],
+        },
+        "outputs": {},
+    }}
+    result = cc.wait_for_result(
+        "http://127.0.0.1:8000", pid,
+        http_get=make_history_get([error_entry]),
+        sleep=lambda s: sleeps.append(s),
+        timeout_seconds=60, interval_seconds=1,   # 若空等會 sleep ~59 次
+    )
+    assert result.status == "error"
+    assert result.ok is False
+    assert result.node_id == "7"
+    assert result.node_type == "CLIPTextEncode"
+    # 訊息含 debug 欄位
+    for token in ("p-err", "status=error", "node_id=7", "CLIPTextEncode",
+                  "RuntimeError", "clip input is invalid"):
+        assert token in result.message
+    assert len(sleeps) == 0                        # 第一次輪詢就回，未空等
+
+
+def test_wait_malformed_history_no_crash():
+    """history 結構異常（status 非 dict / messages 非 list）不可 crash，回穩定可讀結果。"""
+    # 1) status 非 dict、無 outputs → 無法判定錯誤 → 維持 timeout（穩定）
+    malformed = {"p-m": {"status": "weird-string", "outputs": None}}
+    r1 = cc.wait_for_result(
+        "http://127.0.0.1:8000", "p-m",
+        http_get=make_history_get([malformed]),
+        sleep=lambda s: None, timeout_seconds=2, interval_seconds=1,
+    )
+    assert r1.status == "timeout"
+    assert "p-m" in r1.message
+
+    # 2) status_str=error 但 messages 格式壞 → 仍判定 error、抽不到 node 不 crash
+    err_no_detail = {"p-m2": {"status": {"status_str": "error", "messages": "not-a-list"}}}
+    r2 = cc.wait_for_result(
+        "http://127.0.0.1:8000", "p-m2",
+        http_get=make_history_get([err_no_detail]),
+        sleep=lambda s: None, timeout_seconds=2, interval_seconds=1,
+    )
+    assert r2.status == "error"
+    assert "p-m2" in r2.message and "status=error" in r2.message

@@ -280,17 +280,22 @@ def run_generation_job(
     files: list[str] = []
     metas: list[dict] = []
     warnings: list[str] = []
+    errors: list[str] = []   # ComfyUI 執行錯誤的可 debug 細節（供失敗訊息分流）
 
     for idx, prompt_id in enumerate(job.prompt_ids):
-        history = comfy_client.wait_for_result(
+        result = comfy_client.wait_for_result(
             url, prompt_id, http_get=get_fn, sleep=sleep_fn,
             timeout_seconds=timeout_seconds, interval_seconds=interval_seconds,
         )
-        if history is None:
+        if result.status == "error":
+            warnings.append(result.message)
+            errors.append(result.message)
+            continue
+        if result.status != "completed" or result.entry is None:
             warnings.append(f"prompt_id={prompt_id} 等待結果逾時。")
             continue
 
-        refs, w = image_importer.parse_comfy_history_for_images(history)
+        refs, w = image_importer.parse_comfy_history_for_images(result.entry)
         warnings.extend(w)
         seed_i = job.prompt_seeds[idx] if idx < len(job.prompt_seeds) else None
         summary = job.prompt_summary or {}
@@ -340,8 +345,13 @@ def run_generation_job(
         ok = True
     else:
         job.status = "failed"
-        job.message = "未產出任何候選圖。"
-        job.error = job.error or "no images produced"
+        if errors:
+            # 有 ComfyUI 執行錯誤 → 訊息明確顯示「生成失敗」與細節，而非籠統「未產出」。
+            job.message = errors[0]
+            job.error = job.error or errors[0]
+        else:
+            job.message = "未產出任何候選圖（等待逾時或無圖輸出）。"
+            job.error = job.error or "no images produced"
         ok = False
 
     return GenerationResult(ok=ok, job_id=job.job_id, message=job.message,

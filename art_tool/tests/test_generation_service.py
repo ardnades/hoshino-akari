@@ -182,7 +182,8 @@ def _running_job():
 
 def test_run_success_flow(monkeypatch):
     history = {"outputs": {"9": {"images": [{"filename": "o_1.png", "subfolder": "", "type": "output"}]}}}
-    monkeypatch.setattr(comfy_client, "wait_for_result", lambda *a, **k: history)
+    monkeypatch.setattr(comfy_client, "wait_for_result",
+                        lambda *a, **k: comfy_client.WaitResult(status="completed", entry=history))
     monkeypatch.setattr(image_importer, "fetch_comfy_image", lambda *a, **k: (b"PNG", None))
     saved = {}
 
@@ -203,7 +204,9 @@ def test_run_success_flow(monkeypatch):
 
 
 def test_run_timeout_fails(monkeypatch):
-    monkeypatch.setattr(comfy_client, "wait_for_result", lambda *a, **k: None)
+    monkeypatch.setattr(comfy_client, "wait_for_result",
+                        lambda *a, **k: comfy_client.WaitResult(
+                            status="timeout", message="等待 prompt_id=p 結果逾時（180s）。"))
     job = _running_job()
     result = gs.run_generation_job(job, app_config=make_cfg(), sleep=lambda s: None,
                                    http_get=lambda *a, **k: None)
@@ -214,9 +217,29 @@ def test_run_timeout_fails(monkeypatch):
 
 def test_run_no_images_fails(monkeypatch):
     monkeypatch.setattr(comfy_client, "wait_for_result",
-                        lambda *a, **k: {"outputs": {"9": {"text": "x"}}})
+                        lambda *a, **k: comfy_client.WaitResult(
+                            status="completed", entry={"outputs": {"9": {"text": "x"}}}))
     job = _running_job()
     result = gs.run_generation_job(job, app_config=make_cfg(), sleep=lambda s: None,
                                    http_get=lambda *a, **k: None)
     assert result.ok is False
     assert job.status == "failed"
+
+
+def test_run_error_fails_fast(monkeypatch):
+    """ComfyUI 執行錯誤 → job failed，message/warning 帶可讀「ComfyUI 生成失敗」細節。"""
+    err = comfy_client.WaitResult(
+        status="error", node_id="7", node_type="CLIPTextEncode",
+        error="RuntimeError: clip input is invalid: None",
+        message=("ComfyUI 生成失敗：prompt_id=p | status=error | node_id=7 | "
+                 "node_type=CLIPTextEncode | exception_type=RuntimeError | "
+                 "exception_message=clip input is invalid: None"))
+    monkeypatch.setattr(comfy_client, "wait_for_result", lambda *a, **k: err)
+    job = _running_job()
+    result = gs.run_generation_job(job, app_config=make_cfg(), sleep=lambda s: None,
+                                   http_get=lambda *a, **k: None)
+    assert result.ok is False
+    assert job.status == "failed"
+    assert "ComfyUI 生成失敗" in job.message
+    assert "CLIPTextEncode" in job.message
+    assert any("ComfyUI 生成失敗" in w for w in result.warnings)
