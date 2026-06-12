@@ -10,7 +10,7 @@
   let cleared = new Set(JSON.parse(localStorage.getItem(ENDK) || "[]"));
   let chapterCleared = new Set(JSON.parse(localStorage.getItem(CH) || "[]"));
   let autoMode = false, skipMode = false;
-  let sceneTimer = null;   // 角落地點卡的停留/淡出計時器
+  let sceneTimer = null, sceneFadeTimer = null;   // 角落地點卡的停留/淡出計時器（兩段分開，避免互相清掉）
 
   // ---- 素材解析（assets.js manifest；缺素材一律 fallback，不報錯）----
   const A = () => (H.assets || {});
@@ -106,6 +106,7 @@
 
   function hideSceneTag() {
     if (sceneTimer) { clearTimeout(sceneTimer); sceneTimer = null; }
+    if (sceneFadeTimer) { clearTimeout(sceneFadeTimer); sceneFadeTimer = null; }
     const e = $("sceneTag"); if (e) { e.classList.remove("show"); e.classList.add("hidden"); }
   }
 
@@ -116,6 +117,7 @@
     const el = $("sceneTag");
     if (!el) { if (node.mood) setMood(node.mood); return; }
     if (sceneTimer) { clearTimeout(sceneTimer); sceneTimer = null; }
+    if (sceneFadeTimer) { clearTimeout(sceneFadeTimer); sceneFadeTimer = null; }
     el.innerHTML = `<div class="st-card">${node.time ? `<span class="st-time">${node.time}</span>` : ""}<span class="st-place">${node.place || ""}</span></div>`;
     $("speaker").classList.add("hidden"); $("dialogue").textContent = ""; $("advanceHint").classList.remove("show");
     el.classList.remove("hidden");
@@ -133,7 +135,7 @@
     // 角落停約 5 秒後淡出——非阻塞，旁白此時已接著跑
     sceneTimer = setTimeout(() => {
       el.classList.remove("show");
-      sceneTimer = setTimeout(() => el.classList.add("hidden"), 600);
+      sceneFadeTimer = setTimeout(() => el.classList.add("hidden"), 600);
     }, skipMode ? 4 : 5000);
   }
 
@@ -145,7 +147,9 @@
     const html = kind === "end"
       ? `<div class="day-card day-end"><div class="dc-no">Day ${d}</div><div class="dc-rule"></div><div class="dc-tail">${tail}</div></div>`
       : `<div class="day-card"><div class="dc-no">Day ${d}</div><div class="dc-rule"></div><div class="dc-title">${info.title}</div>${info.subtitle ? `<div class="dc-sub">${info.subtitle}</div>` : ""}</div>`;
+    $("sceneCard").classList.add("daycard");
     await fadeCard(html, kind === "end" ? 1400 : 1900);
+    $("sceneCard").classList.remove("daycard");
   }
 
   async function showSNS(line) {
@@ -192,7 +196,8 @@
     const sp = $("speaker");
     if (nm.label) { sp.textContent = nm.label; sp.className = nm.cls; sp.classList.remove("hidden"); }
     else sp.classList.add("hidden");
-    $("dialogue").className = node.who === "narration" ? "narration" : "";
+    const dlg = $("dialogue"); dlg.className = node.who === "narration" ? "narration" : "";
+    if (!skipMode && dlg.classList) { dlg.classList.add("swap"); setTimeout(() => dlg.classList.remove("swap"), 280); }
     $("advanceHint").classList.remove("show");
 
     if (node.screen === "black") { setBlack(false); }
@@ -212,11 +217,16 @@
       box.innerHTML = node.prompt ? `<div class="choice-prompt">${node.prompt}</div>` : "";
       $("advanceHint").classList.remove("show");
       const showHint = $("dbgChk") && $("dbgChk").checked;
-      node.options.forEach((op) => {
+      node.options.forEach((op, idx) => {
         const b = document.createElement("button");
+        b.style.setProperty("--i", idx);                 // 依序入場（stagger）
         b.innerHTML = op.label + (showHint && op._dbg ? `<span class="hint">${op._dbg}</span>` : "");
         b.onclick = async () => {
-          box.classList.add("hidden"); box.innerHTML = "";
+          if (box.dataset.locked) return; box.dataset.locked = "1";   // 防連點兩個選項
+          const btns = box.querySelectorAll ? box.querySelectorAll("button") : [];
+          [].forEach.call(btns, (x) => x.classList.add(x === b ? "picked" : "dim"));   // 選中態：選的高亮、其餘淡出
+          await delay(skipMode ? 4 : 170);
+          box.classList.add("hidden"); box.innerHTML = ""; delete box.dataset.locked;
           if (op.add) for (const k in op.add) state.scores[k] = (state.scores[k] || 0) + op.add[k];
           if (op.flag) for (const k in op.flag) state.flags[k] = op.flag[k];
           refreshDbg();
@@ -264,7 +274,11 @@
     await playNodes(chapterOf(d).outro || []);      // 必做4：當日極短收束
     if (!opts.replay) markChapterCleared(d);
     await showDayCard(d, "end");                     // 必做2：Day End 轉場（含 Day7 終章卡）
-    if (opts.replay) { openGallery(); return; }      // 回想：只重看一日，不續播、不進結局
+    if (opts.replay) {                               // 回想：只重看一日，不續播、不進結局
+      const sv = JSON.parse(localStorage.getItem(SAVE) || "null");   // 還原正式存檔狀態，避免回想污染進度
+      if (sv) state = { day: sv.day, scores: { ...sv.scores }, flags: { ...sv.flags } };
+      openGallery(); return;
+    }
     if (d < M.dayCount) { await runDay(d + 1); }
     else { await finale(); }
   }
@@ -278,13 +292,13 @@
     } else {
       await playNodes(H.endings[tone] || []);
     }
-    const em = M.endingMeta[tone]; unlockCG(em.badge.replace("end_", "") === tone ? em.badge : em.badge);
+    const em = M.endingMeta[tone] || M.endingMeta.quiet_normal;
     unlocked.add(em.badge); localStorage.setItem(GAL, JSON.stringify([...unlocked]));
     showEndingCard(tone);
   }
 
   function showEndingCard(tone) {
-    const em = M.endingMeta[tone];
+    const em = M.endingMeta[tone] || M.endingMeta.quiet_normal;
     const box = $("choices");
     box.innerHTML =
       `<div style="text-align:center;max-width:460px">
@@ -307,7 +321,7 @@
         const c = document.createElement("div");
         c.className = "gal-cell" + (open ? "" : " locked");
         if (open) { c.innerHTML = (ART[it.key] ? ART[it.key]() : "") + `<div class="cap">${it.cap}</div>`; c.onclick = () => openView(it); }
-        else c.textContent = "🔒";
+        else c.innerHTML = ART.lock();
         el.appendChild(c);
       });
     };
@@ -320,7 +334,7 @@
         const c = document.createElement("div");
         c.className = "gal-cell ch-cell" + (open ? "" : " locked");
         if (open) { c.innerHTML = `<div class="ch-no">Day ${d}</div><div class="ch-ti">${info.title}</div>`; c.onclick = () => replayChapter(d); }
-        else c.textContent = "🔒";
+        else c.innerHTML = ART.lock();
         chEl.appendChild(c);
       }
     }
@@ -394,10 +408,13 @@
     $("gBack").onclick = () => showScreen($("game").classList.contains("hidden") ? "title" : "game");
     $("galViewClose").onclick = () => $("galView").classList.add("hidden");
 
+    const devMode = /[?&]dev/.test(location.search || "");   // 開發者工具只在網址帶 ?dev 時出現（正式版隱藏分數/跳天）
+    if (!devMode) { const lbl = document.querySelector(".dbg-toggle"); if (lbl) lbl.classList.add("hidden"); }
+
     $("textbox").onclick = userAdvance;
     document.addEventListener("keydown", (e) => {
       if (e.key === "Enter" || e.key === " ") { e.preventDefault(); userAdvance(); }
-      if (e.key.toLowerCase() === "d") { $("dbgChk").checked = !$("dbgChk").checked; $("dbgPanel").classList.toggle("hidden", !$("dbgChk").checked); openMenu(); }
+      if (devMode && e.key.toLowerCase() === "d") { $("dbgChk").checked = !$("dbgChk").checked; $("dbgPanel").classList.toggle("hidden", !$("dbgChk").checked); openMenu(); }
     });
 
     $("btnMenu").onclick = openMenu;

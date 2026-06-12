@@ -93,6 +93,7 @@
     end_bitter: () => S(`<circle cx="100" cy="100" r="60" stroke="#6b7785" stroke-dasharray="5 7"/>${paw(100,96,1.3,'#6b7785')}<text x="100" y="172" fill="#6b7785" stroke="none" font-size="13" text-anchor="middle">苦・餘味結局</text>`),
     end_hidden: () => S(`<circle cx="100" cy="100" r="60" stroke="#ffd9a8"/><circle cx="100" cy="100" r="46" stroke="#ff9d6e" stroke-dasharray="3 6"/>${cat()}<text x="100" y="178" fill="#ffd9a8" stroke="none" font-size="12" text-anchor="middle">隱藏・灯視點</text>`),
 
+    lock: () => `<svg viewBox="0 0 24 24" fill="none" stroke="#66747f" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/><circle cx="12" cy="15.5" r="1.2" fill="#66747f"/></svg>`,
     locked: () => '🔒',
   };
 })();
