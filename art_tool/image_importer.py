@@ -54,6 +54,60 @@ def _safe_segment(value: str, default: str = "unknown") -> str:
 
 
 # =====================================================================
+# C4-A：rating / tags（向後相容欄位）
+# =====================================================================
+RATING_MIN, RATING_MAX = 0, 5
+
+
+def parse_rating(value) -> tuple[Optional[int], Optional[str]]:
+    """解析 rating：必須是 RATING_MIN–RATING_MAX 的整數。
+
+    回 (rating, error_msg)；非法回 (None, msg)。拒絕 '1.5'、'+3'、'-1'、'6'、'x'。
+    """
+    s = str(value).strip()
+    if not re.fullmatch(r"[0-9]+", s):
+        return None, f"rating 必須是 {RATING_MIN}-{RATING_MAX} 的整數（收到 {value!r}）"
+    r = int(s)
+    if not (RATING_MIN <= r <= RATING_MAX):
+        return None, f"rating 需在 {RATING_MIN}-{RATING_MAX}（收到 {r}）"
+    return r, None
+
+
+def normalize_tags(tags) -> list[str]:
+    """清理 tags：接受 list 或逗號分隔字串；轉字串、trim、去空字串、去重（保序）。"""
+    if tags is None:
+        return []
+    raw = tags.split(",") if isinstance(tags, str) else tags
+    if not isinstance(raw, (list, tuple)):
+        return []
+    out: list[str] = []
+    seen: set = set()
+    for t in raw:
+        if t is None:
+            continue
+        s = str(t).strip()
+        if s and s not in seen:
+            seen.add(s)
+            out.append(s)
+    return out
+
+
+def _with_read_defaults(entry: dict) -> dict:
+    """讀取時補上向後相容欄位的預設（rating=0 / tags=[]）。
+
+    回淺拷貝、不改動磁碟，避免批量重寫舊 metadata。
+    """
+    if not isinstance(entry, dict):
+        return entry
+    if "rating" in entry and "tags" in entry:
+        return entry
+    e = dict(entry)
+    e.setdefault("rating", 0)
+    e.setdefault("tags", [])
+    return e
+
+
+# =====================================================================
 # 1. 解析 history 中的 image outputs
 # =====================================================================
 def parse_comfy_history_for_images(history: Optional[dict]) -> tuple[list[dict], list[str]]:
@@ -159,7 +213,8 @@ def _save_metadata(metadata_path: Path, entries: list[dict]) -> bool:
 
 
 def load_all_metadata(metadata_path: Optional[Path] = None) -> list[dict]:
-    return _load_metadata(metadata_path or METADATA_PATH)
+    # 讀取時補 rating/tags 預設（向後相容），不回寫磁碟。
+    return [_with_read_defaults(e) for e in _load_metadata(metadata_path or METADATA_PATH)]
 
 
 def get_metadata_entry(asset_id: str, metadata_path: Optional[Path] = None) -> Optional[dict]:
@@ -246,6 +301,8 @@ def save_generated_image(
         "status": "candidate",
         "problems": [],
         "adopted_to": None,
+        "rating": 0,
+        "tags": [],
     }
     if metadata_fields:
         entry.update(metadata_fields)
@@ -270,10 +327,15 @@ def update_generated_metadata(
     status: Optional[str] = None,
     problems: Optional[list] = None,
     adopted_to: Optional[str] = None,
+    rating: Optional[int] = None,
+    tags: Optional[list] = None,
     metadata_path: Optional[Path] = None,
     now: Optional[str] = None,
 ) -> tuple[Optional[dict], list[str]]:
-    """更新指定 asset 的 metadata。找不到回 (None, warnings)。"""
+    """更新指定 asset 的 metadata。找不到回 (None, warnings)。
+
+    rating 假設已由呼叫端驗證為合法整數（見 parse_rating）；tags 在此做清理。
+    """
     meta_path = metadata_path or METADATA_PATH
     with _METADATA_LOCK:
         entries = _load_metadata(meta_path, now)
@@ -286,6 +348,10 @@ def update_generated_metadata(
             target["problems"] = problems
         if adopted_to is not None:
             target["adopted_to"] = adopted_to
+        if rating is not None:
+            target["rating"] = rating
+        if tags is not None:
+            target["tags"] = normalize_tags(tags)
         target["updated_at"] = _now_iso(now)
         _save_metadata(meta_path, entries)
     return target, []
@@ -297,7 +363,7 @@ def update_generated_metadata(
 _ADOPT_META_KEYS = (
     "positive_prompt", "negative_prompt", "seed", "checkpoint",
     "width", "height", "steps", "cfg", "sampler", "scheduler",
-    "created_at", "style_id", "character_id",
+    "created_at", "style_id", "character_id", "rating", "tags",
 )
 
 

@@ -354,6 +354,52 @@ def test_api_mark_missing_asset(client, monkeypatch):
     assert resp.status_code == 404
 
 
+# --- C4-A：annotate（rating / tags）---
+def test_api_annotate_updates_rating_tags(client, monkeypatch):
+    captured = {}
+
+    def fake_update(asset_id, **k):
+        captured.update({"asset_id": asset_id, **k})
+        return ({"asset_id": asset_id, "rating": k.get("rating"),
+                 "tags": k.get("tags"), "status": k.get("status"),
+                 "problems": k.get("problems")}, [])
+    monkeypatch.setattr(image_importer, "update_generated_metadata", fake_update)
+    data = client.post("/api/generated/a1/annotate",
+                       data={"rating": "4", "tags": " a , a , b , "}).json()
+    assert data["ok"] is True
+    assert data["rating"] == 4
+    assert data["tags"] == ["a", "b"]        # endpoint 已清理 tags
+    assert captured["rating"] == 4
+    assert captured["tags"] == ["a", "b"]
+
+
+def test_api_annotate_bad_rating(client):
+    for bad in ("6", "-1", "x", "1.5"):
+        resp = client.post("/api/generated/a1/annotate", data={"rating": bad})
+        assert resp.status_code == 400, bad
+
+
+def test_api_annotate_no_fields(client):
+    resp = client.post("/api/generated/a1/annotate", data={})
+    assert resp.status_code == 400
+
+
+def test_api_annotate_missing_asset(client, monkeypatch):
+    monkeypatch.setattr(image_importer, "update_generated_metadata",
+                        lambda asset_id, **k: (None, ["找不到"]))
+    resp = client.post("/api/generated/ghost/annotate", data={"rating": "3"})
+    assert resp.status_code == 404
+
+
+def test_api_generated_passes_through_rating_tags(client, monkeypatch):
+    items = [{"asset_id": "a1", "character_id": "hoshino_akari", "task_id": "character_rough",
+              "rating": 5, "tags": ["fav"]}]
+    monkeypatch.setattr(image_importer, "load_all_metadata", lambda *a, **k: items)
+    data = client.get("/api/generated").json()
+    assert data["items"][0]["rating"] == 5
+    assert data["items"][0]["tags"] == ["fav"]
+
+
 def test_api_adopt(client, monkeypatch):
     entry = {"asset_id": "a1", "task_id": "character_rough", "character_id": "hoshino_akari"}
     monkeypatch.setattr(image_importer, "get_metadata_entry", lambda *a, **k: entry)

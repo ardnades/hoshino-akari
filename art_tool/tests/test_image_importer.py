@@ -173,6 +173,57 @@ def test_update_metadata_missing_asset(tmp_path):
     assert warns
 
 
+# ----------------------------------------------------------------------
+# C4-A：rating / tags
+# ----------------------------------------------------------------------
+def test_parse_rating_valid_and_invalid():
+    for ok in ("0", "3", "5", 4):
+        r, err = imp.parse_rating(ok)
+        assert err is None and r == int(ok)
+    for bad in ("-1", "6", "x", "1.5", "+3", "", "  "):
+        r, err = imp.parse_rating(bad)
+        assert r is None and err  # 有錯誤訊息
+
+
+def test_normalize_tags_cleans():
+    assert imp.normalize_tags(["a ", " b", "a", "", None]) == ["a", "b"]   # trim/去空/去重
+    assert imp.normalize_tags("x, y , x ,") == ["x", "y"]                  # 逗號字串
+    assert imp.normalize_tags(None) == []
+    assert imp.normalize_tags(123) == []                                   # 非法型別不 crash
+
+
+def test_save_image_has_rating_tags_defaults(tmp_path):
+    meta = _seed_one(tmp_path)
+    data = json.loads(meta.read_text(encoding="utf-8"))
+    assert data[0]["rating"] == 0
+    assert data[0]["tags"] == []
+
+
+def test_load_metadata_fills_defaults_without_rewrite(tmp_path):
+    """舊 metadata 無 rating/tags：讀取補預設、但磁碟不被批量重寫。"""
+    meta = tmp_path / "metadata.json"
+    legacy = [{"asset_id": "old1", "status": "candidate"}]   # 無 rating/tags
+    meta.write_text(json.dumps(legacy, ensure_ascii=False), encoding="utf-8")
+
+    loaded = imp.load_all_metadata(meta)
+    assert loaded[0]["rating"] == 0 and loaded[0]["tags"] == []
+
+    # 磁碟仍維持原樣（不批量重寫舊資料）
+    on_disk = json.loads(meta.read_text(encoding="utf-8"))
+    assert "rating" not in on_disk[0] and "tags" not in on_disk[0]
+
+
+def test_update_metadata_rating_and_tags(tmp_path):
+    meta = _seed_one(tmp_path)
+    entry, warns = imp.update_generated_metadata(
+        "aid1", rating=4, tags=["a", "a", " b "], metadata_path=meta, now="2026-06-12T12:00:00")
+    assert warns == []
+    assert entry["rating"] == 4
+    assert entry["tags"] == ["a", "b"]            # 去重 + trim
+    data = json.loads(meta.read_text(encoding="utf-8"))
+    assert data[0]["rating"] == 4 and data[0]["tags"] == ["a", "b"]
+
+
 def test_corrupt_metadata_backed_up_not_overwritten(tmp_path):
     gen = tmp_path / "generated"
     gen.mkdir(parents=True)
@@ -221,6 +272,20 @@ def test_adopt_character_copies_to_characters_dir(tmp_path):
     meta = json.loads(sidecar.read_text(encoding="utf-8"))
     assert meta["seed"] == 7 and meta["source_task_id"] == "character_rough"
     assert res["dest_public_path"].startswith("/assets/characters/hoshino_akari/")
+
+
+def test_adopt_sidecar_includes_rating_tags(tmp_path):
+    entry = _make_entry(tmp_path)
+    entry["rating"] = 5
+    entry["tags"] = ["fav", "keyvisual"]
+    task = {"id": "character_rough", "output_kind": "character"}
+    res = imp.adopt_asset(entry, task, characters_dir=tmp_path / "characters",
+                          cg_dir=tmp_path / "cg", now="2026-06-12T12:00:00")
+    assert res["ok"] is True
+    sidecar = list((tmp_path / "characters" / "hoshino_akari").glob("*.json"))[0]
+    meta = json.loads(sidecar.read_text(encoding="utf-8"))
+    assert meta["rating"] == 5
+    assert meta["tags"] == ["fav", "keyvisual"]
 
 
 def test_adopt_cg_copies_to_cg_dir(tmp_path):

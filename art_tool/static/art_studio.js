@@ -95,10 +95,70 @@
 
   // ---- Candidate grid ----
   var PROBLEMS = ["臉不一致", "手壞", "不夠可愛", "太幼", "太成熟", "構圖弱", "風格不對"];
+  var filterSel = document.getElementById("filter-select");
+  var sortSel = document.getElementById("sort-select");
+  var countEl = document.getElementById("cand-count");
+  var allItems = [];   // 全量快取；filter/sort 於 client 端套用
+
+  // 星等列：0–5；再點同星等＝清回 0
+  function starRow(item) {
+    var wrap = document.createElement("div");
+    wrap.className = "rating-row";
+    var current = item.rating || 0;
+    for (var i = 1; i <= 5; i++) {
+      (function (n) {
+        var s = document.createElement("span");
+        s.className = "star" + (n <= current ? " on" : "");
+        s.textContent = "★";
+        s.title = n + " 星";
+        s.addEventListener("click", function () {
+          annotate(item.asset_id, { rating: String(current === n ? 0 : n) });
+        });
+        wrap.appendChild(s);
+      })(i);
+    }
+    return wrap;
+  }
+
+  // tag 列：chips（可移除）＋ 輸入框（Enter 新增）。與 problems 缺陷標記分離。
+  function tagRow(item) {
+    var wrap = document.createElement("div");
+    wrap.className = "tag-row";
+    var tags = item.tags || [];
+    tags.forEach(function (t) {
+      var chip = document.createElement("span");
+      chip.className = "tag-chip";
+      chip.textContent = t;
+      var x = document.createElement("button");
+      x.className = "tag-x";
+      x.textContent = "×";
+      x.title = "移除";
+      x.addEventListener("click", function () {
+        annotate(item.asset_id, {
+          tags: tags.filter(function (v) { return v !== t; }).join(","),
+        });
+      });
+      chip.appendChild(x);
+      wrap.appendChild(chip);
+    });
+    var input = document.createElement("input");
+    input.className = "tag-input";
+    input.type = "text";
+    input.placeholder = "加 tag…";
+    input.addEventListener("keydown", function (ev) {
+      if (ev.key !== "Enter") return;
+      ev.preventDefault();
+      var v = input.value.trim();
+      if (v) annotate(item.asset_id, { tags: (item.tags || []).concat([v]).join(",") });
+    });
+    wrap.appendChild(input);
+    return wrap;
+  }
 
   function card(item) {
     var el = document.createElement("div");
-    el.className = "cand-card status-" + (item.status || "candidate");
+    el.className = "cand-card status-" + (item.status || "candidate") +
+      (item.adopted_to ? " is-adopted" : "");
     var img = item.public_path
       ? '<img src="' + item.public_path + '" alt="candidate" loading="lazy">'
       : '<div class="noimg">no image</div>';
@@ -109,9 +169,13 @@
       "<div>style: " + (item.style_id || "-") + "</div>" +
       "<div>seed: " + (item.seed == null ? "-" : item.seed) + "</div>" +
       "<div>ckpt: " + (item.checkpoint || "-") + "</div>" +
-      "<div>status: <b>" + (item.status || "-") + "</b></div>" +
+      "<div>status: <b>" + (item.status || "-") + "</b>" +
+      (item.adopted_to ? ' · <b class="ok">adopted</b>' : "") + "</div>" +
       "<div class=\"muted\">" + (item.created_at || "") + "</div>" +
       "</div>";
+
+    el.appendChild(starRow(item));
+    el.appendChild(tagRow(item));
 
     var actions = document.createElement("div");
     actions.className = "cand-actions";
@@ -141,15 +205,47 @@
     return el;
   }
 
+  function matchFilter(it, f) {
+    if (f === "adopted") return !!it.adopted_to;                       // 以 adopted_to 判斷
+    if (f === "rejected") return it.status === "rejected";
+    if (f === "unreviewed") return it.status === "candidate" && !it.adopted_to;
+    return true;                                                       // all
+  }
+
+  function applyView() {
+    if (!grid) return;
+    var f = filterSel ? filterSel.value : "all";
+    var s = sortSel ? sortSel.value : "newest";
+    var items = allItems.filter(function (it) { return matchFilter(it, f); });
+    items.sort(function (a, b) {
+      if (s === "rating") return (b.rating || 0) - (a.rating || 0);
+      return String(b.created_at || "").localeCompare(String(a.created_at || "")); // newest
+    });
+    grid.innerHTML = "";
+    if (gridEmpty) gridEmpty.hidden = items.length > 0;
+    if (countEl) countEl.textContent = items.length + " / " + allItems.length + " 張";
+    items.forEach(function (it) { grid.appendChild(card(it)); });
+  }
+
   function loadCandidates() {
     if (!grid) return;
     fetch("/api/generated")
       .then(function (r) { return r.json(); })
       .then(function (j) {
-        grid.innerHTML = "";
-        var items = (j && j.items) || [];
-        if (gridEmpty) gridEmpty.hidden = items.length > 0;
-        items.forEach(function (it) { grid.appendChild(card(it)); });
+        allItems = (j && j.items) || [];
+        applyView();
+      })
+      .catch(function () { /* 略 */ });
+  }
+
+  function annotate(assetId, fields) {
+    var body = new FormData();
+    Object.keys(fields).forEach(function (k) { body.append(k, fields[k]); });
+    fetch("/api/generated/" + encodeURIComponent(assetId) + "/annotate", { method: "POST", body: body })
+      .then(function (r) { return r.json(); })
+      .then(function (j) {
+        if (!j.ok) { alert("更新失敗：" + (j.message || "")); return; }
+        loadCandidates();
       })
       .catch(function () { /* 略 */ });
   }
@@ -173,5 +269,7 @@
   }
 
   if (reloadBtn) reloadBtn.addEventListener("click", loadCandidates);
+  if (filterSel) filterSel.addEventListener("change", applyView);
+  if (sortSel) sortSel.addEventListener("change", applyView);
   loadCandidates();
 })();

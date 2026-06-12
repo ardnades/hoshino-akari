@@ -133,6 +133,23 @@
       <h2>候選圖</h2>
       <button type="button" class="btn btn-secondary btn-sm" id="reload-candidates">重新整理</button>
     </div>
+    <div class="cand-controls">
+      <label>篩選
+        <select id="filter-select">
+          <option value="all">全部</option>
+          <option value="adopted">已採用</option>
+          <option value="rejected">已拒絕</option>
+          <option value="unreviewed">未審</option>
+        </select>
+      </label>
+      <label>排序
+        <select id="sort-select">
+          <option value="newest">最新</option>
+          <option value="rating">評分</option>
+        </select>
+      </label>
+      <span id="cand-count" class="muted"></span>
+    </div>
     <div id="candidate-grid" class="candidate-grid"></div>
     <p id="candidate-empty" class="muted">尚無候選圖。</p>
   </section>

@@ -104,4 +104,19 @@ body {
 .cand-actions { display: flex; flex-wrap: wrap; gap: 6px; padding: 8px 10px; border-top: 1px solid #21304d; }
 .prob-sel { background: var(--panel); color: var(--text); border: 1px solid #2a3a5c; border-radius: 6px; font-size: .78rem; padding: 4px; }
 
+/* C4-A：filter/sort 控制列、星等、tags */
+.cand-controls { display: flex; align-items: flex-end; gap: 14px; margin-bottom: 12px; }
+.cand-controls label { display: flex; flex-direction: column; font-size: .8rem; color: var(--muted); gap: 4px; }
+.cand-controls select { background: var(--panel); color: var(--text); border: 1px solid #2a3a5c; border-radius: 6px; font-size: .82rem; padding: 4px 6px; }
+.cand-card.is-adopted { box-shadow: inset 0 0 0 1px var(--green); }
+.cand-meta b.ok { color: var(--green); }
+.rating-row { padding: 4px 10px 0; display: flex; gap: 2px; }
+.rating-row .star { cursor: pointer; color: #3a4a6c; font-size: 1.05rem; line-height: 1; user-select: none; }
+.rating-row .star.on { color: #ffce54; }
+.tag-row { display: flex; flex-wrap: wrap; gap: 4px; padding: 6px 10px; align-items: center; }
+.tag-chip { background: #1d2c49; color: var(--text); border-radius: 10px; padding: 1px 6px; font-size: .72rem; display: inline-flex; align-items: center; gap: 4px; }
+.tag-x { background: none; border: none; color: var(--muted); cursor: pointer; font-size: .85rem; line-height: 1; padding: 0; }
+.tag-x:hover { color: var(--red); }
+.tag-input { background: var(--panel); color: var(--text); border: 1px solid #2a3a5c; border-radius: 6px; font-size: .72rem; padding: 2px 6px; width: 72px; }
+
 @media (max-width: 600px) { .gen-form { grid-template-columns: 1fr; } }

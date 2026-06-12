@@ -353,6 +353,46 @@ def api_mark(asset_id: str, status: str = Form(...), problems: str = Form("")) -
                          "problems": entry.get("problems")})
 
 
+@app.post("/api/generated/{asset_id}/annotate")
+def api_annotate(
+    asset_id: str,
+    rating: str = Form(None),
+    tags: str = Form(None),
+    status: str = Form(None),
+    problems: str = Form(None),
+) -> JSONResponse:
+    """C4-A：更新候選圖的 rating / tags（也可選填 status / problems）。
+
+    與 /mark 並存、不改其行為。rating 非法（非 0-5 整數）回 400。
+    tags 做基本清理（trim / 去空 / 去重）。problems 維持缺陷標記語意、不與 tags 混用。
+    """
+    kwargs: dict = {}
+    if rating is not None and str(rating).strip() != "":
+        value, err = image_importer.parse_rating(rating)
+        if err:
+            return JSONResponse({"ok": False, "message": err}, status_code=400)
+        kwargs["rating"] = value
+    if tags is not None:
+        kwargs["tags"] = image_importer.normalize_tags(tags)
+    if status is not None and str(status).strip() != "":
+        if status not in ("accepted", "rejected", "problem", "candidate"):
+            return JSONResponse({"ok": False, "message": f"不支援的 status={status!r}"},
+                                status_code=400)
+        kwargs["status"] = status
+    if problems is not None:
+        kwargs["problems"] = [p.strip() for p in problems.split(",") if p.strip()]
+    if not kwargs:
+        return JSONResponse({"ok": False, "message": "沒有可更新的欄位"}, status_code=400)
+
+    entry, warnings = image_importer.update_generated_metadata(asset_id, **kwargs)
+    if entry is None:
+        return JSONResponse({"ok": False, "message": "找不到該候選圖", "warnings": warnings},
+                            status_code=404)
+    return JSONResponse({"ok": True, "asset_id": asset_id,
+                         "rating": entry.get("rating"), "tags": entry.get("tags"),
+                         "status": entry.get("status"), "problems": entry.get("problems")})
+
+
 @app.post("/api/generated/{asset_id}/adopt")
 def api_adopt(asset_id: str) -> JSONResponse:
     entry = image_importer.get_metadata_entry(asset_id)
