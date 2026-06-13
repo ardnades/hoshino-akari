@@ -170,4 +170,4 @@ public/assets/characters/hoshino_akari/
 - 若日後要做「同一個人」的差分／表情／口罩態：身分一致性靠 **D 組 LoRA + 固定 seed + 自基準立繪做低 denoise img2img / 局部 inpaint**；**ControlNet 控結構（姿勢／構圖）不控身分**。Anima 的原生控制是 **Anima-LLLite**（kohya 專為 Anima 移植，含 4ch inpaint 與 3ch lineart/scribble 權重），可用於 mask_half 的局部重繪/合成輔助。Qwen-Image-ControlNet-Union 與 Qwen-Image-Edit 是另一顆 20B 模型，**無法驅動 Anima**（架構推論，信心高）。
 - 上述屬「日後製作」的技術備忘；**本管線僅盤點與整理，不執行訓練／生成／控制。**
 
-> 風格設定不一致（待同步）：`art_config/art_styles.json` 的 `anima_airbrush_editorial` 目前仍是觸發詞還原版（gpt@0.75 + NSS@0.70 + dogma@0.60 + (kishida mel:0.5) + 觸發詞），尚未同步成使用者定案的 **D 組（gpt@0.7 + dogma@0.4，無 NSS）**。manifest 以 D 組為準；config 同步待使用者裁定後另行執行。
+> 風格設定已同步（2026-06-13）：`art_config/art_styles.json` 的 `anima_airbrush_editorial` 已是 production **D 組（gpt@0.7 + dogma@0.4，無 NSS，cfg 4.0，保留 @gpt-image-2 觸發詞，`production_default: true`）**。原觸發詞還原版（gpt@0.75 + NSS@0.70 + dogma@0.60 + (kishida mel:0.5) + @sw33t）已另存為獨立備用 style `anima_airbrush_editorial_sweet_experimental`（`production_default: false`、`commercial_review_required: true`）。manifest 與 config 一致。

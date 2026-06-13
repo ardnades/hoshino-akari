@@ -29,9 +29,9 @@
 
 ## 需使用者裁定的開放決策
 
-1. **LoRA 風格不一致** — 已定 canonical = **D 組**（`gpt-image-2`@0.7 + `dogma`@0.4，無 NSS），但 `art_config/art_styles.json` 的 `anima_airbrush_editorial` 仍是觸發詞還原版（gpt@0.75 + NSS@0.70 + dogma@0.60 + `(kishida mel:0.5)` + 觸發詞）。manifest 已按 D 組記錄，**config 待你裁定後同步**。
+1. **LoRA 風格不一致 ✅ 已裁定並同步（2026-06-13）** — production canonical = **D 組**（`gpt-image-2`@0.7 + `dogma`@0.4，無 NSS，cfg 4.0，保留 `@gpt-image-2` 觸發詞），已寫入 `art_config/art_styles.json` 的 `anima_airbrush_editorial`（`production_default: true`）。原觸發詞還原版（gpt@0.75 + NSS@0.70 + dogma@0.60 + `(kishida mel:0.5)` + `@sw33t`）保留為獨立備用 style `anima_airbrush_editorial_sweet_experimental`（`production_default: false`、`commercial_review_required: true`），非遊戲 production 預設。manifest 與 config 已一致。
 2. **第二套衣裝**（P0 衣裝上限 2，已用 1）— 在「偶像舞台服」與「casual」二擇一，兩者皆未製作。
 3. **是否真要訓練角色 LoRA** — 目前素材高度同構（≈2 構圖 + 1 高清臉），投報率低、易過擬合；建議先用「基準臉 + 局部重繪/img2img/overlay」做完 P0，要訓練須另補多樣性至 18–25 張。
 4. **mask_half 長線做法** — 即時人工修口罩 vs overlay 合成（建議 overlay，較穩定可重複）。
-5. **CFG** — 專案現值 3.5–4.5 略低於 Anima 官方建議 4–5，是否上調。
+5. **CFG** — production style（`anima_airbrush_editorial`）已設 cfg 4.0，對齊 Anima 官方建議 4–5 下緣（2026-06-13）；sweet experimental 保留 3.5。其餘 style 視需要再調。
 6. **商業授權** — Anima 採 CircleStone Labs 非商業授權並繼承 NVIDIA Open Model License；若日後商業發行，整套 LoRA 受限，需另洽授權。

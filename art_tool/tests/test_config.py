@@ -162,11 +162,12 @@ def test_load_art_styles_real_file():
     assert data is not None
     ids = [s["id"] for s in data["styles"]]
     assert "soft_romance_avg" in ids
-    assert len(data["styles"]) == 6
+    assert len(data["styles"]) == 7
     # 綁定實際 Anima 模型的畫風；其餘畫風仍可為佔位字串（皆不可因此失敗）
     by_id = {s["id"]: s for s in data["styles"]}
     anima_bound = {"soft_romance_avg", "cool_reflective_illustration",
-                   "airy_editorial_illustration", "anima_airbrush_editorial"}
+                   "airy_editorial_illustration", "anima_airbrush_editorial",
+                   "anima_airbrush_editorial_sweet_experimental"}
     for sid in anima_bound:
         assert by_id[sid]["checkpoint"] == "anima_baseV10.safetensors"
     assert all(

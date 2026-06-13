@@ -66,12 +66,12 @@
 **must_keep：** 成年 20 歲（無未成年感）；核心偽裝 帽+口罩+連帽衣；清秀偶像氣質但帶藏起來的疲憊。
 **avoid：** nsfw、未成年/loli/teen、可辨識真實藝人臉、壞手、過度成熟/妖豔。
 
-### 1.1 畫風 LoRA：canonical = D 組（需同步 config，本文不改 config）
+### 1.1 畫風 LoRA：canonical = D 組（已同步 config，2026-06-13 拍板）
 
-- 使用者已確認 **canonical 風格 = D 組：`gpt-image-2_anima-base1_v1` @0.7 + `dogma_animaV1.6` @0.4，不含 NSS。**
-- **既有不一致（承接 ASSET_CLEANUP_REPORT 的待裁定項）：** `art_styles.json` 的 `anima_airbrush_editorial` 目前仍是「觸發詞還原版」：`gpt-image-2 @0.75 + AnimaNEWNSS8 @0.70 + dogma @0.60 + (kishida mel:0.5)` + 觸發詞 `@gpt-image-2 / @sw33t`，cfg 3.5。
-- **本文件按使用者指定的 D 組記錄為 canonical。** config 同步留待後續，本次只盤點/規劃，不改 config。此不一致須由使用者裁定（與 manifest draft 的 `_config_discrepancy_note`、cleanup report 第 6/⚠ 節一致，不矛盾）。
-- 排除：`AnimaNEWNSS8`、`anima-highres-aesthetic-boost`、`anima-turbo-lora-v0.2`。
+- production canonical 風格 = **D 組：`gpt-image-2_anima-base1_v1` @0.7 + `dogma_animaV1.6` @0.4，不含 NSS，cfg 4.0，保留 `@gpt-image-2` 觸發詞。** 已寫入 `art_styles.json` 的 `anima_airbrush_editorial`（`production_default: true`）。
+- **原「觸發詞還原版」保留為獨立備用 style：** `anima_airbrush_editorial_sweet_experimental`：`gpt-image-2 @0.75 + AnimaNEWNSS8 @0.70 + dogma @0.60 + (kishida mel:0.5)` + 觸發詞 `@gpt-image-2 / @sw33t`，cfg 3.5，標 `production_default: false`、`commercial_review_required: true`。Sweet/commercial/NSS-era 實驗用，非遊戲 production 預設，未刪除。
+- **狀態：** 經 A/B 視覺驗證（2026-06-13）使用者拍板採 D 組為 production；manifest 與 config 已一致（manifest draft 的 `_config_discrepancy_note`、cleanup report 第 6/⚠ 節原為「待裁定」，現已落定並同步更新）。
+- 排除（不進 production D 組）：`AnimaNEWNSS8`（僅存在於 sweet experimental 備用 style）、`anima-highres-aesthetic-boost`、`anima-turbo-lora-v0.2`。
 
 ---
 

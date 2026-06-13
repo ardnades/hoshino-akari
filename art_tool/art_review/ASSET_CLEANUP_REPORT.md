@@ -63,10 +63,10 @@ akari_disguise_mask_half_DRAFT.png       (源 f2418510)  ← 需人工修口罩
 - `p0_limits`（立繪≤8/表情≤6/衣裝≤2/姿勢≤2/CG≤4/背景≤5）
 - `manual_cleanup_policy`（AI=draft、人工清理後才 approved）
 
-## ⚠️ 需你裁定的關鍵不一致（LoRA）
-你本次確認 canonical = **D 組（gpt 0.7 + dogma 0.4，無 NSS）**。
-但目前 `art_config/art_styles.json` 的 `anima_airbrush_editorial` 實際是**觸發詞還原版**（gpt 0.75 + **NSS 0.70** + dogma 0.60 + `(kishida mel:0.5)` + 觸發詞）——這是後來追風格時改的，效果上更接近參考圖。
-**兩者不一致。** manifest 先按你本次指定的 D 組記錄。本次只整理、**未改 config**。請你裁定哪個為準，下次再同步 config。
+## ✅ LoRA 不一致已裁定並同步（2026-06-13，更新）
+經 A/B 視覺驗證後拍板：production canonical = **D 組（gpt 0.7 + dogma 0.4，無 NSS，cfg 4.0，保留 `@gpt-image-2`）**，已寫入 `art_config/art_styles.json` 的 `anima_airbrush_editorial`（`production_default: true`）。
+原**觸發詞還原版**（gpt 0.75 + **NSS 0.70** + dogma 0.60 + `(kishida mel:0.5)` + `@sw33t`，cfg 3.5；效果更甜、更接近參考圖但偏商業）保留為獨立備用 style `anima_airbrush_editorial_sweet_experimental`（`production_default: false`、`commercial_review_required: true`），非遊戲 production 預設、未刪除。
+**config 與 manifest 現已一致。**
 
 ## 7. 報告路徑
 `art_tool/art_review/ASSET_CLEANUP_REPORT.md`（本檔）

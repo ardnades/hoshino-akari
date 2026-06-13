@@ -15,7 +15,7 @@
 - `art_tool/art_review/asset_manifest.draft.json`：既有素材 manifest 草案。本文沿用其 `canonical_design`、`mask_states`、`p0_limits`、`manual_cleanup_policy`、`fix_ready_assets`、`asset_layers`。**注意**：草案 `sprite_plan` 內混入了第二套「casual」衣裝與 `sad_quiet`／`soft` 等表情命名；本文將表情統一鎖定為 §5 的 6 種正規名，並把 casual 衣裝標為「未製作」（見 §3、§D5 的衣裝對齊註記）。
 - `art_tool/art_review/ASSET_CLEANUP_REPORT.md`：2026-06-13 整理報告。本文沿用其分類（approved=無、approved_base_draft、needs_manual_cleanup、candidate）與 LoRA 不一致裁定事項。
 - `art_tool/art_config/characters.json`：角色設定。本文沿用 `visual_core`／`hair`／`eyes`／`outfit`／`must_keep`／`avoid`，並把「眼色 canon 未鎖」更新為「使用者已定案黑髮＋青綠為預設」（見 §1）。
-- `art_tool/art_config/art_styles.json`：畫風設定。本文記錄 `anima_airbrush_editorial` 目前內容與使用者確認的 canonical「D 組」之間的不一致（見 §8）。
+- `art_tool/art_config/art_styles.json`：畫風設定。`anima_airbrush_editorial` 已同步為 production canonical「D 組」（2026-06-13）；原觸發詞還原版另存為 `anima_airbrush_editorial_sweet_experimental` 備用（見 §8）。
 
 ---
 
@@ -184,11 +184,11 @@
   - **與專案現值的偏差：** 專案目前 CFG 3.5–4.5 略低於官方 4–5 下緣，屬小偏差、非錯誤，建議向 4–5 靠攏。832×1216 在範圍內。
 - **絕非 SDXL、非 SD1.5、非 Flux。** SDXL／SD1.5 的 LoRA、ControlNet、kohya `sdxl_train_network.py` 在架構上不相容（不同 VAE 通道數、不同文字編碼器、不同主幹），不可直接套用。
 
-### 8.2 canonical 風格「D 組」與 art_styles.json 不一致（待同步）
+### 8.2 canonical 風格「D 組」已同步至 art_styles.json（2026-06-13 拍板）
 
-- 使用者已確認 canonical 風格 = **D 組**：`gpt-image-2_anima-base1_v1.safetensors` @0.7 + `dogma_animaV1.6.safetensors` @0.4，**不含 NSS**。
-- **不一致（沿用整理報告，未在本文修改 config）：** `art_config/art_styles.json` 的 `anima_airbrush_editorial` 目前仍是觸發詞還原版 —— gpt @0.75 + **AnimaNEWNSS8 @0.70** + dogma @0.60 + `(kishida mel:0.5)` + 觸發詞 `@gpt-image-2`／`@sw33t`。
-- **裁定事項（交給使用者）：** 兩者擇一為準。本文與 manifest 先按使用者本次指定的 D 組記錄；config 同步留待後續，不在本文動 config。
+- production canonical 風格 = **D 組**：`gpt-image-2_anima-base1_v1.safetensors` @0.7 + `dogma_animaV1.6.safetensors` @0.4，**不含 NSS**，cfg 4.0，保留 `@gpt-image-2` 觸發詞。已寫入 `art_config/art_styles.json` 的 `anima_airbrush_editorial`（`production_default: true`）。
+- **原觸發詞還原版保留為獨立備用 style：** `anima_airbrush_editorial_sweet_experimental` —— gpt @0.75 + **AnimaNEWNSS8 @0.70** + dogma @0.60 + `(kishida mel:0.5)` + 觸發詞 `@gpt-image-2`／`@sw33t`，cfg 3.5，標 `production_default: false`、`commercial_review_required: true`。Sweet／commercial／NSS-era 實驗用，非遊戲 production 預設，未刪除。
+- **狀態：** 經 A/B 視覺驗證（2026-06-13）後使用者拍板採 D 組為 production；manifest 與 config 已一致。
 
 ### 8.3 身分一致性（identity）與結構（structure）的分工（信心：高）
 
@@ -259,6 +259,6 @@
 | 底模 = Anima（Cosmos-Predict2 衍生，非 Qwen-Image 家族） | 高（修正原 brief 說法） |
 | mask_half 白口罩疊白圍巾辨識度低 | 已視覺核對確認，附解法指引 |
 | 表情鎖 6 種、姿勢鎖 2 種 | 依 P0 上限與 Day1-7 節拍鎖定 |
-| **待裁定 1：LoRA D 組 vs art_styles.json 觸發詞還原版** | 使用者裁定後再同步 config（本文未改 config） |
+| **✅ 已裁定 1：LoRA D 組 = production（已同步 config，2026-06-13）** | `anima_airbrush_editorial`=D 組（`production_default: true`）；觸發詞還原版另存 `anima_airbrush_editorial_sweet_experimental` 備用 |
 | **待裁定 2：第二套衣裝＝舞台服 or casual（P0 剩 1 額度，二擇一）** | 使用者裁定後才製作 |
 | 商業授權（Anima 非商業 + NVIDIA OML） | 若日後商業化須處理 |

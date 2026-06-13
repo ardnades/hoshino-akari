@@ -174,7 +174,7 @@ def test_api_health_offline(monkeypatch):
 # ----------------------------------------------------------------------
 def test_api_config_summary(client):
     data = client.get("/api/config-summary").json()
-    assert data["styles_count"] == 6
+    assert data["styles_count"] == 7
     assert data["characters_count"] == 1
     assert data["tasks_count"] == 6
     assert data["workflow_loaded"] is True
@@ -440,7 +440,7 @@ def test_api_diagnostics_summary(client, monkeypatch):
     assert data["comfyui"]["online"] is True
     assert data["comfyui"]["checkpoints_ok"] is False
     assert data["comfyui"]["status_level"] == "yellow"
-    assert data["config"]["styles_count"] == 6
+    assert data["config"]["styles_count"] == 7
     assert data["config"]["can_generate"] is False
     assert data["assets"]["generated_count"] == 2
     assert data["assets"]["adopted_count"] == 1

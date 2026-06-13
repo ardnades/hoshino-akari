@@ -75,6 +75,26 @@
       "id": "anima_airbrush_editorial",
       "name": "Anima 空氣感插畫風",
       "checkpoint": "anima_baseV10.safetensors",
+      "positive_prefix": "@gpt-image-2, score_7, safe, (beautiful turquoise eyes, detailed iris with light reflections:1.2), glossy eye highlights, subtle blush, soft facial shading, transparent watercolor illustration, translucent thin paint washes, washed-out faded colors, pale cool color tone, cool white balance, multicolored reflected light woven through black hair, hair strands softly tinted cyan blue and warm orange by reflected light, soft warm shop light glow from one side, strong light from one side washing out the shoulder, sleeve and shoulder dissolving into the white background, contour lines vanishing in bright light, pale cool skin with soft blush, airy hazy atmosphere, ethereal lightness, soft backlight, light bleeding through fabric, bleached overexposed whites, delicate sparse linework absorbed into light, lots of white space, white background, quiet calm mood",
+      "negative_prompt": "score_1, score_2, score_3, worst quality, low quality, lowres, bad anatomy, bad hands, text, watermark, signature, opaque heavy pigment, solid black hair mass, dense heavy shading, thick saturated teal hair streaks, chunky color blocks in hair, warm orange skin cast, overly warm color tone, brown hair, paint splatter on clothing, graffiti print on cap, white cap, pale cap, nsfw",
+      "loras": [
+        { "name": "gpt-image-2_anima-base1_v1.safetensors", "strength_model": 0.70, "strength_clip": 0.70 },
+        { "name": "dogma_animaV1.6.safetensors", "strength_model": 0.40, "strength_clip": 0.40 }
+      ],
+      "width": 832,
+      "height": 1216,
+      "steps": 30,
+      "cfg": 4.0,
+      "sampler": "er_sde",
+      "scheduler": "simple",
+      "optional_lora": null,
+      "production_default": true,
+      "notes": "Production default style for game sprites. D-group clean: gpt-image-2 @0.70 + dogma @0.40, no NSS, keep @gpt-image-2 trigger, cfg 4.0. A/B confirmed 2026-06-13."
+    },
+    {
+      "id": "anima_airbrush_editorial_sweet_experimental",
+      "name": "Anima 空氣感插畫風（Sweet Experimental）",
+      "checkpoint": "anima_baseV10.safetensors",
       "positive_prefix": "(kishida mel:0.5), @gpt-image-2, @sw33t, score_7, safe, (beautiful turquoise eyes, detailed iris with light reflections:1.2), glossy eye highlights, subtle blush, soft facial shading, transparent watercolor illustration, translucent thin paint washes, washed-out faded colors, pale cool color tone, cool white balance, multicolored reflected light woven through black hair, hair strands softly tinted cyan blue and warm orange by reflected light, soft warm shop light glow from one side, strong light from one side washing out the shoulder, sleeve and shoulder dissolving into the white background, contour lines vanishing in bright light, pale cool skin with soft blush, airy hazy atmosphere, ethereal lightness, soft backlight, light bleeding through fabric, bleached overexposed whites, delicate sparse linework absorbed into light, lots of white space, white background, quiet calm mood",
       "negative_prompt": "score_1, score_2, score_3, worst quality, low quality, lowres, bad anatomy, bad hands, text, watermark, signature, opaque heavy pigment, solid black hair mass, dense heavy shading, thick saturated teal hair streaks, chunky color blocks in hair, warm orange skin cast, overly warm color tone, brown hair, paint splatter on clothing, graffiti print on cap, white cap, pale cap, nsfw",
       "loras": [
@@ -88,7 +108,10 @@
       "cfg": 3.5,
       "sampler": "er_sde",
       "scheduler": "simple",
-      "optional_lora": null
+      "optional_lora": null,
+      "production_default": false,
+      "commercial_review_required": true,
+      "notes": "Sweeter / more commercial / NSS-era experimental style. Not default for game sprites."
     }
   ]
 }
