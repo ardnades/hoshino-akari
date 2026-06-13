@@ -1,0 +1,350 @@
+{
+  "schema": {
+    "version": "1.1.0",
+    "name": "hoshino_akari_asset_manifest",
+    "authority": "AUTHORITATIVE",
+    "supersedes": "art_tool/art_review/asset_manifest.draft.json",
+    "generated": "2026-06-13",
+    "last_updated": "2026-06-13（P0-C：補收 mask_half 去背 _alpha，approved 4→6；bust 三態最小接入遊戲 assets.js。見 p0c_maskhalf_alpha_and_integration）",
+    "description": "星野灯（hoshino_akari）視覺小說美術素材權威 manifest。承接並取代 art_tool/art_review/asset_manifest.draft.json。記錄實際存在於本目錄下的實體圖、每張圖的狀態、與遊戲內角色狀態的對應（game_state_map）。政策：AI 產出一律 draft；fix_ready 為可修基底；白底 preview_approved 可供預覽但尚未去背；人工去背（_alpha）後才 approved。本檔只盤點與規劃，不規劃生成新圖。",
+    "status_enum": ["draft", "fix_ready", "preview_approved", "approved", "rejected", "archive"],
+    "status_semantics": {
+      "draft": "AI 剛產出、未挑選的原始候選；實際池在 public/assets/generated/（gitignored，約 170 張）。本目錄 draft/ 僅放指標 README，不複製重檔。",
+      "fix_ready": "已挑中、待人工修圖的可修基底（白底，非 alpha）。尚未可直接進遊戲。",
+      "preview_approved": "已從 fix_ready 推進、供預覽與接入準備的白底版（background: white，非 alpha）。像素未改、未去背、無 AI refine。可在白底場景預覽，但需人工去背（_alpha）後才升 approved。",
+      "approved": "人工清理＋去背（_alpha）後、可穩定重複使用的正式素材。P0-C 後共 6 張（mask_off/on/half × full/bust）。",
+      "rejected": "明確不採用的圖（雙眼錯位、口罩消失、壞手等）。",
+      "archive": "被取代的歷史版本（保留可追溯，不再使用）。"
+    }
+  },
+
+  "character_id": "hoshino_akari",
+  "character_name": "星野灯",
+
+  "p0a_batch": {
+    "_comment": "P0-A 本輪處理紀錄（2026-06-13）。只處理 mask_off / mask_on 的全身+半身共 4 張；不碰 mask_half。不重生、不訓練、不去背（無可用 alpha 故輸出白底 preview）、無 AI refine。詳見 art_tool/character_pipeline/hoshino_akari/06_p0a_approved_integration.md。",
+    "processed_count": 4,
+    "alpha_found": false,
+    "alpha_finding": "4 張來源皆白底：3 張為 RGB（無 alpha），1 張（full mask_on）為 RGBA 但 alpha 全 255（純不透明白底，非去背切割）。皆無可用透明度。",
+    "method": "RGB 來源 byte-identical 複製；唯一的 RGBA(全不透明) 來源攤平為 RGB（像素不變、僅丟棄無意義 alpha 通道）以免白底版謊稱有 alpha。",
+    "outputs": [
+      "approved/akari_full_neutral_guarded_maskoff_whitebg_v001.png",
+      "approved/akari_full_neutral_guarded_maskon_whitebg_v001.png",
+      "bustup_approved/akari_bust_neutral_guarded_maskoff_whitebg_v001.png",
+      "bustup_approved/akari_bust_neutral_guarded_maskon_whitebg_v001.png"
+    ]
+  },
+
+  "p0b_alpha_batch": {
+    "_comment": "P0-B 去背收編紀錄（2026-06-13）。把 mask_off / mask_on 的全身+半身共 4 張白底 preview_approved，經人工去背升為首批 approved。不重生、不訓練、無 AI refine、不裁切、未改 RGB 角色本體。mask_half 不在本輪。",
+    "processed_count": 4,
+    "method": "whitebg_v002（人工修）→ 演算法去背 pass2（邊界連通背景移除＋內部負空間白洞偵測，保留白圍巾／白口罩／淺灰連帽衣／白鞋／髮絲 rim light）→ v003 人工頭髮 alpha 清理。輕羽化 1–2px，canvas 尺寸不變。",
+    "bust_maskoff_note": "bust maskoff 的 v003 匯出曾遺失 alpha（被存成全不透明白底），已用同構的 maskon v003 alpha 修復（白邊 0、裁切 0、RGB 為自身）。",
+    "outputs": [
+      "approved/akari_full_neutral_guarded_maskoff_v003_alpha.png",
+      "approved/akari_full_neutral_guarded_maskon_v003_alpha.png",
+      "bustup_approved/akari_bust_neutral_guarded_maskoff_v003_alpha.png",
+      "bustup_approved/akari_bust_neutral_guarded_maskon_v003_alpha.png"
+    ],
+    "not_committed": "實體圖已落地 approved/ 與 bustup_approved/，manifest 已更新；尚未 git commit（待使用者決定）。"
+  },
+
+  "p0c_maskhalf_alpha_and_integration": {
+    "_comment": "P0-C（2026-06-13）。兩件事：(1) 補收 mask_half 去背 _alpha（全身+半身），approved 由 4→6；(2) 最小遊戲接入（只接 bust）。不重生、不訓練、無 AI refine、不裁切、未改 RGB、不改 engine、不改劇本、不 commit。",
+    "maskhalf_promoted": {
+      "found_valid_alpha": true,
+      "source_dir": "public/assets/generated/manual_cleanup/batch_v002/alpha/（gitignored 去背工作區）",
+      "qc": "兩張皆 has_valid_alpha_before=true / recommended_status=skip_existing_alpha（採既有 alpha 不重切）/ hair_red=0 / hair_yellow=0；full 79% 透明、bust 56% 透明，與 mask_off/on 同輪廓。",
+      "outputs": [
+        "approved/akari_full_neutral_guarded_maskhalf_alpha_v001.png",
+        "bustup_approved/akari_bust_neutral_guarded_maskhalf_alpha_v001.png"
+      ],
+      "known_limitation": "RGB 內容『白口罩疊白圍巾辨識度低』（屬美術限制，非 alpha 問題）；接入僅映射少數過渡台詞，長線可改 overlay 合成。"
+    },
+    "game_integration": {
+      "wired_file": "projects/hoshino-akari/play/data/assets.js（characters.akari）",
+      "runtime_asset_dir": "projects/hoshino-akari/play/assets/characters/（新增；放 3 張 bust _alpha_v001，路徑相對 index.html 自洽，不依賴靜態根）",
+      "scope": "只接 bust（對話立繪）。full 三張留 canonical approved/ 待未來 scene 立繪，本輪不接。manager/cg/background/bgm/se 不動。",
+      "expr_mapping": {
+        "mask_on": ["口罩圍巾", "壓低帽簷", "拉低帽簷", "喘氣帽簷低", "警戒", "戒備遮臉", "圍巾遮臉", "看玻璃門眼神警戒"],
+        "mask_off": ["素顏", "素顏微笑", "素顏感笑", "無表情", "遠目", "貼罐子放鬆"],
+        "mask_half": ["鬆動", "眼神放軟"],
+        "fallback_unmapped": "其餘情緒明確 expr（藏不住的笑／紅到耳朵／慌／瞪／嘴硬…）一律留空 → setSprite 查無 → 隱藏 sprite → art.js SVG fallback；缺素材不報錯。"
+      },
+      "engine_untouched": "engine.js setSprite(who,expr) 既有行為（characters[who][expr] 有值用圖、查無隱藏）本輪零修改。",
+      "not_committed": "本輪全部變更（promote 2 張、複製 3 張到 play/assets、assets.js、manifest）尚未 git commit（待使用者決定）。"
+    }
+  },
+
+  "canonical_design": {
+    "status": "confirmed",
+    "description": "20 歲日本國民偶像；公開耀眼完美，私下偽裝成普通人。安靜、警戒、疏離，藏著疲憊；放鬆時眼睛會稍微彎起。",
+    "hair": "long straight pure black hair, blunt bangs（2026-06-13 使用者定案：黑長直＝國民偶像感）",
+    "eyes": "teal / turquoise green eyes, double eyelid（canon 標為提案未鎖；使用者已定案黑髮＋青綠為預設）",
+    "outfit_disguise_winter": "深色／黑鴨舌帽壓低；寬鬆淺灰藍 oversized hoodie；白／米色冬季圍巾；黑色窄管褲（實際 render 偏黑色緊身褲／leggings）；白色運動鞋；嘴邊白色呼氣（faint visible breath）。",
+    "must_keep": [
+      "成年女性 20 歲，無未成年外觀",
+      "私下偽裝核心：鴨舌帽 + 口罩（可掛下巴）+ 寬鬆連帽衣",
+      "輪廓清秀、偶像氣質但帶藏起來的疲憊"
+    ],
+    "avoid": [
+      "露骨／情色（nsfw）",
+      "未成年／幼態（loli、child、teen）",
+      "可辨識的真實藝人臉孔",
+      "壞手、多指、缺指",
+      "過度成熟／妖豔風格"
+    ],
+    "canon_refs": "projects/hoshino-akari/brief/canon-log.md A001（20yo idol）/ A030（公開私下反差偽裝）/ A070（冬季：白氣／圍巾／暖黃店光）/ A091（經理人非反派）",
+    "frozen": [
+      "20yo adult idol",
+      "private disguise: cap + half-mask + oversized hoodie + winter scarf",
+      "winter A070：visible breath / scarf / warm shop light",
+      "quiet / guarded with hidden tiredness"
+    ]
+  },
+
+  "style": {
+    "style_id": "anima_airbrush_editorial",
+    "canonical_lora_group": "D 組",
+    "checkpoint": "anima_baseV10.safetensors",
+    "loras_canonical_D": [
+      { "name": "gpt-image-2_anima-base1_v1.safetensors", "strength_model": 0.7, "strength_clip": 0.7 },
+      { "name": "dogma_animaV1.6.safetensors", "strength_model": 0.4, "strength_clip": 0.4 }
+    ],
+    "loras_excluded": [
+      "AnimaNEWNSS8.safetensors (Niji Sweet Spot)",
+      "anima-highres-aesthetic-boost",
+      "anima-turbo-lora-v0.2"
+    ],
+    "sampling_defaults": {
+      "sampler": "er_sde",
+      "scheduler": "simple",
+      "cfg": 4.0,
+      "cfg_note": "官方建議 cfg 4-5（HF model card）。專案歷史預設 3.5-4.5 略低於官方下限，建議向 4-5 對齊。",
+      "steps": "30-50",
+      "resolution": "832x1216（官方範圍 512^2-1536^2）"
+    },
+    "config_discrepancy_note": "已拍板並同步（2026-06-13，經 A/B 視覺驗證）：production canonical = D 組（gpt@0.7 + dogma@0.4，無 NSS，cfg 4.0，保留 @gpt-image-2 觸發詞），已寫入 art_tool/art_config/art_styles.json 的 anima_airbrush_editorial（production_default: true）。原觸發詞還原版（gpt@0.75 + NSS@0.70 + dogma@0.60 + (kishida mel:0.5) + @sw33t，cfg 3.5）保留為獨立備用 style anima_airbrush_editorial_sweet_experimental（production_default: false、commercial_review_required: true，非遊戲 production 預設）。manifest 與 config 已一致。",
+    "model_architecture_note": "重要技術修正（以 RESEARCH/VERIFICATION 為準）：anima_baseV10 的擴散骨幹是 NVIDIA Cosmos-Predict2-2B（kohya 稱 MiniTrainDIT），僅『借用』Qwen-Image VAE 與 Qwen3-0.6B 文字編碼器，並非 Qwen-Image 家族、非 SDXL、非 SD1.5、非 Flux。經 UNETLoader/CLIPLoader(type=stable_diffusion)/VAELoader 三件式載入。信心：高。影響：Qwen-Image 與 SDXL 的 LoRA／ControlNet 皆不可直接套用；要用 Anima-native 工具（kohya anima_train_network.py、ComfyUI-Anima-LLLite）。本管線僅盤點現有素材，不在此規劃訓練／控制。"
+  },
+
+  "mask_states": {
+    "values": ["mask_off", "mask_half", "mask_on"],
+    "semantics": {
+      "mask_off": "放鬆、預設；素顏露出，眼睛放鬆時稍彎。",
+      "mask_half": "過渡；口罩拉到下巴。白口罩疊白圍巾辨識度低，為不穩定狀態，需人工修或 overlay 合成。",
+      "mask_on": "警戒；口罩戴正，上緣俐落。"
+    }
+  },
+
+  "outfits": {
+    "disguise_hoodie_scarf": { "status": "confirmed", "items": "深色／黑鴨舌帽、oversized hoodie、白／米色圍巾、黑色窄管褲（render 偏黑緊身褲）、白運動鞋" },
+    "casual": { "status": "planned", "note": "第二套衣裝（P0 上限 2 套），尚未定義；不在本次盤點範圍。" }
+  },
+
+  "assets": [
+    {
+      "asset_id": "akari_full_mask_off",
+      "file": "fix_ready/akari_full_mask_off_fix_v001.png",
+      "approved_file": "approved/akari_full_neutral_guarded_maskoff_whitebg_v001.png",
+      "category": "full",
+      "expression": "neutral_guarded",
+      "mask_state": "mask_off",
+      "outfit": "disguise_hoodie_scarf",
+      "current_status": "approved",
+      "background": "transparent",
+      "approved_for_preview": true,
+      "alpha_file": "approved/akari_full_neutral_guarded_maskoff_v003_alpha.png",
+      "has_alpha": true,
+      "preview_whitebg_file": "approved/akari_full_neutral_guarded_maskoff_whitebg_v002.png",
+      "needs_alpha_cleanup": false,
+      "needs_manual_cleanup": false,
+      "dims": "832x1216",
+      "source_image": "20260613051933_225bc2d9",
+      "source_lineage": "由 d0d576e0 腿部重繪而來；褲子版基準全身立繪；全角色頭身比基準。",
+      "notes": "P0-B：preview_approved → approved。人工去背完成：whitebg_v002（人工修）→ 演算法去背 pass2（邊界連通＋內部負空間白洞，保留圍巾/口罩/連帽衣/鞋/rim light）→ v003 人工頭髮 alpha 清理。canvas 未變、RGB 角色本體未改。所有差分以遮罩局部重繪自此圖。"
+    },
+    {
+      "asset_id": "akari_full_mask_on",
+      "file": "fix_ready/akari_full_mask_on_fix_v001.png",
+      "approved_file": "approved/akari_full_neutral_guarded_maskon_whitebg_v001.png",
+      "category": "full",
+      "expression": "neutral_guarded",
+      "mask_state": "mask_on",
+      "outfit": "disguise_hoodie_scarf",
+      "current_status": "approved",
+      "background": "transparent",
+      "approved_for_preview": true,
+      "alpha_file": "approved/akari_full_neutral_guarded_maskon_v003_alpha.png",
+      "has_alpha": true,
+      "preview_whitebg_file": "approved/akari_full_neutral_guarded_maskon_whitebg_v002.png",
+      "needs_alpha_cleanup": false,
+      "needs_manual_cleanup": false,
+      "dims": "832x1216",
+      "source_image": "20260613112352_89f0cdfc",
+      "source_lineage": "口罩戴正、上緣俐落、單對眼。",
+      "notes": "P0-B：preview_approved → approved。人工去背完成：whitebg_v002（人工修）→ 演算法去背 pass2 → v003 人工頭髮 alpha 清理。與 maskoff 共用同一 alpha 輪廓（僅臉部口罩差異，屬內部不影響去背）。canvas 未變、RGB 未改。"
+    },
+    {
+      "asset_id": "akari_full_mask_half",
+      "file": "fix_ready/akari_full_mask_half_fix_v001.png",
+      "approved_file": "approved/akari_full_neutral_guarded_maskhalf_alpha_v001.png",
+      "category": "full",
+      "expression": "neutral_guarded",
+      "mask_state": "mask_half",
+      "outfit": "disguise_hoodie_scarf",
+      "current_status": "approved",
+      "background": "transparent",
+      "has_alpha": true,
+      "approved_for_preview": true,
+      "alpha_file": "approved/akari_full_neutral_guarded_maskhalf_alpha_v001.png",
+      "alpha_source": "public/assets/generated/manual_cleanup/batch_v002/alpha/akari_full_mask_half_fix_v002_alpha.png（gitignored 工作區；v002 人工去背。QC：has_valid_alpha_before=true／skip_existing_alpha／hair_red=0；79% 透明、256 階、非全255）",
+      "needs_alpha_cleanup": false,
+      "needs_manual_cleanup": false,
+      "dims": "832x1216",
+      "source_image": "20260613122401_f2418510",
+      "source_lineage": "AI 基本差分（口罩拉下、有摺線／上下緣）→ v002 人工去背 _alpha。",
+      "notes": "P0-C：找到既有有效 alpha（79% 透明、256 階、非全255），升 approved，官方名 _maskhalf_alpha_v001（複製自 gitignored 去背工作區，未改像素）。alpha 乾淨；惟 RGB『白口罩疊白圍巾辨識度低』為已知美術限制（非 alpha 問題），接入僅映射少數過渡台詞。canvas 未變、RGB 未改。長線可改 overlay 合成。全身本輪未接入遊戲。"
+    },
+    {
+      "asset_id": "akari_bustup_neutral_mask_off",
+      "file": "bustup_fix_ready/akari_bustup_neutral_mask_off_fix_v001.png",
+      "approved_file": "bustup_approved/akari_bust_neutral_guarded_maskoff_whitebg_v001.png",
+      "category": "bustup",
+      "expression": "neutral_guarded",
+      "mask_state": "mask_off",
+      "outfit": "disguise_hoodie_scarf",
+      "current_status": "approved",
+      "background": "transparent",
+      "approved_for_preview": true,
+      "alpha_file": "bustup_approved/akari_bust_neutral_guarded_maskoff_v003_alpha.png",
+      "has_alpha": true,
+      "wired_in_game": true,
+      "preview_whitebg_file": "bustup_approved/akari_bust_neutral_guarded_maskoff_whitebg_v002.png",
+      "needs_alpha_cleanup": false,
+      "needs_manual_cleanup": false,
+      "dims": "910x904",
+      "source_image": "akari_full_mask_off_fix_v001（源 20260613051933_225bc2d9）",
+      "derivation": { "method": "cropped_from_full_fix", "crop_box": { "x": 165, "y": 18, "width": 455, "height": 452 }, "upscale": "2x Lanczos -> 910x904", "ai_refine": "none（純裁切，零 AI 漂移）" },
+      "notes": "P0-B：preview_approved → approved。人工去背完成（whitebg_v002 → pass2 去背 → v003 人工頭髮清理）。對話用半身。canvas 未變、RGB 未改。最佳臉實驗見 bustup_fix_ready/hq_tests/akari_bustup_neutral_mask_off_hq_FINAL_local.png（非權威實體）。"
+    },
+    {
+      "asset_id": "akari_bustup_neutral_mask_on",
+      "file": "bustup_fix_ready/akari_bustup_neutral_mask_on_fix_v001.png",
+      "approved_file": "bustup_approved/akari_bust_neutral_guarded_maskon_whitebg_v001.png",
+      "category": "bustup",
+      "expression": "neutral_guarded",
+      "mask_state": "mask_on",
+      "outfit": "disguise_hoodie_scarf",
+      "current_status": "approved",
+      "background": "transparent",
+      "approved_for_preview": true,
+      "alpha_file": "bustup_approved/akari_bust_neutral_guarded_maskon_v003_alpha.png",
+      "has_alpha": true,
+      "wired_in_game": true,
+      "preview_whitebg_file": "bustup_approved/akari_bust_neutral_guarded_maskon_whitebg_v002.png",
+      "needs_alpha_cleanup": false,
+      "needs_manual_cleanup": false,
+      "dims": "910x904",
+      "source_image": "akari_full_mask_on_fix_v001（源 20260613112352_89f0cdfc）",
+      "derivation": { "method": "cropped_from_full_fix", "crop_box": { "x": 165, "y": 18, "width": 455, "height": 452 }, "upscale": "2x Lanczos -> 910x904", "ai_refine": "none（純裁切，零 AI 漂移）" },
+      "notes": "P0-B：preview_approved → approved。人工去背完成（whitebg_v002 → pass2 去背 → v003 人工頭髮清理）。與 mask_off/half 同框構，僅口罩不同。canvas 未變、RGB 未改。"
+    },
+    {
+      "asset_id": "akari_bustup_neutral_mask_half",
+      "file": "bustup_fix_ready/akari_bustup_neutral_mask_half_fix_v001.png",
+      "approved_file": "bustup_approved/akari_bust_neutral_guarded_maskhalf_alpha_v001.png",
+      "category": "bustup",
+      "expression": "neutral_guarded",
+      "mask_state": "mask_half",
+      "outfit": "disguise_hoodie_scarf",
+      "current_status": "approved",
+      "background": "transparent",
+      "has_alpha": true,
+      "approved_for_preview": true,
+      "alpha_file": "bustup_approved/akari_bust_neutral_guarded_maskhalf_alpha_v001.png",
+      "alpha_source": "public/assets/generated/manual_cleanup/batch_v002/alpha/akari_bustup_neutral_mask_half_fix_v002_alpha.png（gitignored 工作區；v002 人工去背。QC：has_valid_alpha_before=true／skip_existing_alpha／hair_red=0；56% 透明、256 階、非全255）",
+      "needs_alpha_cleanup": false,
+      "needs_manual_cleanup": false,
+      "dims": "910x904",
+      "source_image": "akari_full_mask_half_fix_v001（源 20260613122401_f2418510）",
+      "derivation": { "method": "cropped_from_full_fix", "crop_box": { "x": 165, "y": 18, "width": 455, "height": 452 }, "upscale": "2x Lanczos -> 910x904", "ai_refine": "none（純裁切，零 AI 漂移）" },
+      "wired_in_game": true,
+      "notes": "P0-C：找到既有有效 alpha（56% 透明、256 階、非全255），升 approved，官方名 _maskhalf_alpha_v001。本張為對話半身，已接入 assets.js（鬆動／眼神放軟 → maskhalf）。RGB『白口罩疊白圍巾辨識度低』為已知美術限制（非 alpha 問題）。canvas 未變、RGB 未改。"
+    }
+  ],
+
+  "asset_count": {
+    "total_physical_entries": 6,
+    "by_category": { "full": 3, "bustup": 3 },
+    "by_status": { "draft": 0, "fix_ready": 0, "preview_approved": 0, "approved": 6, "rejected": 0, "archive": 0 },
+    "needs_manual_cleanup": 0,
+    "needs_alpha_cleanup": 0,
+    "note": "6 張為本目錄頂層的權威邏輯實體圖，P0-C 後全部 approved（去背 _alpha）：mask_off/on 全身+半身為 v003_alpha；mask_half 全身+半身為 _maskhalf_alpha_v001（v002 人工去背，複製自 gitignored generated/manual_cleanup/batch_v002/alpha/）。fix_ready 與 whitebg preview 來源檔仍保留在原處（未刪）。bustup_fix_ready/hq_tests/ 內實驗檔不計入。draft 池（generated/，約 170 張）為 gitignored，不在此逐張收錄。"
+  },
+
+  "game_state_map": {
+    "_comment": "與遊戲內角色狀態的對應 spec。P0-C 後 bust 三態（mask_off/on/half）已接進遊戲（play/data/assets.js characters.akari）；cg/background 仍空、走 inline SVG fallback。此表把 (category x mask_state x expression) 對應到 sprite asset_id 與其檔案；state=preview_approved 表示已有白底預覽檔（待去背），pending=尚無實體圖（屬 sprite_plan）。接入機制與映射見 06_p0a_approved_integration.md。",
+    "lookup_key_format": "{category}:{mask_state}:{expression}",
+    "current_expression_coverage": "目前實體圖僅 neutral_guarded 表情；其餘表情（troubled/anxious、annoyed、blush_avert、small_genuine_smile、soft_final）皆 pending，見 sprite_plan。",
+    "entries": [
+      { "key": "full:mask_off:neutral_guarded",   "asset_id": "akari_full_mask_off",             "state": "approved", "file": "approved/akari_full_neutral_guarded_maskoff_v003_alpha.png", "needs_alpha_cleanup": false },
+      { "key": "full:mask_on:neutral_guarded",    "asset_id": "akari_full_mask_on",              "state": "approved", "file": "approved/akari_full_neutral_guarded_maskon_v003_alpha.png",  "needs_alpha_cleanup": false },
+      { "key": "full:mask_half:neutral_guarded",  "asset_id": "akari_full_mask_half",            "state": "approved", "file": "approved/akari_full_neutral_guarded_maskhalf_alpha_v001.png", "needs_alpha_cleanup": false, "wired": false },
+      { "key": "bust:mask_off:neutral_guarded",   "asset_id": "akari_bustup_neutral_mask_off",   "state": "approved", "file": "bustup_approved/akari_bust_neutral_guarded_maskoff_v003_alpha.png", "needs_alpha_cleanup": false },
+      { "key": "bust:mask_on:neutral_guarded",    "asset_id": "akari_bustup_neutral_mask_on",    "state": "approved", "file": "bustup_approved/akari_bust_neutral_guarded_maskon_v003_alpha.png",  "needs_alpha_cleanup": false },
+      { "key": "bust:mask_half:neutral_guarded",  "asset_id": "akari_bustup_neutral_mask_half",  "state": "approved", "file": "bustup_approved/akari_bust_neutral_guarded_maskhalf_alpha_v001.png", "needs_alpha_cleanup": false, "wired": true },
+      { "key": "bust:mask_on:neutral_guarded(alt)","asset_id": "akari_disguise_neutral_mask_on", "state": "pending", "plan_ref": "sprite_plan" },
+      { "key": "bust:mask_half:annoyed",          "asset_id": "akari_disguise_annoyed_mask_half","state": "pending", "plan_ref": "sprite_plan" },
+      { "key": "bust:mask_on:troubled",           "asset_id": "akari_disguise_troubled_mask_on", "state": "pending", "plan_ref": "sprite_plan" },
+      { "key": "bust:mask_half:blush_avert",      "asset_id": "akari_disguise_blush_avert_mask_half", "state": "pending", "plan_ref": "sprite_plan" },
+      { "key": "bust:mask_off:small_genuine_smile","asset_id": "akari_casual_small_smile_mask_off", "state": "pending", "plan_ref": "sprite_plan" },
+      { "key": "bust:mask_off:soft_final",        "asset_id": "akari_casual_soft_final_mask_off", "state": "pending", "plan_ref": "sprite_plan" }
+    ],
+    "integration_spec_when_wired": [
+      "接入點唯一檔案 = play/data/assets.js（window.HOSHINO.assets）。引擎 setSprite(who, expr) 查 assets.characters[who][expr]；查無則 url=null → sprite 隱藏 → SVG/CSS fallback，缺素材不會壞遊戲。",
+      "前端建議只接 approved 去背 PNG（_alpha）。本輪 preview_approved 為白底，若要先預覽可暫接白底，但去背完成前不建議正式接入（白底會在深色場景出現白框）。",
+      "day 資料用自由中文 expr 字串（約 62 種，如『素顏微笑』『壓低帽簷』『口罩圍巾』），與本 manifest 的 (mask_state x expression) 不同軸；接入需一層 expr→sprite 映射（見 06_p0a_approved_integration.md），目前僅 neutral_guarded 一種臉，只能保守接少數相容 expr。",
+      "mask_half 若採 overlay 合成：base sprite（mask_off）+ mask_half overlay PNG（含 alpha）疊圖，避免維護一張完整 mask_half 立繪。"
+    ]
+  },
+
+  "sprite_plan": {
+    "_comment": "規劃條目（planned 狀態），承接 draft manifest 的 sprite_plan，指向交付物 D2 表情規劃。表情範圍小（內斂雙人小品）。本管線不在此規劃生成；僅標 planned。",
+    "status": "planned",
+    "next_deliverable_ref": "D2（表情規劃）",
+    "needed_expressions": ["neutral_guarded", "troubled_anxious", "annoyed", "blush_avert", "small_genuine_smile", "soft_final"],
+    "p0_limits": {
+      "sprites_max": 8, "expressions_max": 6, "outfits_max": 2, "poses_max": 2, "cg_max": 4, "backgrounds_max": 5,
+      "rules": ["不要每句台詞一張圖", "不要每個 scene 換衣裝", "保持像同一個人"]
+    },
+    "planned_entries": [
+      { "asset_id": "akari_disguise_neutral_mask_on",     "category": "bustup", "outfit": "disguise_hoodie_scarf", "expression": "neutral_guarded",   "mask_state": "mask_on",   "status": "planned" },
+      { "asset_id": "akari_disguise_annoyed_mask_half",   "category": "bustup", "outfit": "disguise_hoodie_scarf", "expression": "annoyed",           "mask_state": "mask_half", "status": "planned" },
+      { "asset_id": "akari_disguise_troubled_mask_on",    "category": "bustup", "outfit": "disguise_hoodie_scarf", "expression": "troubled_anxious",  "mask_state": "mask_on",   "status": "planned" },
+      { "asset_id": "akari_disguise_blush_avert_mask_half","category": "bustup","outfit": "disguise_hoodie_scarf", "expression": "blush_avert",       "mask_state": "mask_half", "status": "planned" },
+      { "asset_id": "akari_casual_neutral_mask_off",      "category": "bustup", "outfit": "casual",               "expression": "neutral_guarded",   "mask_state": "mask_off",  "status": "planned" },
+      { "asset_id": "akari_casual_small_smile_mask_off",  "category": "bustup", "outfit": "casual",               "expression": "small_genuine_smile","mask_state": "mask_off", "status": "planned" },
+      { "asset_id": "akari_casual_sad_quiet_mask_half",   "category": "bustup", "outfit": "casual",               "expression": "troubled_anxious",  "mask_state": "mask_half", "status": "planned" },
+      { "asset_id": "akari_casual_soft_final_mask_off",   "category": "bustup", "outfit": "casual",               "expression": "soft_final",        "mask_state": "mask_off",  "status": "planned" }
+    ]
+  },
+
+  "directory_map": {
+    "state_dirs": {
+      "draft/": "草案層指標目錄（README 指向 public/assets/generated/，不放重檔）",
+      "fix_ready/": "待人工修的全身 AI draft（白底，非 alpha）；現有 3 張 + bustup_fix_ready/ 子夾",
+      "bustup_fix_ready/": "待人工修的半身對話圖（白底，非 alpha）；現有 3 張 + hq_tests/ 實驗夾",
+      "approved/": "正式全身素材。P0-B 後含 2 張去背 _alpha v003（maskoff/maskon）= approved；另保留白底 whitebg v001/v002 作 preview 來源。",
+      "bustup_approved/": "正式半身素材。P0-B 後含 2 張去背 _alpha v003（maskoff/maskon）= approved；另保留白底 whitebg v001/v002 作 preview 來源。",
+      "rejected/": "明確不採用（目前空）",
+      "archive/": "被取代的歷史版本（目前空）"
+    },
+    "related_external": {
+      "public/assets/generated/": "AI candidate 草案池（gitignored，約 170 張）= 實質 draft/experiment 池",
+      "art_tool/art_archive/unconfirmed_adopted/": "先前 adopt 但被取代版（10 檔）；遷移建議併入本目錄 archive/",
+      "art_tool/art_review/needs_manual_cleanup/": "3 張全身 fix 的 DRAFT 副本；與 fix_ready 同源，可視為過渡，最終以本目錄 fix_ready 為準",
+      "art_tool/art_review/asset_manifest.draft.json": "舊草案 manifest，已被本檔取代"
+    }
+  }
+}
