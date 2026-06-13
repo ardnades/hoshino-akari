@@ -12,7 +12,7 @@ A 7-night **idol-romance AVG** (static web game, zero backend at runtime) plus a
 ## Repository layout
 
 ```
-ai-interactive-story-factory/            (local dir name; GitHub repo = hoshino-akari)
+hoshino-akari/                           (repo root, local dir = GitHub repo)
 ├── projects/hoshino-akari/              ← the game
 │   ├── brief/        canon-log (事實台帳) + voice/ (角色語氣表)
 │   ├── episodes/     day1–7.md          劇本源稿 (source scripts)

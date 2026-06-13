@@ -4,7 +4,7 @@
 
 ## 沿用的規範
 
-- **文字規範與 AI 慣用語黑名單**：沿用根目錄 `ai-interactive-story-factory/CLAUDE.md`「文字規範」「AI 慣用語黑名單」。全形標點、`……`（六點）、`——`（雙字）、禁簡體、禁黑名單詞。
+- **文字規範與 AI 慣用語黑名單**：沿用 repo 根 `CLAUDE.md`「文字規範」「AI 慣用語黑名單」。全形標點、`……`（六點）、`——`（雙字）、禁簡體、禁黑名單詞。
 - **事實台帳**：本作專用 `projects/hoshino-akari/brief/canon-log.md`（append-only，只增不改）。
 - **角色語氣**：依 `templates/character-sheet.md` 建表，存於 `projects/hoshino-akari/brief/voice/`。生成台詞前必讀。
 - **驗證**：新增／修改劇情文字後跑 `pwsh scripts/check-text.ps1 <檔案>`，違規清零前視為未完成。
