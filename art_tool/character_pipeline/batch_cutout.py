@@ -92,6 +92,9 @@ RED = np.array([235, 30, 40], np.uint8)
 YEL = np.array([245, 220, 30], np.uint8)
 CYN = np.array([0, 210, 235], np.uint8)
 
+# 整批報表保留檔名（per-image json 不可與這些撞名，否則會被整批報表覆蓋）
+RESERVED_REPORT_STEMS = {"summary"}
+
 
 # ============================== 檔名解析 ==============================
 def parse_meta(fname):
@@ -226,7 +229,10 @@ def hair_review(rgb, alpha):
     warns = []
     dark = (gray < CFG["hair_dark_lt"]) & opaque
     if not dark.any():
-        return None, None, {"red": 0, "yellow": 0, "cyan": 0}, [], ["無暗髮像素，hair review 略過"]
+        # 無暗髮像素：仍輸出純底圖（無候選標記），確保 qc_hair_alpha_review 一定存在
+        a = (alpha / 255.0)[..., None]
+        base = (rgb.astype(np.float32) * a + np.array(CFG["bg_dark"], np.float32) * (1 - a)).round().astype(np.uint8)
+        return base, None, {"red": 0, "yellow": 0, "cyan": 0}, [], ["無暗髮像素：hair review 無候選，輸出純底圖供檢視"]
     dl, _ = ndimage.label(dark)
     ys, xs = np.where(dark)
     hid = dl[ys[ys.argmin()], xs[ys.argmin()]]      # 含最上方暗像素的連通塊=頭部(髮+帽)
@@ -317,6 +323,15 @@ def save_png(arr, path, overwrite):
     return True
 
 
+def save_json(obj, path, overwrite):
+    """與 save_png 一致遵守 no-overwrite 預設。回傳是否實際寫入。"""
+    if os.path.exists(path) and not overwrite:
+        return False
+    with open(path, "w", encoding="utf-8") as f:
+        json.dump(obj, f, ensure_ascii=False, indent=2)
+    return True
+
+
 def process_one(src, dirs, do_hair, overwrite, quiet):
     fname = os.path.basename(src)
     stem = os.path.splitext(fname)[0]
@@ -392,9 +407,12 @@ def process_one(src, dirs, do_hair, overwrite, quiet):
         "hair_points": points,
         "pass2_detail": stats["pass2_detail"],
     })
-    # 每張 summary json
-    with open(os.path.join(dirs["reports"], f"{stem}.json"), "w", encoding="utf-8") as f:
-        json.dump(summary, f, ensure_ascii=False, indent=2)
+    # 每張 summary json（遵守 no-overwrite；避免與整批報表保留名撞名）
+    json_stem = stem + "_item" if stem in RESERVED_REPORT_STEMS else stem
+    if json_stem != stem:
+        warns.append(f"檔名與整批報表保留名衝突，per-image json 改名為 {json_stem}.json")
+    if not save_json(summary, os.path.join(dirs["reports"], f"{json_stem}.json"), overwrite):
+        warns.append(f"既有 per-image json 存在，未覆蓋：{json_stem}.json")
     if not quiet:
         print(f"  [{status:18s}] {sprite}/{mask:8s} p1={stats['pass1_removed_ratio']:.3f} "
               f"p2px={stats['pass2_removed_pixels']:6d} hair R/Y/C={counts['red']}/{counts['yellow']}/{counts['cyan']}  {fname}")
@@ -453,7 +471,17 @@ def main():
             rows.append(process_one(src, dirs, not args.no_hair, args.overwrite, args.quiet))
         except Exception as e:
             print(f"  [ERROR] {os.path.basename(src)}: {e}", file=sys.stderr)
-            rows.append({"source_file": src, "recommended_status": "error", "warnings": [f"BLOCK:例外 {e}"]})
+            sprite, mask, _ = parse_meta(os.path.basename(src))
+            err_row = {"source_file": src.replace("\\", "/"), "sprite_type": sprite, "mask_state": mask,
+                       "recommended_status": "error", "warnings": [f"BLOCK:例外 {e}"]}
+            # 即使處理失敗，仍寫一份 per-image json（確保「每張一份」成立）
+            estem = os.path.splitext(os.path.basename(src))[0]
+            ejson_stem = estem + "_item" if estem in RESERVED_REPORT_STEMS else estem
+            try:
+                save_json(err_row, os.path.join(dirs["reports"], f"{ejson_stem}.json"), args.overwrite)
+            except Exception:
+                pass
+            rows.append(err_row)
 
     # 整批 CSV
     cols = ["source_file", "output_file", "sprite_type", "mask_state", "width", "height",
@@ -462,14 +490,17 @@ def main():
             "hair_red_count", "hair_yellow_count", "hair_cyan_count",
             "recommended_status", "warnings"]
     csv_path = os.path.join(dirs["reports"], "summary.csv")
-    with open(csv_path, "w", newline="", encoding="utf-8-sig") as f:
-        wr = csv.DictWriter(f, fieldnames=cols, extrasaction="ignore")
-        wr.writeheader()
-        for r in rows:
-            rr = dict(r)
-            if isinstance(rr.get("warnings"), list):
-                rr["warnings"] = " | ".join(rr["warnings"])
-            wr.writerow(rr)
+    if os.path.exists(csv_path) and not args.overwrite:
+        print(f"  summary.csv 已存在且未加 --overwrite，保留既有檔（未更新）：{csv_path}")
+    else:
+        with open(csv_path, "w", newline="", encoding="utf-8-sig") as f:
+            wr = csv.DictWriter(f, fieldnames=cols, extrasaction="ignore")
+            wr.writeheader()
+            for r in rows:
+                rr = dict(r)
+                if isinstance(rr.get("warnings"), list):
+                    rr["warnings"] = " | ".join(rr["warnings"])
+                wr.writerow(rr)
 
     # 總表 json
     agg = {
@@ -482,8 +513,9 @@ def main():
     for r in rows:
         s = r.get("recommended_status", "error")
         agg["by_status"][s] = agg["by_status"].get(s, 0) + 1
-    with open(os.path.join(dirs["reports"], "summary.json"), "w", encoding="utf-8") as f:
-        json.dump(agg, f, ensure_ascii=False, indent=2)
+    agg_path = os.path.join(dirs["reports"], "summary.json")
+    if not save_json(agg, agg_path, args.overwrite):
+        print(f"  summary.json 已存在且未加 --overwrite，保留既有檔（未更新）：{agg_path}")
 
     print(f"完成。分級統計：{agg['by_status']}")
     print(f"報表：{csv_path}")
