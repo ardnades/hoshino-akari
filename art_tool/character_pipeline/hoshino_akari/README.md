@@ -13,6 +13,8 @@
 | 3 | [03_lora_training_plan.md](03_lora_training_plan.md) | 角色一致性 LoRA 方案（Anima/Cosmos 專用訓練法、素材選/排除、caption、trigger、驗收）|
 | 4 | [04_control_workflow_plan.md](04_control_workflow_plan.md) | 控制流程：可用/不可用的 reference/inpaint/img2img/control，四層控制權責分工表 |
 | 5 | [05_asset_pipeline.md](05_asset_pipeline.md) | 接入遊戲的目錄結構、狀態總表、game_state_map、檔名規則 |
+| 6 | [06_p0a_approved_integration.md](06_p0a_approved_integration.md) | P0a approved 素材接入整理 |
+| 7 | [07_cg_regional_controlnet_plan.md](07_cg_regional_controlnet_plan.md) | CG 專用 Regional-ControlNet 流程：色塊分區描繪、CG 分類、兩個測試案例、節點圖、Strength/bleed 風險 |
 
 實際素材與權威 manifest 在：
 `public/assets/characters/hoshino_akari/`（`manifest.json` + `draft/ fix_ready/ approved/ rejected/ archive/`）。
