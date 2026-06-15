@@ -20,7 +20,7 @@
   --font-sans:"PingFang TC","Hiragino Sans","Noto Sans TC",system-ui,-apple-system,"Segoe UI","Microsoft JhengHei",sans-serif;
   --font-num:"SF Mono","Menlo","Consolas",ui-monospace,monospace;
 }
-*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none}
 html,body{height:100%}
 body{background:var(--bg);color:var(--ink);font-family:var(--font-serif);overflow:hidden;line-height:1.7}
 #app{position:fixed;inset:0;max-width:920px;margin:0 auto;display:flex;flex-direction:column;
@@ -103,7 +103,56 @@ button{font-family:inherit;cursor:pointer;border:none;color:var(--ink);backgroun
   background:radial-gradient(120% 90% at 50% 120%,rgba(0,0,0,.35),transparent 60%)}
 
 #spriteLayer{position:absolute;inset:0;display:flex;align-items:flex-end;justify-content:center;z-index:1;pointer-events:none}
-#spriteLayer .sprite{max-height:92%;max-width:82%;object-fit:contain;filter:drop-shadow(0 6px 24px rgba(0,0,0,.5))}
+/* 立繪採 base + 可選 overlay（口罩等）疊層：同一 832×1216 畫布、同 aspect-ratio 框內 object-fit:contain → 像素級對位 */
+#spriteLayer .sprite-stack{position:relative;height:92%;aspect-ratio:832 / 1216;max-width:82%;filter:drop-shadow(0 6px 24px rgba(0,0,0,.5))}
+#spriteLayer .sprite-stack img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain}
+#spriteLayer .sprite-stack .sprite-mask{pointer-events:none}
+
+/* ── 立繪演出 v0：pos / depth / motion / exit（引擎讀 line 欄位 → 套 class）──
+   設計：pos 用 translate、depth 用 scale（兩者皆獨立 CSS 屬性，互不覆蓋、可與 motion 的 transform 疊加）；
+   motion 用 transform+opacity keyframe，一律收尾於 transform:none，故 reduced-motion 把 duration 壓成 .001ms 時會落在靜止態。
+   原點設在腳底中央：near 自腳底往上長高 → 臉上移、不被 textbox 蓋住；far 往腳底縮小＝退半步。動畫短而克制（商業 AVG，非網頁特效）。*/
+#spriteLayer .sprite-stack{transform-origin:bottom center}
+#spriteLayer .sprite-pos-left{translate:-11% 0}      /* 保守位移：360–375px 窄機立繪框仍不被 stage overflow 裁切；臉永遠置中不出框 */
+#spriteLayer .sprite-pos-right{translate:11% 0}
+#spriteLayer .sprite-depth-near{scale:1.10}          /* 靠近（加強對比，仍非大頭；自腳底長高，臉不沒入頂列） */
+#spriteLayer .sprite-depth-far{scale:.86}            /* 站遠 / 退半步（加強，明顯後退） */
+/* 臉部大特寫（靜態）：與 walk_in 終點同框（scale 3.6＋臉部 origin）→ 走近後只換表情、維持大小不變回 */
+#spriteLayer .sprite-depth-closeup{scale:3.6;transform-origin:50% 20%}
+@keyframes spriteFadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@keyframes spriteSlideInL{from{opacity:.25;transform:translateX(-16%)}to{opacity:1;transform:none}}
+@keyframes spriteSlideInR{from{opacity:.25;transform:translateX(16%)}to{opacity:1;transform:none}}
+@keyframes spriteStepIn{from{opacity:.78;transform:translateY(7px) scale(.97)}to{opacity:1;transform:none}}
+@keyframes spriteStepBack{from{transform:translateY(4px) scale(1.045)}to{transform:none}}
+/* 慢慢走近你面前（鏡頭拉向她的臉）：scale 自全身遠景 → 放大到頭部幾乎佔滿；
+   配合 .sprite-motion-walk-in 的 transform-origin（臉部）→ 是「臉朝你走近、看著你」而非胸部逼近。
+   ＋輕微上下踏步 bob 做走路感；以最終大特寫收尾（forwards 保留）。*/
+@keyframes spriteWalkIn{
+  0%{transform:scale(.8) translateY(3%)}
+  25%{transform:scale(1.2) translateY(-1%)}
+  50%{transform:scale(1.75) translateY(1.4%)}
+  75%{transform:scale(2.6) translateY(-0.7%)}
+  100%{transform:scale(3.6) translateY(0)}
+}
+/* 走近的淡入＝獨立固定時長動畫，不隨 motionDur（走近時長）一起變慢 */
+@keyframes spriteAppear{from{opacity:0}to{opacity:1}}
+/* 由畫面外快速衝入＋逼近放大（撞擊）：衝過頭→放大→小回彈→定位；同行配 shake:true 做撞畫面震動 */
+@keyframes spriteRushIn{
+  0%{opacity:.15;transform:translateX(-58%) scale(.72)}
+  60%{opacity:1;transform:translateX(6%) scale(1.12)}
+  80%{transform:translateX(-2%) scale(1.04)}
+  100%{transform:none}
+}
+@keyframes spriteExit{from{opacity:1}to{opacity:0;transform:translateY(6px)}}
+#spriteLayer .sprite-motion-fade-in{animation:spriteFadeIn var(--motion-dur,.34s) ease both}
+#spriteLayer .sprite-motion-slide-in-left{animation:spriteSlideInL var(--motion-dur,.42s) cubic-bezier(.2,.7,.2,1) both}
+#spriteLayer .sprite-motion-slide-in-right{animation:spriteSlideInR var(--motion-dur,.42s) cubic-bezier(.2,.7,.2,1) both}
+#spriteLayer .sprite-motion-step-in{animation:spriteStepIn var(--motion-dur,.36s) ease both}
+#spriteLayer .sprite-motion-step-back{animation:spriteStepBack var(--motion-dur,.42s) ease both}
+/* transform-origin 設在「臉/頭」位置（約畫布上方 20%）→ 放大時鏡頭拉進臉，而非自腳底長高或對著胸 */
+#spriteLayer .sprite-motion-walk-in{transform-origin:50% 20%;animation:spriteWalkIn var(--motion-dur,2.6s) cubic-bezier(.45,.05,.55,.95) both, spriteAppear .45s ease both}  /* 走近吃 motionDur 調速；淡入 spriteAppear 固定 .45s 不隨之變慢 */
+#spriteLayer .sprite-motion-rush-in{animation:spriteRushIn var(--motion-dur,.42s) cubic-bezier(.2,.8,.3,1) both}
+#spriteLayer .sprite-stack.sprite-exit{animation:spriteExit .26s ease forwards}
 
 #sceneCard{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
   gap:12px;text-align:center;z-index:3}
@@ -143,8 +192,18 @@ button{font-family:inherit;cursor:pointer;border:none;color:var(--ink);backgroun
 #seFlash{position:absolute;inset:0;pointer-events:none;z-index:5;opacity:0}
 #seFlash.pulse{animation:sepulse .5s ease}
 @keyframes sepulse{0%{opacity:0}30%{opacity:.5;background:radial-gradient(circle at 50% 50%,rgba(255,157,110,.25),transparent 60%)}100%{opacity:0}}
-#stage.shake{animation:shake .4s}
-@keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-5px)}40%{transform:translateX(5px)}60%{transform:translateX(-3px)}80%{transform:translateX(3px)}}
+#stage.shake{animation:shake .5s cubic-bezier(.36,.07,.19,.97) both}
+/* 撞擊震動（加強）：±10px 橫向 + 縱向 jitter，衰減收束；reduced-motion 下被通用規則關閉 */
+@keyframes shake{
+  0%,100%{transform:translate(0,0)}
+  10%{transform:translate(-10px,4px)}
+  22%{transform:translate(9px,-5px)}
+  35%{transform:translate(-10px,4px)}
+  48%{transform:translate(8px,-3px)}
+  62%{transform:translate(-6px,2px)}
+  78%{transform:translate(4px,-2px)}
+  90%{transform:translate(-2px,1px)}
+}
 
 /* ---- SNS 覆蓋（z5：壓過角落場景卡，避免相互遮擋）---- */
 #snsLayer{position:absolute;inset:0;z-index:5;display:flex;align-items:center;justify-content:center;

@@ -1,0 +1,266 @@
+[
+  {
+    "key": "cloth",
+    "top_match": "mask",
+    "own_rank": 7,
+    "own_sim": 0.095,
+    "flag": false,
+    "detail": "own=0.09 best=0.50(mask) rank=7 distractMax=0.01"
+  },
+  {
+    "key": "wind",
+    "top_match": "bump",
+    "own_rank": 4,
+    "own_sim": 0.415,
+    "flag": false,
+    "detail": "own=0.41 best=0.49(bump) rank=4 distractMax=0.38"
+  },
+  {
+    "key": "pat",
+    "top_match": "mask",
+    "own_rank": 4,
+    "own_sim": 0.238,
+    "flag": false,
+    "detail": "own=0.24 best=0.38(mask) rank=4 distractMax=0.01"
+  },
+  {
+    "key": "step",
+    "top_match": "rush",
+    "own_rank": 3,
+    "own_sim": 0.281,
+    "flag": false,
+    "detail": "own=0.28 best=0.46(rush) rank=3 distractMax=0.04"
+  },
+  {
+    "key": "tiptoe",
+    "top_match": "step",
+    "own_rank": 3,
+    "own_sim": 0.311,
+    "flag": false,
+    "detail": "own=0.31 best=0.37(step) rank=3 distractMax=0.09"
+  },
+  {
+    "key": "call",
+    "top_match": "store",
+    "own_rank": 3,
+    "own_sim": 0.263,
+    "flag": false,
+    "detail": "own=0.26 best=0.30(store) rank=3 distractMax=0.02"
+  },
+  {
+    "key": "bump",
+    "top_match": "stick",
+    "own_rank": 3,
+    "own_sim": 0.327,
+    "flag": false,
+    "detail": "own=0.33 best=0.48(stick) rank=3 distractMax=0.13"
+  },
+  {
+    "key": "fridge",
+    "top_match": "door",
+    "own_rank": 2,
+    "own_sim": 0.391,
+    "flag": false,
+    "detail": "own=0.39 best=0.42(door) rank=2 distractMax=-0.02"
+  },
+  {
+    "key": "count",
+    "top_match": "coin",
+    "own_rank": 2,
+    "own_sim": 0.6,
+    "flag": false,
+    "detail": "own=0.60 best=0.60(coin) rank=2 distractMax=0.01"
+  },
+  {
+    "key": "bag",
+    "top_match": "paper",
+    "own_rank": 2,
+    "own_sim": 0.284,
+    "flag": false,
+    "detail": "own=0.28 best=0.34(paper) rank=2 distractMax=0.05"
+  },
+  {
+    "key": "steam",
+    "top_match": "receipt",
+    "own_rank": 2,
+    "own_sim": 0.403,
+    "flag": false,
+    "detail": "own=0.40 best=0.41(receipt) rank=2 distractMax=0.13"
+  },
+  {
+    "key": "give",
+    "top_match": "store",
+    "own_rank": 2,
+    "own_sim": 0.32,
+    "flag": false,
+    "detail": "own=0.32 best=0.44(store) rank=2 distractMax=-0.02"
+  },
+  {
+    "key": "toss",
+    "top_match": "swipe",
+    "own_rank": 2,
+    "own_sim": 0.239,
+    "flag": false,
+    "detail": "own=0.24 best=0.51(swipe) rank=2 distractMax=-0.00"
+  },
+  {
+    "key": "stop",
+    "top_match": "step",
+    "own_rank": 2,
+    "own_sim": 0.375,
+    "flag": false,
+    "detail": "own=0.37 best=0.40(step) rank=2 distractMax=0.02"
+  },
+  {
+    "key": "car",
+    "top_match": "fog",
+    "own_rank": 2,
+    "own_sim": 0.28,
+    "flag": false,
+    "detail": "own=0.28 best=0.31(fog) rank=2 distractMax=0.11"
+  },
+  {
+    "key": "door",
+    "top_match": "door",
+    "own_rank": 1,
+    "own_sim": 0.368,
+    "flag": false,
+    "detail": "own=0.37 best=0.37(door) rank=1 distractMax=-0.00"
+  },
+  {
+    "key": "heater",
+    "top_match": "heater",
+    "own_rank": 1,
+    "own_sim": 0.373,
+    "flag": false,
+    "detail": "own=0.37 best=0.37(heater) rank=1 distractMax=0.17"
+  },
+  {
+    "key": "beep",
+    "top_match": "beep",
+    "own_rank": 1,
+    "own_sim": 0.394,
+    "flag": false,
+    "detail": "own=0.39 best=0.39(beep) rank=1 distractMax=0.15"
+  },
+  {
+    "key": "coin",
+    "top_match": "coin",
+    "own_rank": 1,
+    "own_sim": 0.631,
+    "flag": false,
+    "detail": "own=0.63 best=0.63(coin) rank=1 distractMax=0.11"
+  },
+  {
+    "key": "receipt",
+    "top_match": "receipt",
+    "own_rank": 1,
+    "own_sim": 0.326,
+    "flag": false,
+    "detail": "own=0.33 best=0.33(receipt) rank=1 distractMax=0.04"
+  },
+  {
+    "key": "store",
+    "top_match": "store",
+    "own_rank": 1,
+    "own_sim": 0.381,
+    "flag": false,
+    "detail": "own=0.38 best=0.38(store) rank=1 distractMax=0.18"
+  },
+  {
+    "key": "rain",
+    "top_match": "rain",
+    "own_rank": 1,
+    "own_sim": 0.441,
+    "flag": false,
+    "detail": "own=0.44 best=0.44(rain) rank=1 distractMax=0.12"
+  },
+  {
+    "key": "fog",
+    "top_match": "fog",
+    "own_rank": 1,
+    "own_sim": 0.459,
+    "flag": false,
+    "detail": "own=0.46 best=0.46(fog) rank=1 distractMax=0.30"
+  },
+  {
+    "key": "tap",
+    "top_match": "tap",
+    "own_rank": 1,
+    "own_sim": 0.442,
+    "flag": false,
+    "detail": "own=0.44 best=0.44(tap) rank=1 distractMax=0.26"
+  },
+  {
+    "key": "stick",
+    "top_match": "stick",
+    "own_rank": 1,
+    "own_sim": 0.396,
+    "flag": false,
+    "detail": "own=0.40 best=0.40(stick) rank=1 distractMax=0.08"
+  },
+  {
+    "key": "swipe",
+    "top_match": "swipe",
+    "own_rank": 1,
+    "own_sim": 0.488,
+    "flag": false,
+    "detail": "own=0.49 best=0.49(swipe) rank=1 distractMax=-0.10"
+  },
+  {
+    "key": "paper",
+    "top_match": "paper",
+    "own_rank": 1,
+    "own_sim": 0.561,
+    "flag": false,
+    "detail": "own=0.56 best=0.56(paper) rank=1 distractMax=0.05"
+  },
+  {
+    "key": "pebble",
+    "top_match": "pebble",
+    "own_rank": 1,
+    "own_sim": 0.457,
+    "flag": false,
+    "detail": "own=0.46 best=0.46(pebble) rank=1 distractMax=0.21"
+  },
+  {
+    "key": "mask",
+    "top_match": "mask",
+    "own_rank": 1,
+    "own_sim": 0.364,
+    "flag": false,
+    "detail": "own=0.36 best=0.36(mask) rank=1 distractMax=-0.05"
+  },
+  {
+    "key": "rush",
+    "top_match": "rush",
+    "own_rank": 1,
+    "own_sim": 0.355,
+    "flag": false,
+    "detail": "own=0.35 best=0.35(rush) rank=1 distractMax=-0.02"
+  },
+  {
+    "key": "buzz",
+    "top_match": "buzz",
+    "own_rank": 1,
+    "own_sim": 0.63,
+    "flag": false,
+    "detail": "own=0.63 best=0.63(buzz) rank=1 distractMax=0.20"
+  },
+  {
+    "key": "flash",
+    "top_match": "flash",
+    "own_rank": 1,
+    "own_sim": 0.471,
+    "flag": false,
+    "detail": "own=0.47 best=0.47(flash) rank=1 distractMax=0.08"
+  },
+  {
+    "key": "tummy",
+    "top_match": "tummy",
+    "own_rank": 1,
+    "own_sim": 0.403,
+    "flag": false,
+    "detail": "own=0.40 best=0.40(tummy) rank=1 distractMax=0.36"
+  }
+]

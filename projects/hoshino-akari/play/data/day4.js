@@ -1,7 +1,7 @@
 /* Day4 —— 赴約的代價（貼文升級・停車場販賣機） */
 window.HOSHINO.days[4] = [
   /* ───── 白天・公司：推薦欄的數字 ───── */
-  { type: "scene", place: "白天・公司", time: "午休", mood: "warm" },
+  { type: "scene", place: "白天・公司", time: "午休", mood: "warm", bg: "bg_office_day_warm" },
 
   { type: "line", who: "narration", text: "我滑開手機。", bgm: "warm" },
   { type: "line", who: "narration", text: "推薦欄裡，昨晚那張模糊照片，已經不只一個帳號在轉。" },
@@ -50,7 +50,7 @@ window.HOSHINO.days[4] = [
   },
 
   /* ───── 深夜・公司門口：去，還是不去 ───── */
-  { type: "scene", place: "深夜・公司門口", time: "零點四十分", mood: "night" },
+  { type: "scene", place: "深夜・公司門口", time: "零點四十分", mood: "night", bg: "bg_office_entrance_night" },
 
   { type: "line", who: "narration", text: "加班結束。", bgm: "night" },
   { type: "line", who: "narration", text: "公司就在便利商店兩條街外。" },
@@ -88,7 +88,7 @@ window.HOSHINO.days[4] = [
   },
 
   /* ───── 深夜・便利商店 後巷：繞遠路的貓 ───── */
-  { type: "scene", place: "深夜・便利商店 後巷", time: "一點零五分", mood: "night" },
+  { type: "scene", place: "深夜・便利商店 後巷", time: "一點零五分", mood: "night", bg: "bg_conv_backalley_night" },
 
   { type: "line", who: "narration", text: "風比昨天更冷。", bgm: "night" },
   { type: "line", who: "narration", text: "我把手插進口袋。" },
@@ -121,7 +121,7 @@ window.HOSHINO.days[4] = [
   { type: "line", who: "akari", text: "「停車場那邊有販賣機。」她把手插回口袋，「偵察成果。」" },
 
   /* ───── 深夜・停車場：熱可可與布丁 ───── */
-  { type: "scene", place: "深夜・便利商店後方 停車場", time: "一點二十五分", mood: "store" },
+  { type: "scene", place: "深夜・便利商店後方 停車場", time: "一點二十五分", mood: "store", bg: "bg_vending_parking_night" },
 
   { type: "line", who: "narration", text: "停車場的盡頭。", bgm: "store" },
   { type: "line", who: "narration", text: "一排自動販賣機，旁邊一張塑膠長椅。" },
@@ -301,7 +301,7 @@ window.HOSHINO.days[4] = [
   },
 
   /* ───── 回家・深夜：貼文再升級與收抽屜 ───── */
-  { type: "scene", place: "回家・深夜", time: "深夜", mood: "night" },
+  { type: "scene", place: "回家・深夜", time: "深夜", mood: "night", bg: "bg_street_night_cold" },
 
   { type: "line", who: "narration", text: "我躺在床上，滑開手機。", bgm: "night" },
   { type: "line", who: "narration", text: "推薦欄裡，那則目擊貼文又被轉了一次。" },

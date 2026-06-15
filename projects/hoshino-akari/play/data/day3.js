@@ -1,13 +1,13 @@
 /* Day3 —— 久違的便利商店（冬季版・自己選自己付的焦糖布丁） */
 window.HOSHINO.days[3] = [
   // ── 白天・主角的日常 ──
-  { type: "scene", place: "回家路上", time: "傍晚", mood: "warm" },
+  { type: "scene", place: "回家路上", time: "傍晚", mood: "warm", bg: "bg_street_evening" },
   { type: "line", who: "narration", text: "下班路上，我發現自己一直在看時間。", bgm: "warm" },
   { type: "line", who: "narration", text: "還有六個小時。" },
   { type: "line", who: "narration", text: "……我到底在期待什麼。", speed: "slow", pause: 0.8 },
 
   // ── 深夜・便利商店前 ──
-  { type: "scene", place: "深夜・便利商店 門口", time: "凌晨零點四十分", mood: "night" },
+  { type: "scene", place: "深夜・便利商店 門口", time: "凌晨零點四十分", mood: "night", bg: "bg_conv_front_night" },
   { type: "line", who: "narration", text: "呼出的氣是白的。", bgm: "night" },
   { type: "line", who: "narration", text: "我比昨天早了十分鐘。" },
   { type: "line", who: "narration", text: "結果還是輸了。", speed: "slow", pause: 0.8 },
@@ -57,7 +57,7 @@ window.HOSHINO.days[3] = [
   },
 
   // ── 兩個選項匯合・進店起霧 ──
-  { type: "scene", place: "便利商店 店內", time: "深夜", mood: "store" },
+  { type: "scene", place: "便利商店 店內", time: "深夜", mood: "store", bg: "bg_conv_interior_warm" },
   { type: "line", who: "narration", text: "玻璃門「叮咚」滑開。", se: "door", bgm: "store" },
   { type: "line", who: "narration", text: "她跨進去。" },
   { type: "line", who: "narration", text: "暖氣迎面撲上來——" },
@@ -75,7 +75,7 @@ window.HOSHINO.days[3] = [
   { type: "line", who: "narration", text: "腳步越來越慢。" },
 
   // ── 甜點櫃・放學回憶 ──
-  { type: "line", who: "narration", text: "在甜點櫃前面，她停住了。" },
+  { type: "line", who: "narration", text: "在甜點櫃前面，她停住了。", bg: "bg_conv_dessert_case" },
   { type: "line", who: "narration", text: "一整排布丁。" },
   { type: "line", who: "narration", text: "焦糖的、抹茶的、北海道牛奶的。" },
   { type: "line", who: "narration", text: "她站著，沒有動。" },
@@ -134,7 +134,7 @@ window.HOSHINO.days[3] = [
   { type: "line", who: "narration", text: "只是跟上來的時候，腳步比剛才近了一點。" },
 
   // ── 櫃檯・店員可愛危機 ──
-  { type: "scene", place: "便利商店 櫃檯", time: "深夜", mood: "store" },
+  { type: "scene", place: "便利商店 櫃檯", time: "深夜", mood: "store", bg: "bg_conv_interior_warm" },
   { type: "line", who: "narration", text: "店員是個大學生模樣的男生，睏睏的。" },
   { type: "line", who: "narration", text: "掃條碼的時候，他抬頭看了她一眼。", se: "beep" },
   { type: "line", who: "narration", text: "又看了第二眼。" },
@@ -163,7 +163,7 @@ window.HOSHINO.days[3] = [
   { type: "line", who: "narration", text: "什麼都沒說。" },
 
   // ── 店外 ──
-  { type: "scene", place: "便利商店 外", time: "深夜", mood: "night" },
+  { type: "scene", place: "便利商店 外", time: "深夜", mood: "night", bg: "bg_conv_front_night" },
   { type: "line", who: "narration", text: "自動門在我們身後關上。", se: "door", bgm: "night" },
   { type: "line", who: "narration", text: "冷空氣裡，她長長吐出一口白氣。" },
   { type: "line", who: "akari", text: "「好險。」" },
@@ -175,7 +175,7 @@ window.HOSHINO.days[3] = [
   { type: "line", who: "narration", text: "我笑出來。" },
 
   // ── 後巷・暖暖包與「剛好」 ──
-  { type: "scene", place: "便利商店 後巷", time: "深夜", mood: "night" },
+  { type: "scene", place: "便利商店 後巷", time: "深夜", mood: "night", bg: "bg_conv_backalley_night" },
   { type: "line", who: "narration", text: "她把布丁捧在手心。", expr: "珍惜" },
   { type: "line", who: "narration", text: "路燈下，看了很久。" },
   { type: "line", who: "narration", text: "但沒有打開。" },
@@ -203,7 +203,7 @@ window.HOSHINO.days[3] = [
   { type: "line", who: "narration", text: "她走了。" },
 
   // ── 回家・推薦欄目擊貼文 ──
-  { type: "scene", place: "我的房間", time: "深夜", mood: "stop" },
+  { type: "scene", place: "我的房間", time: "深夜", mood: "stop", bg: "bg_room_night" },
   { type: "line", who: "narration", text: "我躺在床上，滑開手機。", se: "swipe" },
   { type: "line", who: "narration", text: "推薦欄裡，一個娛樂帳號轉貼了一張模糊的照片。" },
   { type: "line", who: "narration", text: "深夜的街口。" },

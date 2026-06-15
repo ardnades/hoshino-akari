@@ -6,7 +6,7 @@ window.HOSHINO.endings = {
 
   /* ─────────── warm_true（暖・真）：後日談偏甜 ─────────── */
   warm_true: [
-    { type: "scene", place: "幾天後・通勤電車", time: "傍晚", mood: "warm" },
+    { type: "scene", place: "幾天後・通勤電車", time: "傍晚", mood: "warm", bg: "bg_train_warm" },
 
     { type: "line", who: "narration", text: "那之後，我沒有刻意找她的消息。", bgm: "warm" },
     { type: "line", who: "narration", text: "只是眼睛開始容易停在她的名字旁邊——招牌上、手機推薦欄、電車廂的廣告欄。" },
@@ -23,7 +23,7 @@ window.HOSHINO.endings = {
     { type: "line", who: "narration", text: "她笑。觀眾沒聽懂。", pause: 0.5 },
     { type: "line", who: "narration", text: "只有我懂。", speed: "slow", pause: 0.8 },
     { type: "line", who: "narration", text: "下車之後，我走進車站旁的便利商店。" },
-    { type: "line", who: "narration", text: "走到甜點櫃前。焦糖布丁，還擺在老位置。" },
+    { type: "line", who: "narration", text: "走到甜點櫃前。焦糖布丁，還擺在老位置。", bg: "bg_conv_dessert_case" },
     { type: "line", who: "narration", text: "我拿起一個。", pause: 0.4 },
     { type: "line", who: "narration", text: "店員問我，要不要袋子。" },
     { type: "line", who: "me", text: "「不用。」" },
@@ -34,7 +34,7 @@ window.HOSHINO.endings = {
 
   /* ─────────── quiet_normal（靜・常・保底）：平實版 ─────────── */
   quiet_normal: [
-    { type: "scene", place: "幾天後・通勤電車", time: "傍晚", mood: "night" },
+    { type: "scene", place: "幾天後・通勤電車", time: "傍晚", mood: "night", bg: "bg_train_night_cold" },
 
     { type: "line", who: "narration", text: "那之後，我沒有刻意找她的消息。", bgm: "night" },
     { type: "line", who: "narration", text: "偷來的七天，安靜地還了回去。", speed: "slow", pause: 0.7 },
@@ -50,7 +50,7 @@ window.HOSHINO.endings = {
     { type: "line", who: "narration", text: "她笑。影片停在那裡。", pause: 0.5 },
 
     { type: "line", who: "narration", text: "下車之後，我走進車站旁的便利商店。" },
-    { type: "line", who: "narration", text: "走到甜點櫃前。焦糖布丁，還擺在老位置。" },
+    { type: "line", who: "narration", text: "走到甜點櫃前。焦糖布丁，還擺在老位置。", bg: "bg_conv_dessert_case" },
     { type: "line", who: "narration", text: "我拿起一個。" },
     { type: "line", who: "narration", text: "店員問我，要不要袋子。" },
     { type: "line", who: "me", text: "「不用。」" },
@@ -61,7 +61,7 @@ window.HOSHINO.endings = {
 
   /* ─────────── bitter（苦・餘味）：加一句、只一句錯過尾句 ─────────── */
   bitter: [
-    { type: "scene", place: "幾天後・通勤電車", time: "傍晚", mood: "night" },
+    { type: "scene", place: "幾天後・通勤電車", time: "傍晚", mood: "night", bg: "bg_train_night_cold" },
 
     { type: "line", who: "narration", text: "那之後，我沒有刻意找她的消息。", bgm: "night" },
     { type: "line", who: "narration", text: "回家路上，我路過那間便利商店，沒有停。" },
@@ -76,7 +76,7 @@ window.HOSHINO.endings = {
     { type: "line", who: "narration", text: "她笑。影片閃過。", pause: 0.5 },
 
     { type: "line", who: "narration", text: "下車之後，我走進車站旁的便利商店。" },
-    { type: "line", who: "narration", text: "走到甜點櫃前。焦糖布丁，還擺在老位置。" },
+    { type: "line", who: "narration", text: "走到甜點櫃前。焦糖布丁，還擺在老位置。", bg: "bg_conv_dessert_case_cold" },
     { type: "line", who: "narration", text: "我拿起一個。" },
     { type: "line", who: "narration", text: "店員問我，要不要袋子。" },
     { type: "line", who: "me", text: "「不用。」" },
@@ -88,7 +88,7 @@ window.HOSHINO.endings = {
 
   /* ─────────── hidden_pov_tail（接在 warm_true 之後播）：灯視角內心半句 ─────────── */
   hidden_pov_tail: [
-    { type: "scene", place: "同一個傍晚・攝影棚", time: "收工後", mood: "warm" },
+    { type: "scene", place: "同一個傍晚・攝影棚", time: "收工後", mood: "warm", bg: "bg_photo_studio_hidden" },
 
     { type: "line", who: "narration", text: "——而那一頭，她拍完了最後一個工作。", speed: "slow", bgm: "warm", pause: 0.6 },
     { type: "line", who: "akari", text: "燈一盞一盞暗下去，只剩我站的這一塊還亮著。", speed: "slow", cg: "akari_studio" },

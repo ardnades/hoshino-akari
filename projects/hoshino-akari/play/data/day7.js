@@ -1,7 +1,7 @@
 /* Day7 —— 最終話・告別段（傍晚 17:40 商店街雨棚盡頭；後日談在 endings.js 依結局調味） */
 window.HOSHINO.days[7] = [
   /* ── S1 白天・公司：標籤縫裡的紙片 ── */
-  { type: "scene", place: "白天・公司", time: "午休～下午", mood: "warm" },
+  { type: "scene", place: "白天・公司", time: "午休～下午", mood: "warm", bg: "bg_office_day_warm" },
 
   { type: "line", who: "narration", text: "最後一天。", bgm: "warm", speed: "slow" },
   { type: "line", who: "narration", text: "我知道。" },
@@ -30,7 +30,7 @@ window.HOSHINO.days[7] = [
   { type: "line", who: "narration", text: "17:40。冬天，差不多那時候，天就黑了。", speed: "slow" },
 
   /* ── S2 傍晚・雨棚盡頭：工作車旁的十分鐘 ── */
-  { type: "scene", place: "傍晚・商店街 雨棚盡頭", time: "傍晚 17:38", mood: "stop" },
+  { type: "scene", place: "傍晚・商店街 雨棚盡頭", time: "傍晚 17:38", mood: "stop", bg: "bg_arcade_end_twilight" },
 
   { type: "line", who: "narration", text: "冬天的傍晚，黑得很快。", bgm: "stop" },
   { type: "line", who: "narration", text: "商店街的鐵門，白天就拉著，到現在也沒開。雨棚一路延伸到盡頭，接上前面那條大路。" },
@@ -268,7 +268,7 @@ window.HOSHINO.days[7] = [
   { type: "line", who: "narration", text: "她回到原本的世界。", pause: 0.8 },
 
   /* ── 回家路上 ── */
-  { type: "scene", place: "深夜・回家路上", time: "當晚", mood: "store" },
+  { type: "scene", place: "深夜・回家路上", time: "當晚", mood: "store", bg: "bg_street_night_cold" },
 
   { type: "line", who: "narration", text: "我路過那間便利商店。沒有停。只看了一眼玻璃門。", bgm: "store" },
   { type: "line", who: "narration", text: "裡面很亮。關東煮的湯氣，還是把玻璃霧成一片白。", cg: "clear" },

@@ -1,7 +1,7 @@
 /* Day5 —— 她不在，可是痕跡在（缺席日・收據解謎＋留物回應） */
 window.HOSHINO.days[5] = [
   /* ── D5-S1：午休・決定要不要去 ── */
-  { type: "scene", place: "白天・公司", time: "午休", mood: "store" },
+  { type: "scene", place: "白天・公司", time: "午休", mood: "store", bg: "bg_office_day_warm" },
 
   { type: "line", who: "narration", text: "我又點開那則貼文。", bgm: "rain" },
   { type: "line", who: "narration", text: "轉貼還在增加。" },
@@ -37,7 +37,7 @@ window.HOSHINO.days[5] = [
   { type: "line", who: "narration", text: "那就去。", speed: "slow", pause: 0.8 },
 
   /* ── D5-S2：等待・空位（無人的後巷）── */
-  { type: "scene", place: "深夜・便利商店 後巷", time: "凌晨一點", mood: "night" },
+  { type: "scene", place: "深夜・便利商店 後巷", time: "凌晨一點", mood: "night", bg: "bg_conv_backalley_empty_cold" },
 
   { type: "line", who: "narration", text: "一點零五分。沒有人。", speed: "instant", bgm: "night", pause: 0.8 },
   { type: "line", who: "narration", text: "一點十五分。沒有人。", speed: "instant", pause: 0.8 },
@@ -148,7 +148,7 @@ window.HOSHINO.days[5] = [
   },
 
   /* ── D5-S4：停車場・還溫的熱可可（軟分歧2匯合）── */
-  { type: "scene", place: "深夜・便利商店後方 停車場", time: "凌晨一點半", mood: "night" },
+  { type: "scene", place: "深夜・便利商店後方 停車場", time: "凌晨一點半", mood: "night", bg: "bg_vending_parking_empty_cold" },
 
   { type: "line", who: "narration", text: "販賣機的燈，在黑暗裡亮著。", bgm: "warm" },
   { type: "line", who: "narration", text: "塑膠長椅空著。" },
@@ -270,7 +270,7 @@ window.HOSHINO.days[5] = [
   { type: "line", who: "narration", text: "也沒走。", speed: "slow", pause: 1.0 },
 
   /* ── D5-S6：店前・地點開始暴露（結尾Hook）── */
-  { type: "scene", place: "深夜・便利商店 前", time: "凌晨一點半", mood: "store" },
+  { type: "scene", place: "深夜・便利商店 前", time: "凌晨一點半", mood: "store", bg: "bg_conv_front_night" },
 
   { type: "line", who: "narration", text: "繞回店門口的時候，手機震了一下。", bgm: "rain", se: "buzz" },
   { type: "line", who: "narration", text: "推薦欄，新的貼文。" },

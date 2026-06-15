@@ -84,6 +84,15 @@
       const cg = (assets && assets.cg) || {};
       return Object.prototype.hasOwnProperty.call(cg, key) || Object.prototype.hasOwnProperty.call(ART, key);
     };
+    // 背景：node.bg（場景地點＋情緒色，如 bg_conv_backalley_night）須在 assets.background 內有對應圖
+    const bgResolvable = (key) =>
+      Object.prototype.hasOwnProperty.call((assets && assets.background) || {}, key);
+    // 口罩等 overlay：node.mask 須在該角色 assets.characters[who]["@masks"] 內有對應透明 PNG
+    const maskResolvable = (who, key) => {
+      const ch = ((assets && assets.characters) || {})[who || ""] || {};
+      const masks = ch["@masks"] || {};
+      return Object.prototype.hasOwnProperty.call(masks, key);
+    };
     const checkScoreKeys = (obj, file, loc, label, rule) => {
       if (typeof obj !== "object") { err(file, loc, `${label} 必須是物件`, rule); return; }
       for (const k of Object.keys(obj)) if (!SCORE_KEYS.includes(k)) err(file, loc, `${label} key "${k}" 不在允許分數 {${SCORE_KEYS.join(",")}}`, rule);
@@ -126,6 +135,7 @@
 
       if (node.type === "scene") {
         if (node.mood != null && !MOODS.has(node.mood)) err(file, loc, `scene.mood "${node.mood}" 不在合法清單 {${[...MOODS].join(",")}}`, "scene-mood");
+        if (node.bg != null && !bgResolvable(node.bg)) warn(file, loc, `scene.bg "${node.bg}" 無對應 assets.background（缺圖會 fallback mood／CSS 漸層）`, "scene-bg");
       }
 
       if (node.type === "line") {
@@ -135,6 +145,8 @@
         if (node.speed != null && !SPEEDS.has(node.speed)) err(file, loc, `line.speed "${node.speed}" 不合法（normal/slow/instant）`, "line-speed");
         if (node.bgm != null && node.bgm !== "" && !MOODS.has(node.bgm)) err(file, loc, `line.bgm "${node.bgm}" 不是合法 mood`, "line-bgm");
         if (node.cg != null && node.cg !== "clear" && !cgResolvable(node.cg)) warn(file, loc, `line.cg "${node.cg}" 無 assets.cg 真圖、也無 ART fallback`, "line-cg");
+        if (node.mask != null && !maskResolvable(node.who, node.mask)) warn(file, loc, `line.mask "${node.mask}" 在 assets.characters["${node.who}"]["@masks"] 無對應 overlay`, "line-mask");
+        if (node.bg != null && !bgResolvable(node.bg)) warn(file, loc, `line.bg "${node.bg}" 無對應 assets.background`, "line-bg");
         if (node.se != null) {
           if (assets.enabled && assets.enabled.se) {
             const se = assets.se || {};

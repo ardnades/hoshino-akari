@@ -13,7 +13,7 @@ window.HOSHINO.days[2] = [
   { type: "line", who: "narration", text: "我沒去想。", speed: "instant" },
 
   /* ===== D2-S2　暗處的聲音 ===== */
-  { type: "scene", place: "深夜・便利商店", time: "凌晨零點五十分", mood: "store" },
+  { type: "scene", place: "深夜・便利商店", time: "凌晨零點五十分", mood: "store", bg: "bg_conv_interior_warm" },
 
   { type: "line", who: "narration", text: "推開門，暖氣撲到臉上。", bgm: "store" },
   { type: "line", who: "narration", text: "關東煮的湯氣，把玻璃霧出一片白。", se: "heater" },
@@ -21,7 +21,7 @@ window.HOSHINO.days[2] = [
   { type: "line", who: "me", text: "「……多買一塊也還好。」" },
   { type: "line", who: "narration", text: "我夾了兩塊。" },
 
-  { type: "scene", place: "便利商店 後巷", time: "凌晨一點", mood: "night" },
+  { type: "scene", place: "便利商店 後巷", time: "凌晨一點", mood: "night", bg: "bg_conv_backalley_night" },
 
   { type: "line", who: "narration", text: "外面，呼出的氣是白的。我靠在牆邊。", bgm: "night" },
   { type: "line", who: "narration", text: "手裡那袋關東煮，是整條巷子唯一熱的東西。" },

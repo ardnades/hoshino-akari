@@ -1,0 +1,30 @@
+{
+  "fog": {
+    "freesound_id": 473866,
+    "name": "StormRumble-001.wav",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/",
+    "query": "storm",
+    "clap_sim": 0.445
+  },
+  "tiptoe": {
+    "freesound_id": 688595,
+    "name": "Footsteps on light gravel path stride 2",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/",
+    "query": "footsteps",
+    "clap_sim": 0.311
+  },
+  "bump": {
+    "freesound_id": 342533,
+    "name": "Light Thud 1",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/",
+    "query": "thud",
+    "clap_sim": 0.327
+  },
+  "impact": {
+    "freesound_id": 734629,
+    "name": "Body - Fall, heavy dangerous",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/",
+    "query": "body impact thud",
+    "clap_sim": 0.621
+  }
+}

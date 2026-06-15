@@ -28,11 +28,51 @@
     if (url) { try { const a = new Audio(url); a.volume = 0.6; a.play().catch(() => {}); } catch (e) {} }
     flashSE();                                                          // 視覺脈衝永遠保留（即使沒音檔）
   }
-  function setSprite(who, expr) {
+  // ── 立繪演出 v0：pos / depth / motion（讀 line 欄位 → 套 CSS class）＋ clear 乾淨退場 ──
+  // 沒有任何演出欄位的 line：className 維持純 "sprite-stack"，行為與舊版完全一致（向後相容硬要求）。
+  const SPRITE_POS = { left: "sprite-pos-left", right: "sprite-pos-right" };       // center = 預設，不加 class
+  const SPRITE_DEPTH = { near: "sprite-depth-near", far: "sprite-depth-far", closeup: "sprite-depth-closeup" }; // normal = 預設不加 class；closeup = 維持臉部大特寫（與 walk_in 終點同框，換表情不變回原大小）
+  const SPRITE_MOTION = {
+    fade_in: "sprite-motion-fade-in", slide_in_left: "sprite-motion-slide-in-left",
+    slide_in_right: "sprite-motion-slide-in-right", step_in: "sprite-motion-step-in", step_back: "sprite-motion-step-back",
+    walk_in: "sprite-motion-walk-in",    // 慢慢走近（走路踏步感，由遠走到面前）；搭 depth:"near" 收在靠近態
+    rush_in: "sprite-motion-rush-in",    // 由畫面外快速衝入＋逼近放大（撞擊）；建議同行加 shake:true + se 做撞畫面
+  };
+  const SPRITE_EXIT_MS = 280;
+  const prefersReducedMotion = () => { try { return !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches); } catch (e) { return false; } };
+  let spriteGen = 0;                                                              // 競態守衛：每次 setSprite / 退場 / 換日都 +1
+  function setSprite(who, expr, mask, opts) {
+    spriteGen++;
     const el = $("spriteLayer"); if (!el) return;
-    const c = A().characters || {}; const url = (expr != null && c[who]) ? c[who][expr] : null;
-    if (url) { el.innerHTML = `<img class="sprite" src="${url}" alt="" onerror="this.parentNode.classList.add('hidden')">`; el.classList.remove("hidden"); }
-    else { el.classList.add("hidden"); el.innerHTML = ""; }
+    const c = A().characters || {}; let cw = c[who] || null;
+    // 旁白等無立繪角色：expr 若能在 akari 解析，回退用 akari 立繪（旁白描述她→顯示她，如「轉身走進黑暗」顯示背影）。
+    // 僅在該 who 無立繪表＋expr 非空＋akari 有此 expr 時觸發 → 純加值，不動既有 akari/manager 行為。
+    if (!cw && expr != null && expr !== "" && c.akari && c.akari[expr] != null) cw = c.akari;
+    const url = (expr != null && cw) ? cw[expr] : null;
+    if (!url) { el.classList.add("hidden"); el.innerHTML = ""; return; }
+    // 口罩等 overlay：與立繪同畫布尺寸的透明 PNG，疊在 base 上自動對位（mask 為可選，無 mask 即單張）
+    const masks = (cw && cw["@masks"]) || {};
+    const mUrl = (mask != null && masks[mask]) ? masks[mask] : null;
+    const ov = mUrl ? `<img class="sprite-mask" src="${mUrl}" alt="" onerror="this.remove()">` : "";
+    const o = opts || {};                                                         // pos/depth/motion 皆 optional；未知值 → 不加 class（安全 no-op）
+    const cls = ["sprite-stack", SPRITE_POS[o.pos], SPRITE_DEPTH[o.depth], SPRITE_MOTION[o.motion]].filter(Boolean).join(" ");
+    // motionDur（秒）：optional，逐句覆寫 motion 速度。設為 CSS 變數 --motion-dur（只驅動位移/縮放主動畫；
+    // walk_in 的淡入是另一段固定時長動畫、不受影響）。只在有 motion 時有意義。
+    const dur = (typeof o.motionDur === "number" && o.motionDur > 0) ? ` style="--motion-dur:${o.motionDur}s"` : "";
+    el.innerHTML = `<div class="${cls}"${dur}><img class="sprite" src="${url}" alt="" onerror="this.closest('#spriteLayer').classList.add('hidden')">${ov}</div>`;
+    el.classList.remove("hidden");
+  }
+  // clear:true 乾淨退場：加 .sprite-exit → await（非 fire-and-forget）→ gen 未被後續操作改變才清空。
+  // skip/auto 經 delay() 收斂為 ~4ms；reduced-motion 收斂為 0；跳日/重玩會 setSprite(null) 推進 gen 使本次退場 no-op。
+  async function clearSpriteAnimated() {
+    const el = $("spriteLayer"); if (!el) return;
+    spriteGen++; const myGen = spriteGen;
+    const stack = el.querySelector(".sprite-stack");
+    if (!stack || el.classList.contains("hidden")) { el.classList.add("hidden"); el.innerHTML = ""; return; }
+    stack.classList.add("sprite-exit");
+    await delay(prefersReducedMotion() ? 0 : SPRITE_EXIT_MS);
+    if (myGen !== spriteGen) return;                                              // 已被新立繪 / 換日 / 另一次退場取代 → 不可清掉新狀態
+    el.classList.add("hidden"); el.innerHTML = "";
   }
 
   // ---- 前進控制（點擊 / 鍵盤 / auto / skip）----
@@ -44,11 +84,11 @@
   function waitAdvance(ms) {
     return new Promise((res) => {
       pendingAdvance = () => { pendingAdvance = null; res(); };
-      if (skipMode) { const r = pendingAdvance; pendingAdvance = null; setTimeout(r, 12); }
+      if (skipMode) { const r = pendingAdvance; pendingAdvance = null; setTimeout(r, 70); }
       else if (autoMode && ms) { setTimeout(() => { if (pendingAdvance) userAdvance(); }, ms); }
     });
   }
-  const delay = (ms) => new Promise((r) => setTimeout(r, skipMode ? 4 : ms));
+  const delay = (ms) => new Promise((r) => setTimeout(r, skipMode ? 25 : ms));
 
   // ---- 條件評估 ----
   function evalCond(cond) {
@@ -61,11 +101,30 @@
   }
 
   // ---- 舞台繪製 ----
-  function setMood(m) {
-    if (!m) return;
-    const bg = $("moodbg"); bg.className = m;
-    const url = assetUrl("background", m); bg.style.backgroundImage = url ? `url(${url})` : "";  // 無圖 → CSS 漸層
-    playBGM(m);
+  // curBg：目前場景背景圖 key（地點＋情緒色，如 bg_conv_backalley_night）。場景以 setMood(mood,bgKey) 設定並「黏住」；
+  // 行內 bgm 只重啟音樂、不洗掉背景圖（bgKey 省略 → 保留 curBg）。行內 bg 只換圖（mood 省略 → 不動音樂/漸層）。
+  let curBg = null;
+  function setMood(m, bgKey) {
+    if (!m && bgKey === undefined) return;
+    const bg = $("moodbg");
+    if (m) bg.className = m;                              // CSS 漸層 fallback 類別（依 mood）
+    if (bgKey !== undefined) curBg = bgKey;              // 場景／行內明確指定時更新（含 null = 清回 mood 圖）
+    const key = curBg || m;                               // 有地點背景用它，否則退回 mood 對應圖
+    const url = key ? assetUrl("background", key) : null;
+    if (url) {
+      // mood class（.night/.warm…）用 `background:` 簡寫會把 background-size 重設成 auto→圖會以原尺寸平鋪（左右出現重複）。
+      // 故套真圖時，行內強制 cover / no-repeat / center（行內優先於 class），確保填滿不平鋪。
+      bg.style.backgroundImage = `url(${url})`;
+      bg.style.backgroundSize = "cover";
+      bg.style.backgroundRepeat = "no-repeat";
+      bg.style.backgroundPosition = "center";
+    } else {
+      bg.style.backgroundImage = "";                      // 無圖 → 清行內，露出 mood class 的 CSS 漸層
+      bg.style.backgroundSize = "";
+      bg.style.backgroundRepeat = "";
+      bg.style.backgroundPosition = "";
+    }
+    if (m) playBGM(m);
   }
   function flashSE() { const f = $("seFlash"); f.classList.remove("pulse"); void f.offsetWidth; f.classList.add("pulse"); }
   function setExpr() {
@@ -120,7 +179,7 @@
       e.className = "scene-toast";                                        // className 整個覆蓋＝永遠單一卡
       e.innerHTML = `<div class="ov-strip">${label}</div>`;
       void e.offsetWidth; e.classList.add("show");
-      holdT = setTimeout(() => { e.classList.remove("show"); fadeT = setTimeout(() => { e.className = "hidden"; }, 450); }, skipMode ? 4 : 1800);
+      holdT = setTimeout(() => { e.classList.remove("show"); fadeT = setTimeout(() => { e.className = "hidden"; }, 450); }, skipMode ? 60 : 1800);
     }
     return { scene, resetDay, hide };
   })();
@@ -161,7 +220,7 @@
   // 場景轉換（Normal）：換背景 + 小型 toast（非阻塞、不蓋對白、dedup）。Day 卡才用中央 eyecatch。
   async function showScene(node) {
     clearCG(); setExpr("");
-    if (node.mood) setMood(node.mood);
+    if (node.mood || node.bg) setMood(node.mood, node.bg || null);   // 場景背景：地點 bg 優先，無則 mood；每場景重設 curBg
     Overlay.scene(node.place, node.time, node.mood);
     $("speaker").classList.add("hidden"); $("dialogue").textContent = ""; $("advanceHint").classList.remove("show");
     await delay(skipMode ? 4 : 220);                                      // 一個小呼吸，讓背景 crossfade 起頭
@@ -217,9 +276,11 @@
     if (node.set) { for (const k in node.set) state.flags[k] = node.set[k]; refreshDbg(); }
     if (node.screen === "black") { setBlack(true); await delay(700); }
     else if (node.screen === "clear") setBlack(false);
-    if (node.bgm) setMood(node.bgm);
+    if (node.bgm) setMood(node.bgm);                 // 行內音樂：保留 curBg（不洗背景圖）
+    if (node.bg) setMood(undefined, node.bg);        // 行內背景微調（如甜點櫃子場景），不動音樂/漸層
     if (node.cg !== undefined) showCG(node.cg);
-    if (node.expr !== undefined) { setExpr(node.expr); setSprite(node.who, node.expr); }
+    if (node.clear) { await clearSpriteAnimated(); }                              // 乾淨退場（與 expr 互斥，clear 優先）；注意：與 cg:"clear"（清 CG）不同
+    else if (node.expr !== undefined) { setExpr(node.expr); setSprite(node.who, node.expr, node.mask, node); }
     if (node.se) playSE(node.se);
     if (node.shake) { $("stage").classList.add("shake"); setTimeout(() => $("stage").classList.remove("shake"), 420); }
 
@@ -296,16 +357,27 @@
   function chapterOf(d) { return (H.chapters && H.chapters[d]) || {}; }
   function markChapterCleared(d) { chapterCleared.add(d); localStorage.setItem(CH, JSON.stringify([...chapterCleared])); }
 
+  async function sectionBreak() {
+    if (skipMode) return;
+    $("dialogue").textContent = "";
+    $("speaker").classList.add("hidden");
+    $("advanceHint").classList.add("show");
+    await waitAdvance(0);
+    $("advanceHint").classList.remove("show");
+  }
+
   async function runDay(d, opts) {
     opts = opts || {};
     state.day = d; if (!opts.replay) persist();      // 章節回想不覆蓋正式存檔
     const info = dayInfo(d);
     $("dayTag").textContent = "Day " + d + (info.title ? "　" + info.title : "") + (opts.replay ? "（回想）" : ""); refreshDbg();
     clearCG(); setExpr(""); setSprite(null, null); hideSNS(); setBlack(false); Overlay.resetDay();
-    setMood("night");
+    setMood("night", null);                           // 開新一天：清掉上一場景殘留的 curBg
     await showDayCard(d, "start");                  // 必做1：每日章節標題卡
     await playNodes(chapterOf(d).intro || []);      // 必做3：當日極短引子
+    await sectionBreak();                           // 段落停頓：intro 結束後等玩家點一下
     await playNodes(H.days[d] || [{ type: "line", who: "narration", text: "（Day" + d + " 尚未實裝）" }]);
+    await sectionBreak();                           // 段落停頓：主劇情結束後等玩家點一下
     await playNodes(chapterOf(d).outro || []);      // 必做4：當日極短收束
     if (!opts.replay) markChapterCleared(d);
     await showDayCard(d, "end");                     // 必做2：Day End 轉場（含 Day7 終章卡）
@@ -321,7 +393,7 @@
   async function finale() {
     const tone = M.judge(state.scores, state.flags);
     cleared.add(tone); localStorage.setItem(ENDK, JSON.stringify([...cleared]));
-    setMood("soft");                                  // ending_soft：結局柔光（結局台詞若另設 bgm 會覆蓋）
+    setMood("soft", null);                            // ending_soft：結局柔光（清 curBg；結局首個 scene 會設定地點背景）
     if (tone === "hidden_pov") {
       await playNodes(H.endings.warm_true || []);
       await playNodes(H.endings.hidden_pov_tail || []);
@@ -448,6 +520,7 @@
     if (!devMode) { const lbl = document.querySelector(".dbg-toggle"); if (lbl) lbl.classList.add("hidden"); }
 
     $("textbox").onclick = userAdvance;
+    $("stage").onclick = userAdvance;
     document.addEventListener("keydown", (e) => {
       if (e.key === "Enter" || e.key === " ") { e.preventDefault(); userAdvance(); }
       if (devMode && e.key.toLowerCase() === "d") { $("dbgChk").checked = !$("dbgChk").checked; $("dbgPanel").classList.toggle("hidden", !$("dbgChk").checked); openMenu(); }

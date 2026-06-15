@@ -1,7 +1,7 @@
 /* Day6 —— 轉折日・地點曝光與雨棚並肩（不能被同一個鏡頭看成一組人） */
 window.HOSHINO.days[6] = [
   /* ── D6-S1 白天・公司：地點被說出來了 ── */
-  { type: "scene", place: "白天・公司", time: "下午", mood: "rain" },
+  { type: "scene", place: "白天・公司", time: "下午", mood: "rain", bg: "bg_office_day_warm" },
 
   { type: "line", who: "narration", text: "那張販賣機的照片，傳開了。", bgm: "rain", pause: 0.6 },
   { type: "line", who: "narration", text: "留言區終於出現那一句。" },
@@ -39,7 +39,7 @@ window.HOSHINO.days[6] = [
   { type: "line", who: "narration", text: "就走平常那條，回家的路。", pause: 0.6 },
 
   /* ── D6-S2 雨棚・相遇：不要回頭 ── */
-  { type: "scene", place: "深夜・商店街 雨棚下", time: "深夜", mood: "rain" },
+  { type: "scene", place: "深夜・商店街 雨棚下", time: "深夜", mood: "rain", bg: "bg_arcade_rain_night" },
 
   { type: "line", who: "narration", text: "鐵門大半都拉下來了。" },
   { type: "line", who: "narration", text: "只剩雨棚的燈，一盞一盞，把濕掉的地面照成亮黃色。" },
@@ -228,7 +228,7 @@ window.HOSHINO.days[6] = [
   { type: "line", who: "akari", text: "「完全沒有。」" },
 
   /* ── D6-S5 商店街盡頭：明天再還，最後一次 ── */
-  { type: "scene", place: "商店街 盡頭", time: "深夜", mood: "rain" },
+  { type: "scene", place: "商店街 盡頭", time: "深夜", mood: "rain", bg: "bg_arcade_rain_night" },
 
   { type: "line", who: "narration", text: "雨棚到頭了。" },
   { type: "line", who: "narration", text: "前面是一條大馬路。" },
