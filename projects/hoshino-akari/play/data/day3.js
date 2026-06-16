@@ -29,7 +29,7 @@ window.HOSHINO.days[3] = [
 
   // ── choice d3door（純風味，無 add）──
   {
-    type: "choice", id: "d3door",
+    type: "choice", id: "d3door", choiceType: "flavor",
     options: [
       {
         label: "「妳現在比較像普通客人。」", _dbg: "風味 +0",

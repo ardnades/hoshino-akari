@@ -166,10 +166,13 @@
       }
 
       if (node.type === "choice") {
+        const isFlavor = node.choiceType === "flavor";
+        if (node.choiceType != null && node.choiceType !== "flavor") err(file, loc, `choice.choiceType "${node.choiceType}" 未知（僅允許 "flavor" 或省略）`, "choice-type-unknown");
         if (!Array.isArray(node.options) || node.options.length < 2) {
           err(file, loc, `choice.options 必須存在且 ≥2（目前 ${Array.isArray(node.options) ? node.options.length : "缺"}）`, "choice-options");
         } else {
           node.options.forEach((op, j) => {
+            if (isFlavor && op && (op.add || op.flag)) err(file, `${loc}.opt[${j}]`, "flavor 選項不得寫入存檔變數（add/flag）——語氣選擇必須不進 judge/route", "choice-flavor-effect");
             const ol = `${loc}.opt[${j}]`;
             if (!op || typeof op !== "object") { err(file, ol, "option 不是物件", "choice-option-not-object"); return; }
             if (op.label == null || String(op.label).trim() === "") err(file, ol, "option 缺 label", "choice-option-label");

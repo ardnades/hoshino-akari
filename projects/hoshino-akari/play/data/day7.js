@@ -233,7 +233,7 @@ window.HOSHINO.days[7] = [
   { type: "line", who: "akari", text: "「……不要又只會嗯。」" },
 
   {
-    type: "choice", id: "d7s7", prompt: "最後一句——",
+    type: "choice", id: "d7s7", choiceType: "flavor", prompt: "最後一句——",
     options: [
       {
         label: "「再見。」",

@@ -214,9 +214,30 @@ window.HOSHINO.days[6] = [
     ],
   },
 
-  { type: "line", who: "narration", text: "她的手機，在口袋裡震。", se: "buzz" },
-  { type: "line", who: "narration", text: "一次。又一次。", se: "buzz", pause: 0.6 },
-  { type: "line", who: "narration", text: "她沒有拿出來。" },
+  /* Day6 回收：讀 Day4 set 的 unread_message_flag——那串沒看的未讀仍在追她，紅點回聲（只顯影視覺，不改 story flag；場景換到 D6-S5 自動清紅點） */
+  {
+    type: "gate", cond: "flag:unread_message_flag",
+    then: [
+      {
+        type: "line", who: "narration", text: "她的手機，在口袋裡震。", se: "buzz",
+        ui: "unread_badge", unread: { op: "inc", key: "manager", by: 1 },
+        camera: { op: "push", target: "sprite:akari", amount: "small", duration: 700 },
+      },
+      {
+        type: "line", who: "narration", text: "一次。又一次。", se: "buzz", pause: 0.6,
+        ui: "unread_badge", unread: { op: "inc", key: "manager", by: 1 },
+      },
+      {
+        type: "line", who: "narration", text: "她沒有拿出來。",
+        ui: "unread_badge", unread: { op: "hold", key: "manager" }, camera: { op: "hold" },
+      },
+    ],
+    else: [
+      { type: "line", who: "narration", text: "她的手機，在口袋裡震。", se: "buzz" },
+      { type: "line", who: "narration", text: "一次。又一次。", se: "buzz", pause: 0.6 },
+      { type: "line", who: "narration", text: "她沒有拿出來。" },
+    ],
+  },
   { type: "line", who: "narration", text: "雨還在下。", se: "rain" },
 
   { type: "line", who: "akari", text: "「我以為七天很長。」" },

@@ -175,7 +175,7 @@ window.HOSHINO.days[5] = [
   { type: "line", who: "narration", text: "這我知道。", pause: 0.8 },
 
   {
-    type: "choice", id: "d5s4",
+    type: "choice", id: "d5s4", choiceType: "flavor",
     prompt: "（兩塊油豆腐。）",
     options: [
       {
