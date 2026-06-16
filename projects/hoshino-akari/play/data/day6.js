@@ -214,7 +214,8 @@ window.HOSHINO.days[6] = [
     ],
   },
 
-  /* Day6 回收：讀 Day4 set 的 unread_message_flag——那串沒看的未讀仍在追她，紅點回聲（只顯影視覺，不改 story flag；場景換到 D6-S5 自動清紅點） */
+  /* Day6 回收：讀 Day4 set 的 unread_message_flag——那串沒看的未讀仍在追她，紅點回聲（只顯影視覺，不改 story flag；場景換到 D6-S5 自動清紅點）。
+     注意：此為 compatibility / fallback gate，非劇情分歧——正常新遊戲流程必進 then；else 僅供舊 save／debug／未來 Day4 改為可跳過時的安全回退。 */
   {
     type: "gate", cond: "flag:unread_message_flag",
     then: [
