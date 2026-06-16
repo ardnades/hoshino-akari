@@ -72,8 +72,10 @@ button{font-family:inherit;cursor:pointer;border:none;color:var(--ink);backgroun
 #topbar #dayTag.flash{animation:dayTagFlash 1.2s ease}
 
 /* ---- 舞台 ---- */
-#stage{position:relative;flex:1;overflow:hidden}
-#moodbg{position:absolute;inset:0;background:var(--night);background-size:cover;background-position:center;transition:background 1.4s ease}
+#stage{position:relative;flex:1;overflow:hidden;--cam-tx:0px;--cam-ty:0px;--cam-scale:1;--cam-ox:50%;--cam-oy:42%;--cam-dur:600ms}
+/* camera v0：只作用於視覺層（背景／立繪／CG），不動對白框・選項・SNS・未讀紅點。原語：push/pan/hold/reset。 */
+#spriteLayer,#cgLayer{transform:translate(var(--cam-tx),var(--cam-ty)) scale(var(--cam-scale));transform-origin:var(--cam-ox) var(--cam-oy);transition:transform var(--cam-dur) ease}
+#moodbg{position:absolute;inset:0;background:var(--night);background-size:cover;background-position:center;transform:translate(var(--cam-tx),var(--cam-ty)) scale(var(--cam-scale));transform-origin:var(--cam-ox) var(--cam-oy);transition:background 1.4s ease,transform var(--cam-dur) ease}
 #moodbg.night{background:radial-gradient(120% 80% at 70% 8%,rgba(255,160,110,.10),transparent 60%),radial-gradient(130% 95% at 50% 0%,#16202c,#0b0f15)}
 #moodbg.warm{background:radial-gradient(110% 80% at 50% 28%,rgba(255,170,110,.18),transparent 65%),radial-gradient(120% 90% at 50% 30%,#2a1f18,#120d0a)}
 #moodbg.rain{background:linear-gradient(180deg,#0e1620,#0a1018)}
@@ -219,6 +221,18 @@ button{font-family:inherit;cursor:pointer;border:none;color:var(--ink);backgroun
 .post.reply{background:rgba(22,28,38,.7);color:var(--ink-dim);font-size:12.5px;margin-left:16px}
 .post .num{color:var(--accent)}
 @keyframes postin{to{opacity:1;transform:none}}
+
+/* ---- 未讀紅點（z7：把已存在的 unread flag「顯影」成角落壓力計；純 UI、不受 camera 影響）---- */
+#unreadBadge{position:absolute;top:10px;right:12px;z-index:7;display:flex;align-items:center;gap:5px;
+  padding:5px 9px;border-radius:var(--r-pill);background:rgba(14,18,26,.78);border:1px solid var(--line-top);
+  box-shadow:0 4px 14px rgba(0,0,0,.4);pointer-events:none;font-family:var(--font-sans)}
+#unreadBadge .ub-icon{font-size:12px;color:var(--ink-dim)}
+#unreadBadge .ub-dot{width:8px;height:8px;border-radius:50%;background:#ff5b5b;box-shadow:0 0 6px rgba(255,91,91,.7)}
+#unreadBadge .ub-more{font-size:11px;color:#ff8a8a;font-family:var(--font-num);letter-spacing:.05em}
+#unreadBadge.pulse{animation:ubpulse .5s ease}
+#unreadBadge.pulse-strong{animation:ubpulse .5s ease,ubshake .42s ease}
+@keyframes ubpulse{0%{transform:scale(1)}40%{transform:scale(1.16)}100%{transform:scale(1)}}
+@keyframes ubshake{0%,100%{transform:translateX(0)}25%{transform:translateX(-2px)}75%{transform:translateX(2px)}}
 
 /* ---- 文字框 ---- */
 #textbox{position:relative;min-height:32vh;max-height:34vh;padding:22px 22px 26px;z-index:6;cursor:pointer;

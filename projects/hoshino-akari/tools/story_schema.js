@@ -154,6 +154,14 @@
           } else seDisabledRefs.push(node.se);
         }
         if (node.add) checkScoreKeys(node.add, file, loc, "line.add", "line-add-score-key");
+        if (node.ui != null && !["sns", "unread_badge"].includes(node.ui)) warn(file, loc, `line.ui "${node.ui}" 未知（engine 僅支援 sns / unread_badge）`, "line-ui");
+        if (node.camera != null) {
+          if (typeof node.camera !== "object" || !["push", "pan", "hold", "reset"].includes(node.camera.op)) err(file, loc, `line.camera.op 必須是 push/pan/hold/reset（目前 "${node.camera && node.camera.op}"）`, "line-camera-op");
+          else if (node.camera.amount != null && !["small", "medium"].includes(node.camera.amount)) warn(file, loc, `line.camera.amount "${node.camera.amount}" 非 small/medium`, "line-camera-amount");
+        }
+        if (node.unread != null) {
+          if (typeof node.unread !== "object" || !["inc", "hold", "clear"].includes(node.unread.op)) err(file, loc, `line.unread.op 必須是 inc/hold/clear（目前 "${node.unread && node.unread.op}"）`, "line-unread-op");
+        }
         if (node.text != null && SUSPICIOUS_TEXT.test(String(node.text))) warn(file, loc, "line.text 含疑似 debug/分數字樣（玩家 UI 不應顯示分數）", "line-text-suspicious");
       }
 

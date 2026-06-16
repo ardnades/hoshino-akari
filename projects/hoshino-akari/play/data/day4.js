@@ -22,7 +22,7 @@ window.HOSHINO.days[4] = [
   { type: "line", who: "narration", text: "轉貼數，比昨晚多了一位數。" },
   { type: "line", who: "narration", text: "留言開始猜地點。", speed: "instant" },
   { type: "line", who: "narration", text: "沒有人說出正確地點。", pause: 0.8 },
-  { type: "line", who: "narration", text: "……還沒有。", speed: "slow" },
+  { type: "line", who: "narration", text: "……還沒有。", speed: "slow", camera: { op: "push", target: "center", amount: "small", duration: 1200 } },
   { type: "line", who: "narration", text: "我關掉螢幕。", screen: "black", pause: 0.5 },
   { type: "line", who: "narration", text: "下午，又點開了一次。", pause: 1.0 },
   { type: "line", who: "narration", text: "跟上午一模一樣的動作。", pause: 1.2 },
@@ -172,20 +172,30 @@ window.HOSHINO.days[4] = [
   { type: "line", who: "narration", text: "她用附的小湯匙，挖了一小口。" },
   { type: "line", who: "narration", text: "很慢地吃。", speed: "slow" },
   { type: "line", who: "narration", text: "像在吃什麼很貴的東西。" },
-  { type: "line", who: "narration", text: "手機在她口袋裡震了。", se: "rush" },
-  { type: "line", who: "narration", text: "她的動作停了半秒。", expr: "動作凝滯", pause: 0.6 },
+  {
+    type: "line", who: "narration", text: "手機在她口袋裡震了。", se: "rush",
+    ui: "unread_badge", unread: { op: "inc", key: "manager", by: 1 },
+    camera: { op: "push", target: "sprite:akari", amount: "small", duration: 700 },
+  },
+  { type: "line", who: "narration", text: "她的動作停了半秒。", expr: "動作凝滯", pause: 0.6, camera: { op: "hold" } },
   { type: "line", who: "narration", text: "掏出來，看了一眼螢幕。" },
   { type: "line", who: "narration", text: "沒接。" },
   {
     type: "line", who: "narration", text: "反扣在長椅上。",
     set: { unread_message_flag: true },
+    ui: "unread_badge", unread: { op: "hold", key: "manager" },
+    camera: { op: "hold" },
   },
   { type: "line", who: "narration", text: "過了一會。" },
-  { type: "line", who: "narration", text: "又震。", se: "rush" },
+  {
+    type: "line", who: "narration", text: "又震。", se: "rush",
+    ui: "unread_badge", unread: { op: "inc", key: "manager", by: 1 },
+    camera: { op: "push", target: "sprite:akari", amount: "small", duration: 600 },
+  },
   { type: "line", who: "narration", text: "她看著販賣機的燈，笑了一下。", expr: "" },
   { type: "line", who: "akari", text: "「今天好熱鬧。」" },
   { type: "line", who: "me", text: "「妳不回？」" },
-  { type: "line", who: "akari", text: "「回了，就要回去。」" },
+  { type: "line", who: "akari", text: "「回了，就要回去。」", pause: 0.8, camera: { op: "hold" } },
   { type: "line", who: "narration", text: "她又挖了一口布丁。" },
 
   {
@@ -266,8 +276,11 @@ window.HOSHINO.days[4] = [
   { type: "line", who: "narration", text: "她把最後一口吃完。" },
   { type: "line", who: "narration", text: "把空盒子收好，起身丟進販賣機旁的垃圾桶。" },
   { type: "line", who: "narration", text: "動作很乾脆。" },
-  { type: "line", who: "narration", text: "走回來的時候，手機又震了。", se: "rush" },
-  { type: "line", who: "narration", text: "這次，她盯著螢幕看了很久。", expr: "看螢幕凝重", pause: 2.0 },
+  {
+    type: "line", who: "narration", text: "走回來的時候，手機又震了。", se: "rush",
+    ui: "unread_badge", unread: { op: "inc", key: "manager", by: 1 },
+  },
+  { type: "line", who: "narration", text: "這次，她盯著螢幕看了很久。", expr: "看螢幕凝重", pause: 2.0, camera: { op: "push", target: "sprite:akari", amount: "small", duration: 900 } },
   { type: "line", who: "narration", text: "久到熱可可的白氣都散了。" },
   { type: "line", who: "narration", text: "然後她把手機收起來。" },
   { type: "line", who: "akari", text: "「明天，我可能來不了。」", bgm: "night" },
@@ -290,7 +303,11 @@ window.HOSHINO.days[4] = [
     set: { vending_machine_memory: true, unread_message_flag: true },
   },
   { type: "line", who: "narration", text: "她說完，拉低帽子，走進黑暗裡。", se: "step" },
-  { type: "line", who: "narration", text: "這次，她的背影走得比哪一天都慢。", expr: "" },
+  {
+    type: "line", who: "narration", text: "這次，她的背影走得比哪一天都慢。", expr: "",
+    ui: "unread_badge", unread: { op: "clear", key: "manager" },   // 清視覺紅點，但 unread_message_flag 仍在，留給 Day6 回收
+    camera: { op: "reset", duration: 500 },
+  },
 
   /* regret>=1 → 追加「我數到三，沒有叫住她。」 */
   {
@@ -320,7 +337,7 @@ window.HOSHINO.days[4] = [
   },
   { type: "line", who: "narration", text: "留言裡，有人開始比對街燈、招牌、路面的反光。" },
   { type: "line", who: "narration", text: "還沒有人說出那間便利商店的名字。" },
-  { type: "line", who: "narration", text: "但已經很近了。", speed: "slow", pause: 1.0 },
+  { type: "line", who: "narration", text: "但已經很近了。", speed: "slow", pause: 1.0, camera: { op: "push", target: "center", amount: "small", duration: 1100 } },
   { type: "line", who: "narration", text: "我關掉螢幕，看向桌上。", screen: "black" },
   { type: "line", who: "narration", text: "那支護唇膏，立在檯燈下。", cg: "lipbalm" },
 
@@ -338,5 +355,5 @@ window.HOSHINO.days[4] = [
     ],
   },
 
-  { type: "line", who: "narration", text: "窗外，風聲很大。", pause: 1.5 },
+  { type: "line", who: "narration", text: "窗外，風聲很大。", pause: 1.5, camera: { op: "reset", duration: 600 } },
 ];

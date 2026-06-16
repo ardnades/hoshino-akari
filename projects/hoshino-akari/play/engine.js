@@ -220,6 +220,7 @@
   // 場景轉換（Normal）：換背景 + 小型 toast（非阻塞、不蓋對白、dedup）。Day 卡才用中央 eyecatch。
   async function showScene(node) {
     clearCG(); setExpr("");
+    Camera.reset(0); clearUnreadVisual();                            // 換場：鏡頭歸位、紅點視覺清空（每場 scene 自行計數）
     if (node.mood || node.bg) setMood(node.mood, node.bg || null);   // 場景背景：地點 bg 優先，無則 mood；每場景重設 curBg
     Overlay.scene(node.place, node.time, node.mood);
     $("speaker").classList.add("hidden"); $("dialogue").textContent = ""; $("advanceHint").classList.remove("show");
@@ -258,6 +259,66 @@
   }
   function hideSNS() { $("snsLayer").classList.add("hidden"); $("snsLayer").innerHTML = ""; }
 
+  // ── camera 演出 v0：push / pan / hold / reset。只改 #stage 上的 --cam-* 變數，CSS 把 transform 套到視覺三層
+  //    （moodbg / spriteLayer / cgLayer）；對白框・選項・SNS・未讀紅點不在其內，永遠不被鏡頭推走。
+  //    與 sprite 的 pos/depth/motion 互補（那些作用在 .sprite-stack 子層，與本層父變換各自獨立、可疊加）。
+  const CAM_PUSH = { small: 1.04, medium: 1.08 };       // 倍率上限 1.08：手機直幅背景本就裁切，推太多會破圖
+  const CAM_PAN = { small: 3, medium: 6 };              // 位移 %（pan 同時微縮放 1.05 補邊，避免露出背景空邊）
+  const CAM_ORIGIN = { center: ["50%", "42%"], left: ["35%", "50%"], right: ["65%", "50%"], cg: ["50%", "50%"], "sprite:akari": ["50%", "38%"] };
+  const Camera = (function () {
+    function setVars(o) {
+      const st = $("stage"); if (!st) return;
+      const dur = (skipMode || prefersReducedMotion()) ? 0 : (o.dur != null ? o.dur : 600);
+      st.style.setProperty("--cam-dur", dur + "ms");
+      if (o.ox !== undefined) st.style.setProperty("--cam-ox", o.ox);
+      if (o.oy !== undefined) st.style.setProperty("--cam-oy", o.oy);
+      if (o.scale !== undefined) st.style.setProperty("--cam-scale", o.scale);
+      if (o.tx !== undefined) st.style.setProperty("--cam-tx", o.tx);
+      if (o.ty !== undefined) st.style.setProperty("--cam-ty", o.ty);
+    }
+    function reset(dur) { setVars({ scale: 1, tx: "0px", ty: "0px", ox: "50%", oy: "50%", dur: dur }); }
+    function run(c) {
+      if (!c || typeof c !== "object") return;
+      const amount = c.amount === "medium" ? "medium" : "small";
+      const og = CAM_ORIGIN[c.target] || CAM_ORIGIN.center;
+      if (c.op === "reset") return reset(c.duration);
+      if (c.op === "push") return setVars({ scale: CAM_PUSH[amount], tx: "0px", ty: "0px", ox: og[0], oy: og[1], dur: c.duration });
+      if (c.op === "pan") {
+        const p = CAM_PAN[amount], tx = c.target === "right" ? -p : c.target === "left" ? p : 0;
+        return setVars({ scale: 1.05, tx: tx + "%", ty: "0px", ox: og[0], oy: og[1], dur: c.duration });
+      }
+      if (c.op === "hold") return setVars({ dur: c.duration });   // 維持現有 framing，不自動 reset（構圖壓力，非文字節奏）
+    }
+    return { run, reset };
+  })();
+
+  // ── 未讀紅點 v0：把劇情已 set 的 unread flag「顯影」成角落壓力計（純 UI 計數，不碰 story flag）。
+  //    data 指令：{ ui:"unread_badge", unread:{ op:"inc"|"hold"|"clear", key, by } }。每場 scene 自行計數、自行清空。
+  let unreadCounts = {};
+  function renderUnread() {
+    const el = $("unreadBadge"); if (!el) return;
+    let total = 0; for (const k in unreadCounts) total += unreadCounts[k] || 0;
+    if (total <= 0) { el.classList.add("hidden"); el.innerHTML = ""; return; }
+    const dots = Math.min(total, 3);
+    let html = '<span class="ub-icon">✉</span>';
+    for (let i = 0; i < dots; i++) html += '<span class="ub-dot"></span>';
+    if (total > 3) html += '<span class="ub-more">' + total + '</span>';
+    el.innerHTML = html; el.classList.remove("hidden");
+  }
+  function pulseUnread(strong) {
+    const el = $("unreadBadge"); if (!el || el.classList.contains("hidden") || skipMode) return;
+    el.classList.remove("pulse", "pulse-strong"); void el.offsetWidth;
+    el.classList.add(strong ? "pulse-strong" : "pulse");
+  }
+  function unreadDo(u) {
+    if (!u || typeof u !== "object") return;
+    const key = u.key || "default";
+    if (u.op === "clear") { delete unreadCounts[key]; renderUnread(); return; }   // 只清視覺紅點，story flag 不動
+    if (u.op === "inc") { const by = u.by || 1; unreadCounts[key] = (unreadCounts[key] || 0) + by; renderUnread(); pulseUnread(by > 1 || unreadCounts[key] >= 2); return; }
+    if (u.op === "hold") { renderUnread(); pulseUnread(false); return; }          // 紅點留著＝她選擇不看，壓力沒消失
+  }
+  function clearUnreadVisual() { unreadCounts = {}; const el = $("unreadBadge"); if (el) { el.classList.add("hidden"); el.innerHTML = ""; } }
+
   // ---- 打字機 ----
   function typewriter(text, speed) {
     const el = $("dialogue");
@@ -283,6 +344,8 @@
     else if (node.expr !== undefined) { setExpr(node.expr); setSprite(node.who, node.expr, node.mask, node); }
     if (node.se) playSE(node.se);
     if (node.shake) { $("stage").classList.add("shake"); setTimeout(() => $("stage").classList.remove("shake"), 420); }
+    if (node.camera) Camera.run(node.camera);                 // 鏡頭演出：與對白同步起動，不阻塞打字機
+    if (node.unread) unreadDo(node.unread);                    // 未讀紅點：把已 set 的 unread flag 顯影成壓力計
 
     const nm = M.names[node.who] || M.names.narration;
     const sp = $("speaker");
@@ -371,7 +434,7 @@
     state.day = d; if (!opts.replay) persist();      // 章節回想不覆蓋正式存檔
     const info = dayInfo(d);
     $("dayTag").textContent = "Day " + d + (info.title ? "　" + info.title : "") + (opts.replay ? "（回想）" : ""); refreshDbg();
-    clearCG(); setExpr(""); setSprite(null, null); hideSNS(); setBlack(false); Overlay.resetDay();
+    clearCG(); setExpr(""); setSprite(null, null); hideSNS(); clearUnreadVisual(); Camera.reset(0); setBlack(false); Overlay.resetDay();
     setMood("night", null);                           // 開新一天：清掉上一場景殘留的 curBg
     await showDayCard(d, "start");                  // 必做1：每日章節標題卡
     await playNodes(chapterOf(d).intro || []);      // 必做3：當日極短引子
