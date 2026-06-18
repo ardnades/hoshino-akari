@@ -1,4 +1,4 @@
-/* engine.js —— 星野灯線 VN 播放器（零後端，localStorage 存檔以「天」為單位） */
+/* engine.js —— 《雨後，凌晨一點》VN 播放器（零後端，localStorage 存檔以「天」為單位） */
 (function () {
   const H = window.HOSHINO, M = H.meta, ART = window.ART;
   const $ = (id) => document.getElementById(id);
@@ -10,22 +10,91 @@
   let cleared = new Set(JSON.parse(localStorage.getItem(ENDK) || "[]"));
   let chapterCleared = new Set(JSON.parse(localStorage.getItem(CH) || "[]"));
   let autoMode = false, skipMode = false;
+  let skipUntilUnread = false;                 // 「跳已讀」模式：skipMode 在 playLine 撞到未讀行時自動關閉
+  let unreadCount = 0;
+  // ---- 已讀行集合（獨立 HOSHINO_READ；不動 SAVE/GAL/ENDK/CH 契約）----
+  const READ = "HOSHINO_READ";
+  let readSet = new Set((() => { try { return JSON.parse(localStorage.getItem(READ) || "[]"); } catch (e) { return []; } })());
+  const hashTxt = (s) => { let h = 5381; for (let i = 0; i < s.length; i++) h = ((h << 5) + h + s.charCodeAt(i)) | 0; return h; }; // ponytail: djb2；極罕碰撞只會把某句當已讀，無害
+  const isRead = (txt) => readSet.has(hashTxt(txt));
+  function markRead(txt) { const h = hashTxt(txt); if (!readSet.has(h)) { readSet.add(h); try { localStorage.setItem(READ, JSON.stringify([...readSet])); } catch (e) {} } } // ponytail: 每新行寫一次 localStorage，~千行 VN 無感；真要省再批次化
+  function updateSkipUI() {
+    const a = $("btnSkip"), r = $("btnSkipRead");
+    if (a) a.classList.toggle("on", skipMode && !skipUntilUnread);
+    if (r) r.classList.toggle("on", skipMode && skipUntilUnread);
+  }
+  // ---- 對白回顧 + 玩家設定（新增；獨立 HOSHINO_CFG，不動既有 SAVE/GAL/ENDK/CH 契約）----
+  let history = [];
+  const CFG = "HOSHINO_CFG";
+  let cfg = Object.assign(
+    { bgmVol: 0.5, seVol: 0.6, mute: false, textSpeed: "normal", autoMs: 1100 },
+    (() => { try { return JSON.parse(localStorage.getItem(CFG) || "{}"); } catch (e) { return {}; } })()
+  );
+  const saveCfg = () => { try { localStorage.setItem(CFG, JSON.stringify(cfg)); } catch (e) {} };
+  const bgmVol = () => (cfg.mute ? 0 : cfg.bgmVol);
+  const seVol = () => (cfg.mute ? 0 : cfg.seVol);
+  const escapeHtml = (s) => String(s).replace(/[&<>]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c]));
   // 場景/時間/小標題覆蓋層由下方 OverlayDirector 統一管理（單一元素、單一 timer、dedup）
 
   // ---- 素材解析（assets.js manifest；缺素材一律 fallback，不報錯）----
   const A = () => (H.assets || {});
   function assetUrl(group, key) { const g = A()[group]; return (g && key != null && g[key]) || null; }
   let bgmAudio = null, bgmCur = null;
+  // 音量斜坡（共用）：BGM 淡入淡出／淡出停止。skip 或 ms<=0 → 瞬間到位。
+  function rampVol(audio, to, ms, onDone) {
+    if (!audio) { if (onDone) onDone(); return; }
+    to = Math.max(0, Math.min(1, to));
+    if (skipMode || ms <= 0) { try { audio.volume = to; } catch (e) {} if (onDone) onDone(); return; }
+    const from = audio.volume, steps = Math.max(1, Math.round(ms / 40));
+    let i = 0;
+    const t = setInterval(() => {
+      i++;
+      try { audio.volume = Math.max(0, Math.min(1, from + (to - from) * (i / steps))); }
+      catch (e) { clearInterval(t); return; }
+      if (i >= steps) { clearInterval(t); if (onDone) onDone(); }
+    }, 40);
+  }
   function playBGM(m) {
     const en = A().enabled || {}; if (!en.bgm) return;                 // 未啟用音訊 → 靜音 fallback
-    const url = assetUrl("bgm", m);
-    if (m === "stop" || !url) { if (bgmAudio) { try { bgmAudio.pause(); } catch (e) {} } bgmCur = null; return; }
+    const url = (m === "stop") ? null : assetUrl("bgm", m);
+    if (!url) {                                                        // stop／無曲：淡出後暫停（不再硬切）
+      const old = bgmAudio;
+      if (old) rampVol(old, 0, 500, () => { try { old.pause(); } catch (e) {} });
+      bgmCur = null; return;
+    }
     if (url === bgmCur) return;
-    try { if (!bgmAudio) { bgmAudio = new Audio(); bgmAudio.loop = true; bgmAudio.volume = 0.5; } bgmAudio.src = url; bgmAudio.play().catch(() => {}); bgmCur = url; } catch (e) {}
+    try {
+      const old = bgmAudio;
+      const next = new Audio(); next.loop = true; next.src = url; next.volume = 0;
+      next.play().catch(() => {});
+      bgmAudio = next; bgmCur = url;
+      rampVol(next, bgmVol(), 600);                                    // 新軌淡入
+      if (old) rampVol(old, 0, 600, () => { try { old.pause(); } catch (e) {} });  // 舊軌交叉淡出
+    } catch (e) {}
+  }
+  // 單一 SE 聲道：新音效播放時，快速淡出上一個 SE（例：撞擊聲響起→把還在響的跑步聲停掉）。
+  let lastSE = null;
+  function stopLastSE() {
+    if (!lastSE) return;
+    const a = lastSE; lastSE = null;
+    try {
+      let v = a.volume;
+      const t = setInterval(() => {
+        v -= 0.2;
+        if (v <= 0) { clearInterval(t); try { a.pause(); } catch (e) {} }
+        else { try { a.volume = v; } catch (e) { clearInterval(t); } }
+      }, 20);                                                           // ~100ms 淡出，避免硬切爆音
+    } catch (e) { try { a.pause(); } catch (e2) {} }
   }
   function playSE(key) {
     const en = A().enabled || {}; const url = en.se ? assetUrl("se", key) : null;
-    if (url) { try { const a = new Audio(url); a.volume = 0.6; a.play().catch(() => {}); } catch (e) {} }
+    if (url) {
+      try {
+        stopLastSE();                                                   // 新 SE 先停掉上一個（單聲道）
+        const a = new Audio(url); a.volume = seVol(); a.play().catch(() => {});
+        lastSE = a;
+      } catch (e) {}
+    }
     flashSE();                                                          // 視覺脈衝永遠保留（即使沒音檔）
   }
   // ── 立繪演出 v0：pos / depth / motion（讀 line 欄位 → 套 CSS class）＋ clear 乾淨退場 ──
@@ -111,35 +180,44 @@
     if (bgKey !== undefined) curBg = bgKey;              // 場景／行內明確指定時更新（含 null = 清回 mood 圖）
     const key = curBg || m;                               // 有地點背景用它，否則退回 mood 對應圖
     const url = key ? assetUrl("background", key) : null;
-    if (url) {
-      // mood class（.night/.warm…）用 `background:` 簡寫會把 background-size 重設成 auto→圖會以原尺寸平鋪（左右出現重複）。
-      // 故套真圖時，行內強制 cover / no-repeat / center（行內優先於 class），確保填滿不平鋪。
-      bg.style.backgroundImage = `url(${url})`;
-      bg.style.backgroundSize = "cover";
-      bg.style.backgroundRepeat = "no-repeat";
-      bg.style.backgroundPosition = "center";
-    } else {
-      bg.style.backgroundImage = "";                      // 無圖 → 清行內，露出 mood class 的 CSS 漸層
-      bg.style.backgroundSize = "";
-      bg.style.backgroundRepeat = "";
-      bg.style.backgroundPosition = "";
-    }
+    crossfadeBg(url);                                      // 雙層交叉淡入；無圖 → 淡出露出 mood 漸層
     if (m) playBGM(m);
+  }
+  // 背景雙層交叉淡入（mbA/mbB 輪流當前景；#moodbg 自身 CSS 漸層為無圖 fallback）。
+  // reduced-motion 由全域 *{transition-duration:.001ms} 收斂為瞬切，最終態保留。
+  let bgFront = null, bgCurUrl = null;
+  function crossfadeBg(url) {
+    const a = $("mbA"), b = $("mbB"); if (!a || !b) return;
+    if (url === bgCurUrl) return;                          // 同圖不重播
+    bgCurUrl = url;
+    document.documentElement.style.setProperty("--scene-bg", url ? `url("${url}")` : "none");  // 桌機側欄模糊填充取用
+    if (!url) { a.classList.remove("show"); b.classList.remove("show"); bgFront = null; return; }
+    const back = bgFront === "A" ? b : a;                 // 要帶入的那一層（非當前前景）
+    back.style.backgroundImage = `url(${url})`;
+    void back.offsetWidth;                                 // reflow → 觸發 opacity transition
+    back.classList.add("show");
+    (bgFront === "A" ? a : b).classList.remove("show");    // 舊前景淡出
+    bgFront = bgFront === "A" ? "B" : "A";
   }
   function flashSE() { const f = $("seFlash"); f.classList.remove("pulse"); void f.offsetWidth; f.classList.add("pulse"); }
   function setExpr() {
     const b = $("exprBadge"); if (b) b.classList.add("hidden");   // 表情改整合進角色名牌，不再用浮動徽章
   }
   function showCG(key) {
-    if (!key || key === "clear") { $("cgLayer").classList.add("hidden"); return; }
+    if (!key || key === "clear") { $("cgLayer").classList.add("hidden"); $("cgLayer").classList.remove("cg-full"); $("game").classList.remove("cg-on"); return; }
     unlockCG(key);
     const cap = capFor(key);
-    const url = assetUrl("cg", key);                                    // 有真 CG 用圖，否則 inline SVG
-    const art = url ? `<img class="cg-img" src="${url}" alt="" onerror="this.outerHTML=''">` : (ART[key] ? ART[key]() : "");
+    const url = assetUrl("cg", key);                                    // 有真 CG 用圖/影片，否則 inline SVG
+    const art = url
+      ? (/\.(mp4|webm)$/i.test(url)
+          ? `<video class="cg-img" src="${url}" autoplay loop muted playsinline></video>`   // loop 影片 CG：assets.js 指向 .mp4/.webm 即自動循環播放
+          : `<img class="cg-img" src="${url}" alt="" onerror="this.outerHTML=''">`)
+      : (ART[key] ? ART[key]() : "");
     $("cgLayer").innerHTML = art + (cap ? `<div class="cg-cap">${cap}</div>` : "");
-    $("cgLayer").classList.remove("hidden");
+    const isEvent = /^ev_/.test(key);                                   // 主視覺 event CG → 全畫面＋對話框透明；道具 CG → 置中卡
+    $("cgLayer").classList.remove("hidden"); $("cgLayer").classList.toggle("cg-full", isEvent); $("game").classList.toggle("cg-on", isEvent);
   }
-  function clearCG() { $("cgLayer").classList.add("hidden"); $("cgLayer").innerHTML = ""; }
+  function clearCG() { $("cgLayer").classList.add("hidden"); $("cgLayer").classList.remove("cg-full"); $("cgLayer").innerHTML = ""; $("game").classList.remove("cg-on"); }
   function capFor(key) {
     for (const g of ["anchors", "signs", "hidden"]) {
       const it = M.gallery[g].find((x) => x.key === key); if (it) return it.cap;
@@ -155,7 +233,9 @@
   async function fadeCard(html, hold) {
     const c = $("sceneCard");
     c.innerHTML = html;
-    c.classList.remove("hidden"); c.style.opacity = 0; c.style.transition = "opacity 1s"; void c.offsetWidth; c.style.opacity = 1;
+    // 暗底「瞬間」蓋上（不淡入）→ 杜絕進日時「背景先亮起、卡片才淡入變暗」的 flash；內文仍由 .dc-* fadeUp 進場
+    c.classList.remove("hidden"); c.style.transition = "none"; c.style.opacity = 1; void c.offsetWidth;
+    c.style.transition = "opacity .6s";                      // 之後僅供退場淡出
     $("textbox").style.visibility = "hidden";
     await Promise.race([delay(hold), waitAdvance(0)]);
     c.style.opacity = 0; await delay(skipMode ? 4 : 600); c.classList.add("hidden");
@@ -179,7 +259,7 @@
       e.className = "scene-toast";                                        // className 整個覆蓋＝永遠單一卡
       e.innerHTML = `<div class="ov-strip">${label}</div>`;
       void e.offsetWidth; e.classList.add("show");
-      holdT = setTimeout(() => { e.classList.remove("show"); fadeT = setTimeout(() => { e.className = "hidden"; }, 450); }, skipMode ? 60 : 1800);
+      holdT = setTimeout(() => { e.classList.remove("show"); fadeT = setTimeout(() => { e.className = "hidden"; }, 450); }, skipMode ? 60 : 2200);
     }
     return { scene, resetDay, hide };
   })();
@@ -219,7 +299,7 @@
 
   // 場景轉換（Normal）：換背景 + 小型 toast（非阻塞、不蓋對白、dedup）。Day 卡才用中央 eyecatch。
   async function showScene(node) {
-    clearCG(); setExpr("");
+    resetCamera(0); clearCG(); setExpr("");
     if (node.mood || node.bg) setMood(node.mood, node.bg || null);   // 場景背景：地點 bg 優先，無則 mood；每場景重設 curBg
     Overlay.scene(node.place, node.time, node.mood);
     $("speaker").classList.add("hidden"); $("dialogue").textContent = ""; $("advanceHint").classList.remove("show");
@@ -258,10 +338,49 @@
   }
   function hideSNS() { $("snsLayer").classList.add("hidden"); $("snsLayer").innerHTML = ""; }
 
+  // ---- 未讀紅點 ----
+  function resetUnread() {
+    unreadCount = 0;
+    const el = $("unreadBadge"); if (el) el.classList.add("hidden");
+  }
+  function handleUnread(op) {
+    if (op.op === "inc") {
+      unreadCount += (op.by || 1);
+      const el = $("unreadBadge"); if (!el) return;
+      el.textContent = unreadCount;
+      el.classList.remove("hidden");
+      el.classList.remove("pulse"); void el.offsetWidth; el.classList.add("pulse");
+    } else if (op.op === "clear") {
+      resetUnread();
+    }
+    // "hold" = no-op：紅點維持原狀
+  }
+
+  // ---- camera ----
+  function resetCamera(dur) {
+    const el = $("stageVisual"); if (!el) return;
+    el.style.transition = (dur && !prefersReducedMotion()) ? `transform ${dur}ms ease` : 'none';  // reduced-motion：瞬間 reset（保留最終狀態、不動畫）
+    el.style.transform = '';
+  }
+  function handleCamera(op) {
+    if (op.op === 'reset') { resetCamera(op.duration || 400); return; }
+    if (op.op === 'hold') return;
+    const el = $("stageVisual"); if (!el) return;
+    const med = op.amount === 'medium';
+    const xf = op.op === 'push' ? `scale(${med ? 1.08 : 1.04})`
+             : op.op === 'pan'  ? `translateX(${med ? 6 : 3}%)`
+             : '';
+    if (!xf) return;
+    el.style.transition = (skipMode || prefersReducedMotion()) ? 'none' : `transform ${op.duration || 700}ms cubic-bezier(.3,.1,.2,1)`;  // reduced-motion：瞬間套用（資訊保留、不動畫）
+    el.style.transform = xf;
+  }
+
   // ---- 打字機 ----
   function typewriter(text, speed) {
     const el = $("dialogue");
-    const per = speed === "instant" ? 0 : speed === "slow" ? 68 : 26;
+    const base = { slow: 55, normal: 26, fast: 12, instant: 0 }[cfg.textSpeed];
+    let per = speed === "instant" ? 0 : speed === "slow" ? 68 : (base == null ? 26 : base);
+    if (cfg.textSpeed === "instant") per = 0;   // 玩家設定瞬間 → 一律即顯（行內 slow 演出讓位給玩家偏好）
     return new Promise((res) => {
       if (per === 0 || skipMode) { el.textContent = text; res(); return; }
       typing = true; let i = 0; el.textContent = "";
@@ -272,9 +391,14 @@
   }
 
   async function playLine(node) {
+    const _rtxt = node.text || "";
+    if (_rtxt) {
+      if (skipMode && skipUntilUnread && !isRead(_rtxt)) { skipMode = false; skipUntilUnread = false; updateSkipUI(); } // 跳已讀撞到未讀 → 停在本行正常播
+      markRead(_rtxt);
+    }
     if (node.add) { for (const k in node.add) state.scores[k] = (state.scores[k] || 0) + node.add[k]; refreshDbg(); }
     if (node.set) { for (const k in node.set) state.flags[k] = node.set[k]; refreshDbg(); }
-    if (node.screen === "black") { setBlack(true); await delay(700); }
+    if (node.screen === "black") { setBlack(true); resetCamera(0); await delay(700); }
     else if (node.screen === "clear") setBlack(false);
     if (node.bgm) setMood(node.bgm);                 // 行內音樂：保留 curBg（不洗背景圖）
     if (node.bg) setMood(undefined, node.bg);        // 行內背景微調（如甜點櫃子場景），不動音樂/漸層
@@ -282,6 +406,8 @@
     if (node.clear) { await clearSpriteAnimated(); }                              // 乾淨退場（與 expr 互斥，clear 優先）；注意：與 cg:"clear"（清 CG）不同
     else if (node.expr !== undefined) { setExpr(node.expr); setSprite(node.who, node.expr, node.mask, node); }
     if (node.se) playSE(node.se);
+    if (node.unread) handleUnread(node.unread);
+    if (node.camera) handleCamera(node.camera);
     if (node.shake) { $("stage").classList.add("shake"); setTimeout(() => $("stage").classList.remove("shake"), 420); }
 
     const nm = M.names[node.who] || M.names.narration;
@@ -299,9 +425,10 @@
     if (node.ui === "sns") await showSNS(node);
 
     await typewriter(node.text || "", node.speed || "normal");
+    if (node.text) pushHistory(node);
     if (node.pause && !skipMode) await Promise.race([delay(node.pause * 1000), waitAdvance(0)]);
     $("advanceHint").classList.add("show");
-    await waitAdvance(autoMode ? 1100 + (node.pause || 0) * 1000 : 0);
+    await waitAdvance(autoMode ? cfg.autoMs + (node.pause || 0) * 1000 : 0);
     if (node.ui === "sns") hideSNS();
   }
 
@@ -315,6 +442,7 @@
       const showHint = $("dbgChk") && $("dbgChk").checked;
       node.options.forEach((op, idx) => {
         const b = document.createElement("button");
+        if (op.flavor) b.classList.add("flavor-opt");
         b.style.setProperty("--i", idx);                 // 依序入場（stagger）
         b.innerHTML = op.label + (showHint && op._dbg ? `<span class="hint">${op._dbg}</span>` : "");
         b.onclick = async () => {
@@ -371,11 +499,10 @@
     state.day = d; if (!opts.replay) persist();      // 章節回想不覆蓋正式存檔
     const info = dayInfo(d);
     $("dayTag").textContent = "Day " + d + (info.title ? "　" + info.title : "") + (opts.replay ? "（回想）" : ""); refreshDbg();
-    clearCG(); setExpr(""); setSprite(null, null); hideSNS(); setBlack(false); Overlay.resetDay();
+    clearCG(); setExpr(""); setSprite(null, null); hideSNS(); resetUnread(); history = []; resetCamera(0); setBlack(false); Overlay.resetDay();
     setMood("night", null);                           // 開新一天：清掉上一場景殘留的 curBg
     await showDayCard(d, "start");                  // 必做1：每日章節標題卡
-    await playNodes(chapterOf(d).intro || []);      // 必做3：當日極短引子
-    await sectionBreak();                           // 段落停頓：intro 結束後等玩家點一下
+    await playNodes(chapterOf(d).intro || []);      // 必做3：當日極短引子（intro 後不再插空白停頓，直接進當日第一幕）
     await playNodes(H.days[d] || [{ type: "line", who: "narration", text: "（Day" + d + " 尚未實裝）" }]);
     await sectionBreak();                           // 段落停頓：主劇情結束後等玩家點一下
     await playNodes(chapterOf(d).outro || []);      // 必做4：當日極短收束
@@ -499,6 +626,70 @@
   }
   function closeMenu() { $("menuModal").classList.add("hidden"); }
 
+  // ---- 對白回顧（backlog）----
+  function pushHistory(node) {
+    const nm = M.names[node.who] || M.names.narration;
+    history.push({ label: nm.label || "", cls: nm.cls || "", text: node.text, narr: node.who === "narration" });
+    if (history.length > 200) history.shift();
+  }
+  function openBacklog() {
+    const box = $("backlogList"); if (!box) return;
+    box.innerHTML = history.length
+      ? history.map((h) => `<div class="bl-row${h.narr ? " bl-narr" : ""}">${h.label ? `<span class="bl-name ${h.cls}">${h.label}</span>` : ""}<span class="bl-text">${escapeHtml(h.text)}</span></div>`).join("")
+      : `<div class="bl-row bl-narr"><span class="bl-text">（本日還沒有對白）</span></div>`;
+    $("backlogModal").classList.remove("hidden");
+    box.scrollTop = box.scrollHeight;   // 捲到最新
+  }
+  function closeBacklog() { $("backlogModal").classList.add("hidden"); }
+
+  // ---- 設定（音量／靜音／文字速度）----
+  function openSettings() {
+    const m = $("settingsModal"); if (!m) return;
+    $("setBgm").value = cfg.bgmVol; $("setSe").value = cfg.seVol; $("setMute").checked = cfg.mute;
+    [].forEach.call(m.querySelectorAll("[data-speed]"), (b) => b.classList.toggle("on", b.dataset.speed === cfg.textSpeed));
+    m.classList.remove("hidden");
+  }
+  function closeSettings() { $("settingsModal").classList.add("hidden"); }
+
+  // ---- 多槽存檔／讀檔（日為單位；slot 0 = 自動存檔=既有 HOSHINO_SAVE，1..3 = 手動書籤）----
+  // 註：手動「存」複製當前自動存檔（＝當日起點快照），與「繼續／重玩本日」同模型，避免日中分數重複計。
+  //     場景中途任意點 resume 屬階段二（需重構 runDay/playNodes），本版未做。
+  const SLOTS = 3;
+  const slotKey = (i) => (i === 0 ? SAVE : SAVE + "_" + i);
+  const readSlot = (i) => { try { return JSON.parse(localStorage.getItem(slotKey(i)) || "null"); } catch (e) { return null; } };
+  function slotLabel(s) {
+    if (!s) return "（空）";
+    const info = dayInfo(s.day) || {};
+    let when = "";
+    if (s.ts) { const d = new Date(s.ts), p = (n) => ("0" + n).slice(-2); when = `　${p(d.getMonth() + 1)}/${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}`; }
+    return `Day ${s.day}${info.title ? "《" + info.title + "》" : ""}${when}`;
+  }
+  function saveToManual(i) {
+    const auto = readSlot(0); if (!auto) return false;                    // 尚無進度可存
+    localStorage.setItem(slotKey(i), JSON.stringify({ day: auto.day, scores: auto.scores, flags: auto.flags, ts: Date.now() }));
+    return true;
+  }
+  function loadSlot(i) {
+    const s = readSlot(i); if (!s) return;
+    state = { day: s.day, scores: { ...s.scores }, flags: { ...s.flags } };
+    closeSaveLoad(); closeMenu();
+    showScreen("game"); runDay(s.day);
+  }
+  function renderSaveLoad() {
+    const box = $("saveloadList"); if (!box) return;
+    const hasAuto = !!readSlot(0);
+    let html = "";
+    for (let i = 0; i <= SLOTS; i++) {
+      const s = readSlot(i), name = i === 0 ? "自動" : "槽 " + i;
+      const saveBtn = i !== 0 ? `<button class="sl-save" data-slot="${i}"${hasAuto ? "" : " disabled"}>存</button>` : "";
+      html += `<div class="sl-row"><div class="sl-info"><span class="sl-name">${name}</span><span class="sl-meta">${slotLabel(s)}</span></div>`
+        + `<div class="sl-btns">${saveBtn}<button class="sl-load" data-slot="${i}"${s ? "" : " disabled"}>讀</button></div></div>`;
+    }
+    box.innerHTML = html;
+  }
+  function openSaveLoad() { renderSaveLoad(); $("saveloadModal").classList.remove("hidden"); }
+  function closeSaveLoad() { $("saveloadModal").classList.add("hidden"); }
+
   // ---- 綁定 ----
   function boot() {
     $("titleArt").innerHTML = ART.title();
@@ -534,9 +725,57 @@
     $("dbgChk").onchange = (e) => { $("dbgPanel").classList.toggle("hidden", !e.target.checked); refreshDbg(); };
 
     $("btnAuto").onclick = () => { autoMode = !autoMode; $("btnAuto").classList.toggle("on", autoMode); if (autoMode) userAdvance(); };
-    $("btnSkip").onclick = () => { skipMode = !skipMode; $("btnSkip").classList.toggle("on", skipMode); if (skipMode) userAdvance(); };
+    $("btnSkip").onclick = () => { const cur = skipMode && !skipUntilUnread; skipMode = !cur; skipUntilUnread = false; updateSkipUI(); if (skipMode) userAdvance(); };            // 全部快進（含未讀）
+    $("btnSkipRead").onclick = () => { const cur = skipMode && skipUntilUnread; skipMode = !cur; skipUntilUnread = !cur; updateSkipUI(); if (skipMode) userAdvance(); };          // 只快進已讀（遇未讀自動停）
+
+    // 對白回顧
+    $("btnLog").onclick = openBacklog;
+    $("backlogClose").onclick = closeBacklog;
+    // 設定
+    $("mSettings").onclick = () => { closeMenu(); openSettings(); };
+    $("setClose").onclick = closeSettings;
+    // 多槽存檔／讀檔
+    $("btnLoad").onclick = openSaveLoad;
+    $("mSaveLoad").onclick = () => { closeMenu(); openSaveLoad(); };
+    $("saveloadClose").onclick = closeSaveLoad;
+    $("saveloadList").onclick = (e) => {
+      const b = e.target.closest && e.target.closest("button"); if (!b || b.disabled) return;
+      const i = parseInt(b.dataset.slot, 10);
+      if (b.classList.contains("sl-save")) { if (saveToManual(i)) renderSaveLoad(); }
+      else if (b.classList.contains("sl-load")) loadSlot(i);
+    };
+    $("setBgm").oninput = (e) => { cfg.bgmVol = parseFloat(e.target.value); if (bgmAudio) bgmAudio.volume = bgmVol(); saveCfg(); };
+    $("setSe").oninput = (e) => { cfg.seVol = parseFloat(e.target.value); saveCfg(); };
+    $("setMute").onchange = (e) => { cfg.mute = e.target.checked; if (bgmAudio) bgmAudio.volume = bgmVol(); saveCfg(); };
+    [].forEach.call(document.querySelectorAll("#settingsModal [data-speed]"), (b) => { b.onclick = () => { cfg.textSpeed = b.dataset.speed; saveCfg(); openSettings(); }; });
 
     showScreen("title");
+
+    // 開場 loading overlay：等字型＋標題 KV＋全部圖素材就緒（封頂 12s 安全閥）再淡出，
+    // 進場前把立繪/CG/背景讀完 → 遊戲中不再有圖片 pop-in（取代 webp 壓縮路線）。(P1-7 擴充)
+    const revealApp = () => { const o = $("loadingOverlay"); if (o) o.classList.add("done"); };
+    // 蒐集 manifest 內所有圖片 URL（characters 含 @masks／cg／background；bgm/se 不算圖、不預載）
+    const collectImageUrls = () => {
+      const urls = new Set();
+      const walk = (o) => { for (const k in o) { const v = o[k]; if (typeof v === "string") { if (v) urls.add(v); } else if (v && typeof v === "object") walk(v); } };
+      const a = H.assets || {}; walk(a.characters || {}); walk(a.cg || {}); walk(a.background || {});
+      return [...urls];
+    };
+    const ldp = $("ldProgress");
+    const preloadImages = () => {
+      const urls = collectImageUrls(); const total = urls.length; let done = 0;
+      if (!total) return Promise.resolve();
+      return new Promise((resolve) => {
+        const tick = () => { done++; if (ldp) ldp.textContent = done >= total ? "" : "載入素材 " + Math.round(done / total * 100) + "%"; if (done >= total) resolve(); };
+        urls.forEach((u) => { const im = new Image(); im.onload = tick; im.onerror = tick; im.src = u; }); // onerror 也計數：缺圖不卡關
+      });
+    };
+    const kv = new Image(); kv.src = "assets/ui/title_kv.webp";
+    const fontsReady = (document.fonts && document.fonts.ready) ? document.fonts.ready : Promise.resolve();
+    const kvReady = new Promise((res) => { kv.onload = res; kv.onerror = res; });
+    const imagesReady = preloadImages();
+    // ponytail: 封頂 12s——本地/快網數秒讀完；慢網最多等 12s 仍進場（之後 pop-in 但可玩），不無限卡
+    Promise.race([Promise.all([fontsReady, kvReady, imagesReady]), new Promise((r) => setTimeout(r, 12000))]).then(revealApp);
   }
   boot();
 })();

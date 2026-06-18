@@ -46,7 +46,7 @@ window.HOSHINO.days[5] = [
 
   { type: "line", who: "narration", text: "我進店裡買了關東煮。", se: "store" },
   { type: "line", who: "narration", text: "竹輪、蘿蔔、蛋——", speed: "instant" },
-  { type: "line", who: "narration", text: "結帳時才發現，袋子裡有兩塊油豆腐。", cg: "oden", se: "pat" },
+  { type: "line", who: "narration", text: "結帳時才發現，袋子裡有兩塊油豆腐。", cg: "oden_cup", se: "pat" },
   { type: "line", who: "narration", text: "我什麼時候夾的？", pause: 1.2 },
   { type: "line", who: "narration", text: "……自己都沒注意。", speed: "slow" },
   { type: "line", who: "narration", text: "替她留一份，已經變成習慣了。", speed: "slow", pause: 1.0, cg: "clear" },
@@ -59,7 +59,7 @@ window.HOSHINO.days[5] = [
   { type: "line", who: "narration", text: "一張白色的小紙，折成四折，壓在半塊磚頭下面。" },
   { type: "line", who: "narration", text: "像怕被風吹走。" },
   { type: "line", who: "narration", text: "又像怕太顯眼。", pause: 0.8 },
-  { type: "line", who: "narration", text: "我撿起來，打開。", se: "give" },
+  { type: "line", who: "narration", text: "我撿起來，打開。", se: "give", cg: "receipt" },
 
   /* ── D5-S3：解謎・收據正背面（軟分歧1）── */
   { type: "line", who: "narration", text: "邊角有一點泥印。", bgm: "warm" },
@@ -74,14 +74,14 @@ window.HOSHINO.days[5] = [
   { type: "line", who: "narration", text: "那串數字旁邊，有人用原子筆畫了一個很小的東西。" },
   { type: "line", who: "narration", text: "一個肉球印。", speed: "slow", pause: 0.8 },
 
-  { type: "line", who: "narration", text: "我把收據翻到背面。", se: "give" },
+  { type: "line", who: "narration", text: "我把收據翻到背面。", se: "give", cg: "receipt_back", camera: { op: "push", amount: "medium", duration: 700 } },
   { type: "line", who: "narration", text: "背面的線條比正面的字跡深，像是後來補上的。" },
 
   /* gate：affection>=4 護唇膏記號版／else 原文版 */
   {
     type: "gate", cond: "affection>=4",
     then: [
-      { type: "line", who: "narration", text: "一隻畫得很歪的小貓。", cg: "receipt" },
+      { type: "line", who: "narration", text: "一隻畫得很歪的小貓。", cg: "receipt_back" },
       { type: "line", who: "narration", text: "便利商店的玻璃門上，打了一個大大的叉。" },
       { type: "line", who: "narration", text: "貓沒有走向門。" },
       { type: "line", who: "narration", text: "牠的肉球印繞過去，繞到一台四四方方的機器旁邊。" },
@@ -90,16 +90,16 @@ window.HOSHINO.days[5] = [
       { type: "line", who: "narration", text: "那裡，點了一個小小的、長條形的記號。" },
       { type: "line", who: "narration", text: "護唇膏。", speed: "slow", pause: 0.8 },
       { type: "line", who: "narration", text: "她連這個都畫上去了。", speed: "slow", pause: 1.2 },
-      { type: "line", who: "narration", text: "沒有任何字。", speed: "instant", pause: 1.5, cg: "clear" },
+      { type: "line", who: "narration", text: "沒有任何字。", speed: "instant", pause: 1.5, cg: "clear", camera: { op: "reset", duration: 400 } },
     ],
     else: [
-      { type: "line", who: "narration", text: "一隻畫得很歪的小貓。", cg: "receipt" },
+      { type: "line", who: "narration", text: "一隻畫得很歪的小貓。", cg: "receipt_back" },
       { type: "line", who: "narration", text: "便利商店的玻璃門上，打了一個大大的叉。" },
       { type: "line", who: "narration", text: "貓沒有走向門。" },
       { type: "line", who: "narration", text: "牠的肉球印繞過去，繞到一台四四方方的機器旁邊。" },
       { type: "line", who: "narration", text: "販賣機。", speed: "slow", pause: 0.8 },
       { type: "line", who: "narration", text: "肉球印停在販賣機旁邊。", pause: 0.8 },
-      { type: "line", who: "narration", text: "沒有任何字。", speed: "instant", pause: 1.5, cg: "clear" },
+      { type: "line", who: "narration", text: "沒有任何字。", speed: "instant", pause: 1.5, cg: "clear", camera: { op: "reset", duration: 400 } },
     ],
   },
 
@@ -110,7 +110,7 @@ window.HOSHINO.days[5] = [
     type: "choice", id: "d5s3",
     options: [
       {
-        label: "「01:03，是她來過的時間。」", _dbg: "+0",
+        label: "「01:03，是她來過的時間。」", _dbg: "+0", flavor: true,
         reaction: [
           { type: "line", who: "me", text: "「01:03，是她來過的時間。」" },
           { type: "line", who: "narration", text: "她來過？" },
@@ -123,7 +123,7 @@ window.HOSHINO.days[5] = [
         ],
       },
       {
-        label: "「01:03，是她買到布丁的時間。」", _dbg: "+0",
+        label: "「01:03，是她買到布丁的時間。」", _dbg: "+0", flavor: true,
         reaction: [
           { type: "line", who: "me", text: "「01:03，是她買到布丁的時間。」" },
           { type: "line", who: "narration", text: "那是前天，她自己買到布丁的時間。" },
@@ -168,7 +168,7 @@ window.HOSHINO.days[5] = [
   { type: "line", who: "narration", text: "連留東西，都像貓。", pause: 0.8, cg: "clear" },
 
   { type: "line", who: "narration", text: "坐下，打開那袋關東煮。" },
-  { type: "line", who: "narration", text: "兩塊油豆腐，並排躺著。" },
+  { type: "line", who: "narration", text: "兩塊油豆腐，並排躺著。", cg: "oden_cup" },
   { type: "line", who: "narration", text: "一塊是我的。" },
   { type: "line", who: "narration", text: "另一塊，是手自己多夾的那塊。", speed: "slow" },
   { type: "line", who: "narration", text: "她今天不會來。" },
@@ -179,7 +179,7 @@ window.HOSHINO.days[5] = [
     prompt: "（兩塊油豆腐。）",
     options: [
       {
-        label: "「兩塊油豆腐，都吃掉。」", _dbg: "+0（情緒選擇）",
+        label: "「兩塊油豆腐，都吃掉。」", _dbg: "+0（情緒選擇）", flavor: true,
         reaction: [
           { type: "line", who: "narration", text: "吃吧。" },
           { type: "line", who: "narration", text: "她看到剩菜，大概又要唸浪費。" },
@@ -188,7 +188,7 @@ window.HOSHINO.days[5] = [
         ],
       },
       {
-        label: "「留一塊，陪一會。」", _dbg: "+0（情緒選擇）",
+        label: "「留一塊，陪一會。」", _dbg: "+0（情緒選擇）", flavor: true,
         reaction: [
           { type: "line", who: "narration", text: "我吃了一塊。" },
           { type: "line", who: "narration", text: "另一塊留在盒子裡，蓋好。" },
@@ -222,8 +222,8 @@ window.HOSHINO.days[5] = [
     options: [
       {
         label: "投一罐未開封熱可可，立在她放罐的位置；把焦糖布丁收據收好。",
-        _dbg: "affection +1・確認 vending_machine_memory",
-        add: { affection: 1 }, flag: { vending_machine_memory: true },
+        _dbg: "affection +1",
+        add: { affection: 1 },
         reaction: [
           { type: "line", who: "narration", text: "我沒有寫字，也沒有畫圖。" },
           { type: "line", who: "narration", text: "只走到販賣機前，投了一罐熱可可。", se: "give" },

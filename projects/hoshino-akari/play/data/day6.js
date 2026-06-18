@@ -44,13 +44,13 @@ window.HOSHINO.days[6] = [
   { type: "line", who: "narration", text: "鐵門大半都拉下來了。" },
   { type: "line", who: "narration", text: "只剩雨棚的燈，一盞一盞，把濕掉的地面照成亮黃色。" },
   { type: "line", who: "narration", text: "雨打在棚頂，聲音很密。", se: "rain" },
-  { type: "line", who: "narration", text: "我把手插進口袋，走在中間。", set: { rain_shelter_flag: true } },
+  { type: "line", who: "narration", text: "我把手插進口袋，走在中間。" },
   { type: "line", who: "narration", text: "護唇膏還在。" },
 
   { type: "line", who: "narration", text: "前面，一個戴口罩、圍著圍巾的人，迎面走來。" },
   { type: "line", who: "narration", text: "低著頭。走得很普通。" },
   { type: "line", who: "narration", text: "擦肩的那一瞬間，那個人沒有停。", se: "give", pause: 0.6 },
-  { type: "line", who: "akari", text: "「不要回頭。」", speed: "slow", expr: "口罩圍巾" },
+  { type: "line", who: "akari", text: "「不要回頭。」", speed: "slow", expr: "口罩圍巾", mask: "口罩", pos: "right", depth: "far", motion: "fade_in" },
   { type: "line", who: "narration", text: "然後繼續往前走。" },
   { type: "line", who: "narration", text: "我停了半秒。", pause: 0.8 },
   { type: "line", who: "narration", text: "那個聲音，我認得。", speed: "slow", pause: 0.6 },
@@ -64,7 +64,7 @@ window.HOSHINO.days[6] = [
         reaction: [
           { type: "line", who: "narration", text: "我沒有回頭。" },
           { type: "line", who: "narration", text: "腳步放慢，等她繞回來，走到我背後。" },
-          { type: "line", who: "akari", text: "「……今天很聽話。」", speed: "slow", expr: "眼神放軟" },
+          { type: "line", who: "akari", text: "「……今天很聽話。」", speed: "slow", expr: "眼神放軟", mask: "半罩", pos: "left", depth: "far" },
           { type: "line", who: "me", text: "「妳說的。」" },
           { type: "line", who: "akari", text: "「嗯。」" },
           { type: "line", who: "akari", text: "「難得。」" },
@@ -76,7 +76,7 @@ window.HOSHINO.days[6] = [
         reaction: [
           { type: "line", who: "narration", text: "我的肩膀動了一下，脖子已經要轉。" },
           { type: "line", who: "narration", text: "半路又僵住，轉了回來。" },
-          { type: "line", who: "akari", text: "「……差一點。」", speed: "slow", expr: "口罩圍巾" },
+          { type: "line", who: "akari", text: "「……差一點。」", speed: "slow", expr: "口罩圍巾", mask: "口罩", pos: "left", depth: "far" },
           { type: "line", who: "me", text: "「沒回頭就好。」" },
           { type: "line", who: "akari", text: "「差點，不算合格。」" },
           { type: "line", who: "narration", text: "但聽得出來，她沒有真的在生氣。" },
@@ -109,30 +109,30 @@ window.HOSHINO.days[6] = [
     type: "choice", id: "d6s3",
     options: [
       {
-        label: "「像剛好同路？」", _dbg: "affection +1（鬥嘴）",
+        label: "「像剛好同路？」", _dbg: "affection +1（鬥嘴）", flavor: true,
         add: { affection: 1 }, flag: { tag_banter: true },
         reaction: [
           { type: "line", who: "me", text: "「像剛好同路？」" },
-          { type: "line", who: "akari", text: "「對。」", expr: "眼神彎" },
+          { type: "line", who: "akari", text: "「對。」", expr: "眼神彎", mask: "半罩", pos: "right", depth: "far" },
           { type: "line", who: "akari", text: "「今天稍微有點聰明。」" },
           { type: "line", who: "me", text: "「只有今天？」" },
           { type: "line", who: "akari", text: "「別得寸進尺。」" },
         ],
       },
       {
-        label: "「很難。」", _dbg: "affection +1（坦白）",
-        add: { affection: 1 }, flag: { tag_honest: true },
+        label: "「很難。」", _dbg: "affection +1（坦白＝else，不設 flag）", flavor: true,
+        add: { affection: 1 },
         reaction: [
           { type: "line", who: "me", text: "「很難。」" },
           { type: "line", who: "narration", text: "她沉默了半步。", pause: 0.8 },
-          { type: "line", who: "akari", text: "「……我也覺得。」", speed: "slow", expr: "眼神低" },
+          { type: "line", who: "akari", text: "「……我也覺得。」", speed: "slow", expr: "眼神低", mask: "口罩", pos: "right", depth: "far" },
           { type: "line", who: "akari", text: "「但今天，只能這樣。」" },
         ],
       },
     ],
   },
 
-  { type: "line", who: "narration", text: "我們並排走在雨棚下。" },
+  { type: "line", who: "narration", text: "我們並排走在雨棚下。", cg: "ev_umbrella" },
   { type: "line", who: "narration", text: "不看彼此。不叫名字。" },
   { type: "line", who: "narration", text: "像兩個剛好同路的陌生人。", pause: 0.6 },
   { type: "line", who: "akari", text: "「便利商店，不要去了。」" },
@@ -140,7 +140,7 @@ window.HOSHINO.days[6] = [
   { type: "line", who: "akari", text: "「也不要。」" },
 
   { type: "line", who: "narration", text: "前面，有個人舉起手機，對著雨棚拍了一張。", se: "flash" },
-  { type: "line", who: "narration", text: "她立刻慢了半步。", expr: "" },
+  { type: "line", who: "narration", text: "她立刻慢了半步。", expr: "", cg: "clear" },
   { type: "line", who: "narration", text: "我們之間，多出一個人的距離。", pause: 1.0 },
   { type: "line", who: "narration", text: "那個人收起手機，走遠了。" },
   { type: "line", who: "narration", text: "她才跟上來。", pause: 0.6 },
@@ -168,7 +168,7 @@ window.HOSHINO.days[6] = [
 
   /* ── D6-S4 雨棚・中段：油豆腐都還沒吃膩 ── */
   { type: "line", who: "narration", text: "我們又走過一盞燈。" },
-  { type: "line", who: "akari", text: "「經理人，發現了。」", set: { manager_warning_flag: true } },
+  { type: "line", who: "akari", text: "「經理人，發現了。」" },
   { type: "line", who: "me", text: "「很生氣？」" },
   { type: "line", who: "akari", text: "「沒有。」", pause: 0.8 },
   { type: "line", who: "me", text: "「……那更可怕。」" },
@@ -195,7 +195,7 @@ window.HOSHINO.days[6] = [
         reaction: [
           { type: "line", who: "me", text: "「護唇膏，還在我這裡。」" },
           { type: "line", who: "narration", text: "口罩遮住了她的嘴。" },
-          { type: "line", who: "narration", text: "但她的眼睛，稍微彎了一下。", expr: "眼神彎" },
+          { type: "line", who: "narration", text: "但她的眼睛，稍微彎了一下。", expr: "眼神彎", mask: "半罩", pos: "right", depth: "far" },
           { type: "line", who: "akari", text: "「……那就還有理由。」", speed: "slow" },
           { type: "line", who: "akari", text: "「最後一個。」" },
         ],
@@ -206,7 +206,7 @@ window.HOSHINO.days[6] = [
         reaction: [
           { type: "line", who: "me", text: "「那明天，還來嗎？」" },
           { type: "line", who: "narration", text: "她沒接話。", pause: 0.6 },
-          { type: "line", who: "akari", text: "「你問得太直了。」", speed: "slow", expr: "口罩圍巾" },
+          { type: "line", who: "akari", text: "「你問得太直了。」", speed: "slow", expr: "口罩圍巾", mask: "口罩", pos: "right", depth: "far" },
           { type: "line", who: "narration", text: "聲音壓得更低。" },
           { type: "line", who: "narration", text: "但她沒有說不來。" },
         ],
@@ -222,7 +222,7 @@ window.HOSHINO.days[6] = [
   { type: "line", who: "akari", text: "「我以為七天很長。」" },
   { type: "line", who: "me", text: "「現在呢？」" },
   { type: "line", who: "narration", text: "「現在覺得，」她的聲音輕得快被雨聲蓋掉，", pause: 1.0 },
-  { type: "line", who: "akari", text: "「油豆腐都還沒吃膩。」", speed: "slow", cg: "oden", expr: "眼神放軟" },
+  { type: "line", who: "akari", text: "「油豆腐都還沒吃膩。」", speed: "slow", cg: "oden", expr: "眼神放軟", mask: "半罩", pos: "right", depth: "far" },
   { type: "line", who: "narration", text: "我差點笑出來。", cg: "clear" },
   { type: "line", who: "me", text: "「完全沒有？」" },
   { type: "line", who: "akari", text: "「完全沒有。」" },
@@ -257,9 +257,9 @@ window.HOSHINO.days[6] = [
   { type: "line", who: "akari", text: "「最後一次。」", speed: "slow" },
   { type: "line", who: "akari", text: "「真的，最後一次。」", speed: "slow" },
   { type: "line", who: "narration", text: "連這一次，都沒看到她的臉。" },
-  { type: "line", who: "narration", text: "她把圍巾往上拉，遮住半張臉。", expr: "圍巾遮臉" },
+  { type: "line", who: "narration", text: "她把圍巾往上拉，遮住半張臉。", expr: "圍巾遮臉", mask: "口罩", motion: "fade_in", depth: "far", pos: "right" },
   { type: "line", who: "narration", text: "走進大馬路的燈光裡。" },
-  { type: "line", who: "narration", text: "白氣跟在身後。很快散了。", expr: "", pause: 0.8 },
+  { type: "line", who: "narration", text: "白氣跟在身後。很快散了。", expr: "", clear: true, pause: 0.8 },
 
   { type: "line", who: "narration", text: "我站在雨棚的盡頭。" },
   { type: "line", who: "narration", text: "我低頭看著掌心裡的護唇膏。", cg: "lipbalm" },

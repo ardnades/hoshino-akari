@@ -1,4 +1,4 @@
-# 星野灯線 —— 可試玩網頁 VN（dev note）
+# 雨後，凌晨一點 —— 可試玩網頁 VN（dev note）
 
 **獨立專案。** 不接任何其他作品的首頁、不與舊作並列。零後端、零 API key、純靜態，可直接用瀏覽器開 `index.html` 或丟 GitHub Pages。
 

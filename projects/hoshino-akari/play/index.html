@@ -3,20 +3,23 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>星野灯線 —— 凌晨一點的便利店</title>
-<link rel="stylesheet" href="style.css?v=20260616e">
+<title>雨後，凌晨一點 —— 便利商店旁的一件小事</title>
+<link rel="preload" as="font" type="font/woff2" crossorigin href="fonts/akari-serif.woff2">
+<link rel="stylesheet" href="style.css?v=20260618y">
 </head>
 <body>
+<div id="loadingOverlay"><div class="ld-title">雨後，凌晨一點</div><div class="ld-dot" aria-hidden="true"></div><div id="ldProgress" class="ld-prog" aria-live="polite"></div></div>
 <div id="app">
 
   <!-- 標題畫面 -->
   <section id="title" class="screen">
     <div class="title-art" id="titleArt"></div>
-    <h1>星野灯線</h1>
-    <p class="subtitle">凌晨一點的便利店</p>
+    <h1>雨後，凌晨一點</h1>
+    <p class="subtitle">便利商店旁的一件小事</p>
     <div class="title-menu">
       <button id="btnStart">開始遊戲</button>
       <button id="btnContinue">繼續<span id="contLabel"></span></button>
+      <button id="btnLoad">讀取存檔</button>
       <button id="btnGallery">回想室</button>
     </div>
     <p class="title-note">含虛構角色。全角色 18 歲以上。<br>本作為非營利同人試玩版。</p>
@@ -29,26 +32,54 @@
       <span id="dayTag">Day 1</span>
       <div class="top-right">
         <button id="btnAuto" title="自動播放">▶ 自動</button>
-        <button id="btnSkip" title="快進已讀">» 快進</button>
+        <button id="btnSkip" title="全部快進（含未讀）">» 全部</button>
+        <button id="btnSkipRead" title="只快進已讀（遇未讀自動停）">» 已讀</button>
+        <button id="btnLog" title="對白回顧">回顧</button>
         <button id="btnGalleryG" title="回想室">圖鑑</button>
       </div>
     </div>
 
     <div id="stage">
-      <div id="moodbg"></div>
-      <div id="spriteLayer" class="hidden"></div>
-      <div id="cgLayer" class="hidden"></div>
+      <div id="stageVisual">
+        <div id="moodbg"><div class="mb-img" id="mbA"></div><div class="mb-img" id="mbB"></div></div>
+        <div id="spriteLayer" class="hidden"></div>
+      </div>
       <div id="sceneCard" class="hidden"></div>
       <div id="sceneTag" class="hidden"></div>
       <div id="snsLayer" class="hidden"></div>
       <div id="exprBadge" class="hidden"></div>
       <div id="seFlash"></div>
+      <div id="unreadBadge" class="hidden"></div>
     </div>
 
+    <!-- CG 全畫面層：移出 #stage 的 overflow:hidden，鋪滿 #game、墊在半透明對話框之後 -->
+    <div id="cgLayer" class="hidden"></div>
+
     <div id="textbox">
+      <svg class="tb-frame" viewBox="0 0 400 100" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <defs>
+          <linearGradient id="tbTopHL" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%"   stop-color="#c8b4ff" stop-opacity="0"/>
+            <stop offset="15%"  stop-color="#c8b4ff" stop-opacity="0.55"/>
+            <stop offset="50%"  stop-color="#c8b4ff" stop-opacity="0.88"/>
+            <stop offset="85%"  stop-color="#c8b4ff" stop-opacity="0.55"/>
+            <stop offset="100%" stop-color="#c8b4ff" stop-opacity="0"/>
+          </linearGradient>
+          <linearGradient id="tbLeftHL" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%"   stop-color="#c8b4ff" stop-opacity="0.9"/>
+            <stop offset="55%"  stop-color="#c8b4ff" stop-opacity="0.38"/>
+            <stop offset="100%" stop-color="#c8b4ff" stop-opacity="0"/>
+          </linearGradient>
+        </defs>
+        <rect x="0" y="0" width="400" height="1.2" fill="url(#tbTopHL)"/>
+        <rect x="0" y="0" width="2.5" height="100" fill="url(#tbLeftHL)"/>
+        <rect x="0" y="0" width="400" height="100" fill="none" stroke="#c8b4ff" stroke-opacity="0.12" stroke-width="0.7"/>
+        <path d="M 388,2 L 398,2 L 398,14"  fill="none" stroke="#c8b4ff" stroke-opacity="0.52" stroke-width="1" stroke-linecap="round"/>
+        <path d="M 2,88 L 2,98 L 14,98"     fill="none" stroke="#c8b4ff" stroke-opacity="0.26" stroke-width="1" stroke-linecap="round"/>
+      </svg>
       <div id="speaker" class="hidden"></div>
       <div id="dialogue"></div>
-      <div id="advanceHint">▼</div>
+      <div id="advanceHint"><span></span><span></span><span></span></div>
     </div>
 
     <div id="choices" class="hidden"></div>
@@ -59,10 +90,37 @@
         <h3>選單</h3>
         <button id="mResume">回到遊戲</button>
         <button id="mGallery">回想室</button>
+        <button id="mSettings">設定</button>
+        <button id="mSaveLoad">存檔／讀檔</button>
         <button id="mRestartDay">重玩本日</button>
         <button id="mTitle">回標題</button>
         <label class="dbg-toggle"><input type="checkbox" id="dbgChk"> 開發者模式（顯示數值・跳天）</label>
         <div id="dbgPanel" class="hidden"></div>
+      </div>
+    </div>
+
+    <!-- 對白回顧 -->
+    <div id="backlogModal" class="modal hidden">
+      <div class="modal-box backlog-box">
+        <h3>對白回顧</h3>
+        <div id="backlogList" class="backlog-list"></div>
+        <button id="backlogClose">關閉</button>
+      </div>
+    </div>
+
+    <!-- 設定 -->
+    <div id="settingsModal" class="modal hidden">
+      <div class="modal-box">
+        <h3>設定</h3>
+        <label class="set-row"><span>音樂音量</span><input type="range" id="setBgm" min="0" max="1" step="0.05"></label>
+        <label class="set-row"><span>音效音量</span><input type="range" id="setSe" min="0" max="1" step="0.05"></label>
+        <label class="set-row set-check"><input type="checkbox" id="setMute"> 全部靜音</label>
+        <div class="set-row set-speed"><span>文字速度</span>
+          <div class="seg">
+            <button data-speed="slow">慢</button><button data-speed="normal">中</button><button data-speed="fast">快</button><button data-speed="instant">瞬間</button>
+          </div>
+        </div>
+        <button id="setClose">關閉</button>
       </div>
     </div>
   </section>
@@ -82,21 +140,30 @@
     <div id="galView" class="modal hidden"><div class="modal-box gal-view-box"><div id="galViewArt"></div><p id="galViewText"></p><button id="galViewClose">關閉</button></div></div>
   </section>
 
+  <!-- 存檔／讀檔（置於 #app 層；標題畫面與遊戲中皆可開）-->
+  <div id="saveloadModal" class="modal hidden">
+    <div class="modal-box">
+      <h3>存檔／讀檔</h3>
+      <div id="saveloadList" class="sl-list"></div>
+      <button id="saveloadClose">關閉</button>
+    </div>
+  </div>
+
 </div>
 
 <!-- 資料 -->
-<script src="art.js?v=20260616e"></script>
-<script src="data/meta.js?v=20260616e"></script>
-<script src="data/assets.js?v=20260616e"></script>
-<script src="data/chapters.js?v=20260616e"></script>
-<script src="data/day1.js?v=20260616e"></script>
-<script src="data/day2.js?v=20260616e"></script>
-<script src="data/day3.js?v=20260616e"></script>
-<script src="data/day4.js?v=20260616e"></script>
-<script src="data/day5.js?v=20260616e"></script>
-<script src="data/day6.js?v=20260616e"></script>
-<script src="data/day7.js?v=20260616e"></script>
-<script src="data/endings.js?v=20260616e"></script>
-<script src="engine.js?v=20260616e"></script>
+<script src="art.js?v=20260618y"></script>
+<script src="data/meta.js?v=20260618y"></script>
+<script src="data/assets.js?v=20260618y"></script>
+<script src="data/chapters.js?v=20260618y"></script>
+<script src="data/day1.js?v=20260618y"></script>
+<script src="data/day2.js?v=20260618y"></script>
+<script src="data/day3.js?v=20260618y"></script>
+<script src="data/day4.js?v=20260618y"></script>
+<script src="data/day5.js?v=20260618y"></script>
+<script src="data/day6.js?v=20260618y"></script>
+<script src="data/day7.js?v=20260618y"></script>
+<script src="data/endings.js?v=20260618y"></script>
+<script src="engine.js?v=20260618y"></script>
 </body>
 </html>

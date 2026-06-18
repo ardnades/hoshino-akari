@@ -2,16 +2,16 @@
 window.HOSHINO.days[3] = [
   // ── 白天・主角的日常 ──
   { type: "scene", place: "回家路上", time: "傍晚", mood: "warm", bg: "bg_street_evening" },
-  { type: "line", who: "narration", text: "下班路上，我發現自己一直在看時間。", bgm: "warm" },
+  { type: "line", who: "narration", text: "下班路上，我發現自己一直在看時間。" },
   { type: "line", who: "narration", text: "還有六個小時。" },
   { type: "line", who: "narration", text: "……我到底在期待什麼。", speed: "slow", pause: 0.8 },
 
   // ── 深夜・便利商店前 ──
   { type: "scene", place: "深夜・便利商店 門口", time: "凌晨零點四十分", mood: "night", bg: "bg_conv_front_night" },
-  { type: "line", who: "narration", text: "呼出的氣是白的。", bgm: "night" },
+  { type: "line", who: "narration", text: "呼出的氣是白的。" },
   { type: "line", who: "narration", text: "我比昨天早了十分鐘。" },
   { type: "line", who: "narration", text: "結果還是輸了。", speed: "slow", pause: 0.8 },
-  { type: "line", who: "narration", text: "便利商店門口的柱子旁，站著一個身影。" },
+  { type: "line", who: "narration", text: "便利商店門口的柱子旁，站著一個身影。", expr: "警戒", mask: "口罩", motion: "fade_in", depth: "far" },
   { type: "line", who: "narration", text: "鴨舌帽。口罩。粗框眼鏡。" },
   { type: "line", who: "narration", text: "加一條把半張臉埋進去的圍巾。" },
   { type: "line", who: "narration", text: "圍巾很正常。" },
@@ -21,9 +21,9 @@ window.HOSHINO.days[3] = [
   { type: "line", who: "narration", text: "視線直直盯著那扇自動門。" },
   { type: "line", who: "narration", text: "有客人走出來。" },
   { type: "line", who: "narration", text: "門「叮咚」一聲滑開。", se: "door" },
-  { type: "line", who: "narration", text: "她往後退了半步。", pause: 0.6 },
+  { type: "line", who: "narration", text: "她往後退了半步。", pause: 0.6, expr: "戒備遮臉", mask: "口罩", motion: "step_back" },
   { type: "line", who: "me", text: "「……妳在幹嘛？」" },
-  { type: "line", who: "akari", text: "「測感應範圍。」", speed: "instant", expr: "盯著自動門" },
+  { type: "line", who: "akari", text: "「測感應範圍。」", speed: "instant", expr: "盯著自動門", mask: "口罩", depth: "far" },
   { type: "line", who: "me", text: "「測多久了？」" },
   { type: "line", who: "akari", text: "「…………十分鐘。」", speed: "slow", pause: 1.0, expr: "心虛" },
 
@@ -32,7 +32,7 @@ window.HOSHINO.days[3] = [
     type: "choice", id: "d3door",
     options: [
       {
-        label: "「妳現在比較像普通客人。」", _dbg: "風味 +0",
+        label: "「妳現在比較像普通客人。」", _dbg: "風味 +0", flavor: true,
         reaction: [
           { type: "line", who: "me", text: "「妳現在比較像普通客人。」" },
           { type: "line", who: "akari", text: "「……真的？」", expr: "藏不住的高興" },
@@ -43,7 +43,7 @@ window.HOSHINO.days[3] = [
         ],
       },
       {
-        label: "「妳現在比較像可疑人物。」", _dbg: "風味 +0",
+        label: "「妳現在比較像可疑人物。」", _dbg: "風味 +0", flavor: true,
         reaction: [
           { type: "line", who: "me", text: "「妳現在比較像可疑人物。」" },
           { type: "line", who: "akari", text: "「哪裡可疑了。」", expr: "不服氣" },
@@ -58,15 +58,15 @@ window.HOSHINO.days[3] = [
 
   // ── 兩個選項匯合・進店起霧 ──
   { type: "scene", place: "便利商店 店內", time: "深夜", mood: "store", bg: "bg_conv_interior_warm" },
-  { type: "line", who: "narration", text: "玻璃門「叮咚」滑開。", se: "door", bgm: "store" },
+  { type: "line", who: "narration", text: "玻璃門「叮咚」滑開。", se: "door" },
   { type: "line", who: "narration", text: "她跨進去。" },
   { type: "line", who: "narration", text: "暖氣迎面撲上來——" },
   { type: "line", who: "narration", text: "她的眼鏡，瞬間白成一片。", se: "fog" },
-  { type: "line", who: "akari", text: "「……看不到。」", pause: 0.8, expr: "當機" },
+  { type: "line", who: "akari", text: "「……看不到。」", pause: 0.8, expr: "當機", depth: "normal" },
   { type: "line", who: "narration", text: "她站在原地。" },
   { type: "line", who: "narration", text: "我把她往旁邊拉了半步，讓開門口。" },
   { type: "line", who: "narration", text: "她摘下眼鏡擦霧，動作很急。" },
-  { type: "line", who: "narration", text: "擦完，飛快戴回去，左右看了一眼。", expr: "警戒" },
+  { type: "line", who: "narration", text: "擦完，飛快戴回去，左右看了一眼。", expr: "警戒", mask: "口罩" },
   { type: "line", who: "narration", text: "沒有人注意她。" },
   { type: "line", who: "narration", text: "深夜的便利商店，只有暖氣的聲音。" },
   { type: "line", who: "narration", text: "她的肩膀，慢慢放下來。", speed: "slow", expr: "" },
@@ -75,12 +75,12 @@ window.HOSHINO.days[3] = [
   { type: "line", who: "narration", text: "腳步越來越慢。" },
 
   // ── 甜點櫃・放學回憶 ──
-  { type: "line", who: "narration", text: "在甜點櫃前面，她停住了。", bg: "bg_conv_dessert_case" },
+  { type: "line", who: "narration", text: "在甜點櫃前面，她停住了。", bg: "bg_conv_dessert_case", expr: "遠目", depth: "far" },
   { type: "line", who: "narration", text: "一整排布丁。" },
   { type: "line", who: "narration", text: "焦糖的、抹茶的、北海道牛奶的。" },
   { type: "line", who: "narration", text: "她站著，沒有動。" },
   { type: "line", who: "narration", text: "看了很久。", pause: 1.2 },
-  { type: "line", who: "akari", text: "「我以前也會這樣。」她忽然說。", speed: "slow", expr: "遠目" },
+  { type: "line", who: "akari", text: "「我以前也會這樣。」她忽然說。", speed: "slow", expr: "遠目", depth: "far" },
   { type: "line", who: "me", text: "「這樣？」" },
   { type: "line", who: "akari", text: "「站在甜點櫃前面，站很久。」" },
   { type: "line", who: "narration", text: "她的手指隔著玻璃，輕輕點了一下。", se: "tap" },
@@ -89,7 +89,7 @@ window.HOSHINO.days[3] = [
   { type: "line", who: "akari", text: "「看最久的那個……通常買不起。」", speed: "slow" },
   { type: "line", who: "akari", text: "「最後都買最便宜的。」", speed: "slow" },
   { type: "line", who: "narration", text: "她說得很輕。" },
-  { type: "line", who: "akari", text: "「……差點忘了。」", speed: "slow", pause: 1.2, expr: "淡笑帶酸" },
+  { type: "line", who: "akari", text: "「……差點忘了。」", speed: "slow", pause: 1.2, expr: "淡笑帶酸", depth: "near" },
 
   // ── choice d3s3（affection +1 / +0）──
   {
@@ -103,17 +103,17 @@ window.HOSHINO.days[3] = [
           { type: "line", who: "akari", text: "「我只是在比較成分標示。」" },
           { type: "line", who: "narration", text: "但她的手已經打開櫃門，停在焦糖布丁上。", se: "fridge" },
           { type: "line", who: "narration", text: "停了兩秒。", pause: 1.0 },
-          { type: "line", who: "akari", text: "「……就你了。」", speed: "slow", expr: "素顏感笑", cg: "pudding", set: { pudding_memory: true } },
+          { type: "line", who: "akari", text: "「……就你了。」", speed: "slow", expr: "素顏感笑", cg: "pudding" },
           { type: "line", who: "narration", text: "她對布丁說。" },
         ],
       },
       {
-        label: "「今天不看熱量表？」", _dbg: "+0",
+        label: "「今天不看熱量表？」", _dbg: "+0", flavor: true,
         reaction: [
           { type: "line", who: "me", text: "「今天不看熱量表？」" },
           { type: "line", who: "narration", text: "她轉頭瞪我。", expr: "瞪" },
           { type: "line", who: "akari", text: "「今天的我，不認識數字。」" },
-          { type: "line", who: "narration", text: "說完，她拿了焦糖布丁。", cg: "pudding", set: { pudding_memory: true } },
+          { type: "line", who: "narration", text: "說完，她拿了焦糖布丁。", cg: "pudding" },
           { type: "line", who: "narration", text: "看都沒看背面一眼。" },
         ],
       },
@@ -125,8 +125,8 @@ window.HOSHINO.days[3] = [
   { type: "line", who: "narration", text: "腳步頓了一下。" },
   { type: "line", who: "narration", text: "最上層的封面。" },
   { type: "line", who: "narration", text: "舞台上的星野灯，對著鏡頭笑得發亮。" },
-  { type: "line", who: "narration", text: "她隔著眼鏡和口罩，抬頭看了那張臉三秒。", pause: 1.0, expr: "凝視自己" },
-  { type: "line", who: "akari", text: "「……修圖修很大。」她小聲說。", speed: "slow", expr: "自嘲" },
+  { type: "line", who: "narration", text: "她隔著眼鏡和口罩，抬頭看了那張臉三秒。", pause: 1.0, expr: "凝視自己", depth: "normal" },
+  { type: "line", who: "akari", text: "「……修圖修很大。」她小聲說。", speed: "slow", expr: "自嘲", depth: "normal" },
   { type: "line", who: "narration", text: "我往前半步，站在她和雜誌架之間。" },
   { type: "line", who: "me", text: "「櫃檯在那邊。」", speed: "instant" },
   { type: "line", who: "narration", text: "她看了看我站的位置。", expr: "" },
@@ -144,7 +144,7 @@ window.HOSHINO.days[3] = [
   { type: "line", who: "narration", text: "店員的話還掛在半空中。" },
   { type: "line", who: "narration", text: "「……」", pause: 0.8 },
   { type: "line", who: "akari", text: "「……」", pause: 0.8 },
-  { type: "line", who: "akari", text: "「我是說，」她急著補，「不是袋子。不要袋子。」", speed: "instant", expr: "慌" },
+  { type: "line", who: "akari", text: "「我是說，」她急著補，「不是袋子。不要袋子。」", speed: "instant", expr: "慌", depth: "near" },
   { type: "line", who: "narration", text: "「我還沒問袋子。」", speed: "instant" },
   { type: "line", who: "akari", text: "「你現在問了。」", speed: "instant" },
   { type: "line", who: "narration", text: "店員張著嘴，看看她，又看看我。" },
@@ -176,7 +176,7 @@ window.HOSHINO.days[3] = [
 
   // ── 後巷・暖暖包與「剛好」 ──
   { type: "scene", place: "便利商店 後巷", time: "深夜", mood: "night", bg: "bg_conv_backalley_night" },
-  { type: "line", who: "narration", text: "她把布丁捧在手心。", expr: "珍惜" },
+  { type: "line", who: "narration", text: "她把布丁捧在手心。", expr: "珍惜", motion: "fade_in", depth: "near" },
   { type: "line", who: "narration", text: "路燈下，看了很久。" },
   { type: "line", who: "narration", text: "但沒有打開。" },
   { type: "line", who: "me", text: "「不吃？」" },
@@ -189,18 +189,18 @@ window.HOSHINO.days[3] = [
   { type: "line", who: "akari", text: "「給我的？」" },
   { type: "line", who: "me", text: "「順手買的。」" },
   { type: "line", who: "akari", text: "「順手。」", speed: "slow" },
-  { type: "line", who: "akari", text: "她隔著口罩，眼睛彎起來，「剛好？」", expr: "眼睛彎" },
+  { type: "line", who: "akari", text: "她隔著口罩，眼睛彎起來，「剛好？」", expr: "眼睛彎", depth: "near", mask: "口罩" },
   { type: "line", who: "me", text: "「……嗯。剛好。」", speed: "slow", pause: 1.2 },
   { type: "line", who: "narration", text: "她把暖暖包和布丁放進同一個口袋。" },
-  { type: "line", who: "narration", text: "轉身，走進巷子。" },
+  { type: "line", who: "narration", text: "轉身，走進巷子。", expr: "背對" },
   { type: "line", who: "narration", text: "走了幾步，回頭。" },
-  { type: "line", who: "akari", text: "「明天。同樣時間。」", expr: "試探" },
+  { type: "line", who: "akari", text: "「明天。同樣時間。」", expr: "試探", depth: "far" },
   { type: "line", who: "akari", text: "「你會來吧？」" },
   { type: "line", who: "narration", text: "這次，我沒有說「可能」。", pause: 0.8 },
   { type: "line", who: "me", text: "「會。」", speed: "instant" },
   { type: "line", who: "narration", text: "她「喔」了一聲。" },
   { type: "line", who: "narration", text: "那團白氣拖得很長。" },
-  { type: "line", who: "narration", text: "她走了。" },
+  { type: "line", who: "narration", text: "她走了。", clear: true },
 
   // ── 回家・推薦欄目擊貼文 ──
   { type: "scene", place: "我的房間", time: "深夜", mood: "stop", bg: "bg_room_night" },
@@ -240,7 +240,7 @@ window.HOSHINO.days[3] = [
         ],
       },
       {
-        label: "「躺著，滑過去。」", _dbg: "+0",
+        label: "「躺著，滑過去。」", _dbg: "+0", flavor: true,
         reaction: [
           { type: "line", who: "narration", text: "我把手機舉在臉上方，沒有坐起來。" },
           { type: "line", who: "narration", text: "別想了。", speed: "slow" },

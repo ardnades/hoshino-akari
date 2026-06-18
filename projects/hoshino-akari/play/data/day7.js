@@ -18,7 +18,7 @@ window.HOSHINO.days[7] = [
   { type: "line", who: "narration", text: "不太對。昨天還好好的。" },
   { type: "line", who: "narration", text: "我用指甲，從標籤的縫裡，挑出一小片捲起來的紙。", se: "paper", pause: 0.6 },
   { type: "line", who: "narration", text: "捲得很緊。" },
-  { type: "line", who: "narration", text: "攤開。", pause: 1.0 },
+  { type: "line", who: "narration", text: "攤開。", pause: 1.0, camera: { op: "push", amount: "medium", duration: 600 } },
   { type: "line", who: "narration", text: "沒有字。", cg: "note", pause: 0.8 },
   { type: "line", who: "narration", text: "只有一個歪歪的肉球印。旁邊寫著一個數字：", pause: 0.4 },
   { type: "line", who: "narration", text: "17:40。", speed: "instant" },
@@ -26,7 +26,7 @@ window.HOSHINO.days[7] = [
   { type: "line", who: "narration", text: "我認得那條線。是雨棚。還有，雨棚到頭的那盞路燈。", speed: "slow" },
   { type: "line", who: "narration", text: "昨天，我們分開的那個地方。", speed: "slow", pause: 0.6 },
   { type: "line", who: "narration", text: "我想起昨天，她把護唇膏塞回我手裡之前，握了好久。原來，是在做這個。" },
-  { type: "line", who: "narration", text: "我把那片紙，收進口袋。", cg: "clear" },
+  { type: "line", who: "narration", text: "我把那片紙，收進口袋。", cg: "clear", camera: { op: "reset", duration: 400 } },
   { type: "line", who: "narration", text: "17:40。冬天，差不多那時候，天就黑了。", speed: "slow" },
 
   /* ── S2 傍晚・雨棚盡頭：工作車旁的十分鐘 ── */
@@ -59,7 +59,7 @@ window.HOSHINO.days[7] = [
   { type: "line", who: "manager", text: "「這幾天，表情好一點了。」" },
   { type: "line", who: "narration", text: "她停了一下。" },
   { type: "line", who: "manager", text: "「但照片不會替妳解釋。」" },
-  { type: "line", who: "manager", text: "「十分鐘後沒回來，我會親自去抓妳。」", speed: "instant", set: { manager_warning_flag: false } },
+  { type: "line", who: "manager", text: "「十分鐘後沒回來，我會親自去抓妳。」", speed: "instant" },
   { type: "line", who: "narration", text: "說完，她沒有走遠。只退到工作車旁，和工作人員確認行程。" },
   { type: "line", who: "narration", text: "從那裡，她看得見星野的背影。但聽不見我們說話。" },
   { type: "line", who: "narration", text: "星野捏著那張房卡，還有那個暖暖包。然後，她朝雨棚這邊，走過來。" },
@@ -69,7 +69,7 @@ window.HOSHINO.days[7] = [
   { type: "line", who: "narration", text: "妝還在。頭髮是拍攝後的樣子，有點塌。外面隨便披了一件普通外套。" },
   { type: "line", who: "narration", text: "她看起來，比這幾天的任何一晚，都更像「星野灯」。" },
   { type: "line", who: "narration", text: "但她的眼睛，是那隻在巷子裡偷吃油豆腐的貓。" },
-  { type: "line", who: "akari", text: "「……看夠了沒。」", speed: "slow", expr: "妝容＋塌髮＋貓眼神" },
+  { type: "line", who: "akari", text: "「……看夠了沒。」", speed: "slow", expr: "妝容＋塌髮＋貓眼神", motion: "fade_in", depth: "normal" },
   { type: "line", who: "me", text: "「抱歉。」", speed: "instant" },
   { type: "line", who: "akari", text: "「沒叫你道歉。」", speed: "instant" },
 
@@ -77,7 +77,7 @@ window.HOSHINO.days[7] = [
   {
     type: "gate", cond: "flag:seen_through_flag",
     then: [
-      { type: "line", who: "akari", text: "「你從第一天，就看穿我。」", speed: "slow", pause: 0.8, expr: "嘴硬但眼底鬆" },
+      { type: "line", who: "akari", text: "「你從第一天，就看穿我。」", speed: "slow", pause: 0.8, expr: "嘴硬但眼底鬆", depth: "near" },
     ],
   },
 
@@ -85,8 +85,7 @@ window.HOSHINO.days[7] = [
     type: "choice", id: "d7s3", prompt: "口袋裡那片紙——",
     options: [
       {
-        label: "立刻讀懂，疊好收進胸前口袋。", _dbg: "distance +0",
-        add: { distance: 0 },
+        label: "立刻讀懂，疊好收進胸前口袋。", _dbg: "distance +0", flavor: true,
         reaction: [
           { type: "line", who: "narration", text: "我把那片紙看懂，疊好，收進胸前口袋。" },
           { type: "line", who: "narration", text: "我把它收在離心臟最近的口袋。她不知道我已經讀懂——但我接住了。" },
@@ -106,10 +105,10 @@ window.HOSHINO.days[7] = [
   /* ── S4 護唇膏正面交還・對視 ── */
   { type: "line", who: "narration", text: "她伸出手，手心朝上。", se: "cloth" },
   { type: "line", who: "akari", text: "「護唇膏。」" },
-  { type: "line", who: "narration", text: "我把護唇膏，放到她手裡。", se: "give", pause: 0.6 },
+  { type: "line", who: "narration", text: "我把護唇膏，放到她手裡。", se: "give", pause: 0.6, cg: "lipbalm" },
   { type: "line", who: "narration", text: "這次，我看著她。", pause: 0.8 },
-  { type: "line", who: "narration", text: "她也看著我。", cg: "lipbalm", pause: 1.0 },
-  { type: "line", who: "akari", text: "「你今天，看著我了。」", speed: "slow", expr: "直視・眼底鬆嘴硬收起" },
+  { type: "line", who: "narration", text: "她也看著我。", cg: "ev_lipbalm", pause: 1.0 },
+  { type: "line", who: "akari", text: "「你今天，看著我了。」", speed: "slow", expr: "直視・眼底鬆嘴硬收起", depth: "near" },
   { type: "line", who: "me", text: "「嗯。」", speed: "instant" },
   { type: "line", who: "akari", text: "「那就……」", pause: 2.0 },
   { type: "line", who: "narration", text: "她握住護唇膏。" },
@@ -121,13 +120,13 @@ window.HOSHINO.days[7] = [
     type: "choice", id: "d7s5", prompt: "替她接一句——",
     options: [
       {
-        label: "「這次算數了吧。」", _dbg: "+0",
+        label: "「這次算數了吧。」", _dbg: "+0", flavor: true,
         reaction: [
           { type: "line", who: "me", text: "「這次算數了吧。」" },
           { type: "line", who: "narration", text: "她瞪我一眼。" },
           { type: "line", who: "akari", text: "「……不准反悔。」" },
           { type: "line", who: "me", text: "「是妳一直反悔。」", speed: "instant" },
-          { type: "line", who: "akari", text: "「閉嘴。」", speed: "instant", expr: "嘴硬・眼神鬆" },
+          { type: "line", who: "akari", text: "「閉嘴。」", speed: "instant", expr: "嘴硬・眼神鬆", depth: "normal" },
         ],
       },
       {
@@ -154,9 +153,9 @@ window.HOSHINO.days[7] = [
   { type: "line", who: "akari", text: "「房卡還是別人保管。手機還是會響。明天，我就不在這裡了。」" },
   { type: "line", who: "narration", text: "她看著自己掌心裡的護唇膏。" },
   { type: "line", who: "akari", text: "「但我想起來，自由是什麼味道。」", speed: "slow" },
-  { type: "line", who: "me", text: "「……油豆腐？」", cg: "oden" },
+  { type: "line", who: "me", text: "「……油豆腐？」", cg: "oden", camera: { op: "push", amount: "small", duration: 500 } },
   { type: "line", who: "akari", text: "「還有焦糖布丁。」", cg: "pudding" },
-  { type: "line", who: "narration", text: "她說完，自己先笑了一下。", cg: "clear" },
+  { type: "line", who: "narration", text: "她說完，自己先笑了一下。", cg: "clear", camera: { op: "reset", duration: 400 } },
   { type: "line", who: "akari", text: "「我以前覺得，普通是很無聊的東西。」" },
   { type: "line", who: "me", text: "「現在呢？」" },
   { type: "line", who: "akari", text: "「現在覺得，」", pause: 1.0 },
@@ -167,7 +166,7 @@ window.HOSHINO.days[7] = [
     options: [
       {
         label: "「下次再買布丁吧。」", _dbg: "布丁線",
-        flag: { d7_food: "pudding" },
+        flag: { d7_food_pudding: true },
         reaction: [
           { type: "line", who: "me", text: "「下次再買布丁吧。」" },
           { type: "line", who: "akari", text: "「……你這人，說話很犯規。」" },
@@ -175,8 +174,7 @@ window.HOSHINO.days[7] = [
         ],
       },
       {
-        label: "「下次再吃油豆腐吧。」", _dbg: "油豆腐線",
-        flag: { d7_food: "oden" },
+        label: "「下次再吃油豆腐吧。」", _dbg: "油豆腐線（=else，不設 flag）",
         reaction: [
           { type: "line", who: "me", text: "「下次再吃油豆腐吧。」" },
           { type: "line", who: "narration", text: "她笑了。" },
@@ -204,10 +202,20 @@ window.HOSHINO.days[7] = [
     then: [
       { type: "line", who: "akari", text: "「如果哪天，」", pause: 0.4 },
       { type: "line", who: "akari", text: "「我真的可以，自己走進便利商店。」" },
-      { type: "line", who: "akari", text: "「那時候，我會自己買兩塊油豆腐。」" },
-      { type: "line", who: "me", text: "「一塊不夠？」" },
-      { type: "line", who: "akari", text: "「一塊給貓。」" },
-      { type: "line", who: "akari", text: "「一塊給——」", speed: "slow", pause: 0.8 },
+      { type: "gate", cond: "flag:d7_food_pudding",
+        then: [   // d7s6 選「下次再買布丁吧」(d7_food_pudding=true) → 布丁版未來想像（油豆腐給貓、布丁＝「給你的那一個」）
+          { type: "line", who: "akari", text: "「那時候，我會買兩塊油豆腐。一塊給貓。」" },
+          { type: "line", who: "akari", text: "「……再買一個焦糖布丁。」" },
+          { type: "line", who: "me", text: "「布丁給誰？」" },
+          { type: "line", who: "akari", text: "「給——」", speed: "slow", pause: 0.8 },
+        ],
+        else: [   // 油豆腐線（d7s6 opt1，不設 flag）→ 原本台詞
+          { type: "line", who: "akari", text: "「那時候，我會自己買兩塊油豆腐。」" },
+          { type: "line", who: "me", text: "「一塊不夠？」" },
+          { type: "line", who: "akari", text: "「一塊給貓。」" },
+          { type: "line", who: "akari", text: "「一塊給——」", speed: "slow", pause: 0.8 },
+        ],
+      },
       { type: "line", who: "manager", text: "「灯，時間。」", speed: "instant", se: "call" },
       { type: "line", who: "narration", text: "經理人的聲音，從大路那頭傳過來。" },
       { type: "line", who: "narration", text: "她的嘴停住。手裡的護唇膏，握緊了一下。", pause: 1.5 },
@@ -216,7 +224,7 @@ window.HOSHINO.days[7] = [
     else: [
       { type: "line", who: "akari", text: "「如果哪天，」", pause: 0.4 },
       { type: "line", who: "akari", text: "「我真的可以，自己走進便利商店。」" },
-      { type: "line", who: "akari", text: "「一塊給——」", speed: "slow", pause: 0.6 },
+      { type: "line", who: "akari", text: "「想留一份給——」", speed: "slow", pause: 0.6 },
       { type: "line", who: "manager", text: "「灯，時間。」", speed: "instant", se: "call" },
       { type: "line", who: "narration", text: "經理人的聲音，從大路那頭傳過來。她沒有把那句說完。", speed: "slow" },
       { type: "line", who: "narration", text: "也許說完了，今天也只是更難結束。她握緊護唇膏，沉默。", pause: 1.2 },
@@ -236,35 +244,40 @@ window.HOSHINO.days[7] = [
     type: "choice", id: "d7s7", prompt: "最後一句——",
     options: [
       {
-        label: "「再見。」",
+        label: "「再見。」", flavor: true,
         reaction: [
           { type: "line", who: "me", text: "「再見。」" },
           { type: "line", who: "narration", text: "她笑。有點寂寞。" },
           { type: "line", who: "narration", text: "點了點頭。" },
-          { type: "line", who: "akari", text: "「嗯。再見。」", expr: "寂寞笑", set: { lip_balm_flag: false } },
+          { type: "line", who: "akari", text: "「嗯。再見。」", expr: "寂寞笑", depth: "normal" },
         ],
       },
       {
-        label: "「下次見。」",
+        label: "「下次見。」", flavor: true,
         reaction: [
           { type: "line", who: "me", text: "「下次見。」" },
           { type: "line", who: "narration", text: "她停了一下。", pause: 1.0 },
-          { type: "line", who: "akari", text: "「你真的很不會說謊。」" },
+          /* Day6 d6s3 語氣回收：鬥嘴→嘴硬討「下次」；坦白→既有「不會說謊」。兩者皆「沒有否定」收束。 */
+          {
+            type: "gate", cond: "flag:tag_banter",
+            then: [ { type: "line", who: "akari", text: "「……下次，也只是剛好同路。」" } ],
+            else: [ { type: "line", who: "akari", text: "「你真的很不會說謊。」" } ],
+          },
           { type: "line", who: "narration", text: "但這次，她沒有否定。" },
           { type: "line", who: "narration", text: "她只是把護唇膏，放進外套最裡面的口袋。按了一下。" },
-          { type: "line", who: "narration", text: "像在確認，它不會掉。", set: { lip_balm_flag: false } },
+          { type: "line", who: "narration", text: "像在確認，它不會掉。" },
         ],
       },
     ],
   },
 
-  { type: "line", who: "narration", text: "她轉身，走回大路那片光裡。" },
+  { type: "line", who: "narration", text: "她轉身，走回大路那片光裡。", expr: "背對", motion: "step_back" },
   { type: "line", who: "narration", text: "工作人員朝她圍過去。有人替她拿東西，有人跟她講明天的行程。" },
   { type: "line", who: "narration", text: "她又變回那個，海報上的星野灯。", speed: "slow" },
   { type: "line", who: "narration", text: "但走到車門邊的時候，她停了半秒。", pause: 1.5 },
   { type: "line", who: "narration", text: "沒有回頭。只把手，按在外套口袋上。" },
   { type: "line", who: "narration", text: "那裡，裝著一支用了七天的護唇膏。" },
-  { type: "line", who: "narration", text: "然後，車門關上。", se: "door" },
+  { type: "line", who: "narration", text: "然後，車門關上。", se: "door", clear: true },
   { type: "line", who: "narration", text: "她回到原本的世界。", pause: 0.8 },
 
   /* ── 回家路上 ── */
@@ -279,11 +292,11 @@ window.HOSHINO.days[7] = [
 
   /* ── 回家：口袋摸到紙片（告別段收束，後日談在 endings.js） ── */
   { type: "line", who: "narration", text: "回到家，我把手伸進口袋。" },
-  { type: "line", who: "narration", text: "指尖碰到那一小片紙。", pause: 0.6 },
+  { type: "line", who: "narration", text: "指尖碰到那一小片紙。", pause: 0.6, camera: { op: "push", amount: "small", duration: 600 } },
   { type: "line", who: "narration", text: "護唇膏，被她收回去了。" },
   { type: "line", who: "narration", text: "但這片她偷偷塞進標籤縫裡的紙，還留在我口袋裡。" },
   { type: "line", who: "narration", text: "紙上沒有地址。沒有名字。什麼都沒有。" },
-  { type: "line", who: "narration", text: "只有一個歪歪的肉球印。", cg: "note", pause: 0.8 },
+  { type: "line", who: "narration", text: "只有一個歪歪的肉球印。", cg: "note_pawonly", pause: 0.8 },
   { type: "line", who: "narration", text: "我看著它，忍不住笑了。" },
-  { type: "line", who: "narration", text: "她把該收的，都收走了。就是漏了這隻貓。", speed: "slow", cg: "clear" },
+  { type: "line", who: "narration", text: "她把該收的，都收走了。就是漏了這隻貓。", speed: "slow", cg: "clear", camera: { op: "reset", duration: 400 } },
 ];

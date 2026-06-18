@@ -21,10 +21,10 @@
     "clap_sim": 0.327
   },
   "impact": {
-    "freesound_id": 734629,
-    "name": "Body - Fall, heavy dangerous",
+    "freesound_id": 276600,
+    "name": "body_hit.wav",
     "license": "http://creativecommons.org/publicdomain/zero/1.0/",
-    "query": "body impact thud",
-    "clap_sim": 0.621
+    "query": "body hit",
+    "clap_sim": 0.572
   }
 }

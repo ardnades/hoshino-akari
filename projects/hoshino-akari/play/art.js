@@ -80,6 +80,20 @@
       <circle cx="126" cy="100" r="3" fill="#ff9d6e" stroke="#ff9d6e"/>
       <text x="100" y="166" fill="#9aa7b4" stroke="none" font-size="11" text-anchor="middle">她漏掉的，那隻貓</text>`),
 
+    // 收據背面：她偷偷畫的暗號（玻璃門打叉 → 肉球繞向販賣機）。手畫線稿、無字，配 Day5「翻到背面」那拍。
+    receipt_back: () => S(`
+      <path d="M66 30 h68 v138 l-10 -6 -12 8 -12 -8 -12 8 -12 -8 -10 6 z" stroke="#ffd9a8"/>
+      <g stroke="#9aa7b4" stroke-width="2.2"><rect x="82" y="52" width="36" height="30" rx="2"/><line x1="100" y1="52" x2="100" y2="82"/></g>
+      <g stroke="#ff5b5b" stroke-width="3" stroke-linecap="round"><line x1="84" y1="55" x2="116" y2="79"/><line x1="116" y1="55" x2="84" y2="79"/></g>
+      <path d="M100 88 q-24 12 -16 34 q9 20 40 22" stroke="#ff9d6e" stroke-width="2" stroke-dasharray="1 9"/>
+      ${paw(92, 98, .4)} ${paw(83, 117, .4)} ${paw(96, 133, .4)} ${paw(115, 141, .4)}
+      <g stroke="#9aa7b4" stroke-width="2"><rect x="120" y="120" width="20" height="34" rx="2"/><line x1="124" y1="127" x2="124" y2="148"/><rect x="129" y="126" width="7" height="6" stroke="#ff9d6e"/><rect x="129" y="138" width="7" height="6" stroke="#ff9d6e"/></g>`),
+
+    // Day7 結尾口袋紙：只有一個歪歪的肉球印（無 17:40、無街燈、無字）。「歪歪的」＝手畫感。
+    note_pawonly: () => S(`
+      <rect x="60" y="68" width="80" height="64" rx="5" stroke="#ffd9a8" transform="rotate(-3 100 100)"/>
+      ${paw(101, 99, 1.05, '#ff9d6e')}`),
+
     akari_studio: () => S(`
       <circle cx="100" cy="70" r="40" fill="rgba(255,217,168,.08)" stroke="#ffd9a8"/>
       ${cat('#ffe9cc')}

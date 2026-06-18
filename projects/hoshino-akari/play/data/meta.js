@@ -7,8 +7,11 @@
        speed ∈ "normal"|"slow"|"instant"（預設 normal）；pause=該行後停頓秒數
        expr=右上角表情徽章字串；se=音效視覺脈衝(任意字串觸發閃光)；bgm∈night|warm|rain|stop|store|""(維持)
        ui ∈ "sns"(物件{title,posts:[{text,acct?,reply?,num?}]} 放在 line.sns) | "clock"
+       unread ∈ {op:"inc",by?:1}|{op:"clear"}|{op:"hold"} ← 右上角未讀紅點；inc 累加並 pulse，clear 隱藏，hold no-op
+       camera ∈ {op:"push"|"pan"|"hold"|"reset", amount?:"small"|"medium", duration?:ms} ← #stageVisual 鏡頭；push=scale，pan=translateX，hold=no-op，reset 還原；場景切換自動 reset
        cg = ART key（觸發 CG 覆蓋並解鎖圖鑑該項）；screen="black"；shake=true 文字震動
-   - {type:"choice", id, prompt?, options:[ {label, hint?, add?:{score:n}, flag?:{name:bool}, reaction:[node...]} ]}
+   - {type:"choice", id, prompt?, options:[ {label, hint?, add?:{score:n}, flag?:{name:bool}, reaction:[node...], flavor?:true} ]}
+       flavor:true ← 風味選項（無分歧、或雙選同分）；引擎渲染稍淡，表示「語氣選，不影響結局路線」
        選項播完 reaction 後續接下一個 node（匯合）
    - {type:"gate", cond, then:[node...], else?:[node...]}
        cond 字串：支援 "affection>=2" / "warmth>=5" / "flag:seen_through_flag" / "!flag:xxx"
@@ -39,6 +42,8 @@ window.HOSHINO.meta = {
     akari: { label: "星野灯", cls: "akari" },
     me: { label: "我", cls: "me" },
     manager: { label: "經理人", cls: "manager" },
+    host: { label: "主持人", cls: "manager" },        // 後日談電車訪談主持人（非經理人；沿用 manager 名牌樣式）
+    staff: { label: "工作人員", cls: "manager" },      // hidden_pov_tail 攝影棚收工人員
     narration: { label: "", cls: "narration" },
   },
 

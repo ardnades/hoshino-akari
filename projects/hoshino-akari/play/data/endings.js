@@ -15,10 +15,10 @@ window.HOSHINO.endings = {
     { type: "line", who: "narration", text: "今天，我沒有多買油豆腐。因為那一份，已經真的還給她了。", pause: 0.6 },
 
     { type: "line", who: "narration", text: "幾天後，我在通勤的電車上，滑到一段訪談剪輯。", pause: 0.5 },
-    { type: "line", who: "manager", text: "「最近，有沒有什麼小小的獎勵？」", expr: "主持人" },
+    { type: "line", who: "host", text: "「最近，有沒有什麼小小的獎勵？」" },
     { type: "line", who: "narration", text: "星野灯想了一下。" },
     { type: "line", who: "akari", text: "「焦糖布丁。」", speed: "slow" },
-    { type: "line", who: "manager", text: "「意外地普通呢。」", expr: "主持人" },
+    { type: "line", who: "host", text: "「意外地普通呢。」" },
     { type: "line", who: "akari", text: "「普通的東西，有時候很貴。」", speed: "slow", pause: 0.6 },
     { type: "line", who: "narration", text: "她笑。觀眾沒聽懂。", pause: 0.5 },
     { type: "line", who: "narration", text: "只有我懂。", speed: "slow", pause: 0.8 },
@@ -29,6 +29,12 @@ window.HOSHINO.endings = {
     { type: "line", who: "me", text: "「不用。」" },
     { type: "line", who: "narration", text: "這一次，不是替誰買的。", speed: "slow", pause: 0.6 },
     { type: "line", who: "narration", text: "是我自己，選的。", speed: "slow", cg: "pudding", pause: 1.0 },
+    /* d7s6「下次」回收（暖：留有後續） */
+    {
+      type: "gate", cond: "flag:d7_food_pudding",
+      then: [ { type: "line", who: "narration", text: "「下次再買布丁吧」——那天我說的。今天這個先替自己買，下次的那個，留著。", speed: "slow", pause: 0.6 } ],
+      else: [ { type: "line", who: "narration", text: "「下次再吃油豆腐吧」——那天我說的。布丁是今天的；油豆腐，留到下次，跟她。", speed: "slow", pause: 0.6 } ],
+    },
     { type: "line", who: "narration", text: "口袋裡，那片歪歪的肉球印紙片還在。她把該收的都收走了，就漏了這隻貓。", speed: "slow", pause: 0.8 },
   ],
 
@@ -43,10 +49,10 @@ window.HOSHINO.endings = {
     { type: "line", who: "narration", text: "今天，我沒有多買油豆腐。那一份，已經還給她了。", pause: 0.5 },
 
     { type: "line", who: "narration", text: "幾天後，我在通勤的電車上，滑到一段訪談剪輯。" },
-    { type: "line", who: "manager", text: "「最近，有沒有什麼小小的獎勵？」", expr: "主持人" },
+    { type: "line", who: "host", text: "「最近，有沒有什麼小小的獎勵？」" },
     { type: "line", who: "narration", text: "星野灯想了一下。" },
     { type: "line", who: "akari", text: "「焦糖布丁。」" },
-    { type: "line", who: "manager", text: "「意外地普通呢。」", expr: "主持人" },
+    { type: "line", who: "host", text: "「意外地普通呢。」" },
     { type: "line", who: "narration", text: "她笑。影片停在那裡。", pause: 0.5 },
 
     { type: "line", who: "narration", text: "下車之後，我走進車站旁的便利商店。" },
@@ -56,6 +62,12 @@ window.HOSHINO.endings = {
     { type: "line", who: "me", text: "「不用。」" },
     { type: "line", who: "narration", text: "這一次，不是替誰買的。", pause: 0.5 },
     { type: "line", who: "narration", text: "是我自己選的。", speed: "slow", cg: "pudding", pause: 0.8 },
+    /* d7s6「下次」回收（常：平實未兌現） */
+    {
+      type: "gate", cond: "flag:d7_food_pudding",
+      then: [ { type: "line", who: "narration", text: "「下次再買布丁吧」——我那天說的「下次」，還沒兌現。今天這個，是替自己買的。", pause: 0.5 } ],
+      else: [ { type: "line", who: "narration", text: "「下次再吃油豆腐吧」——我那天說的「下次」，還沒兌現。今天手裡的，是布丁。", pause: 0.5 } ],
+    },
     { type: "line", who: "narration", text: "口袋裡，那片肉球印紙片還在。我看了它一眼，把布丁帶回家。", pause: 0.6 },
   ],
 
@@ -69,10 +81,10 @@ window.HOSHINO.endings = {
     { type: "line", who: "narration", text: "今天，我沒有多買油豆腐。那一份，已經還給她了。", pause: 0.5 },
 
     { type: "line", who: "narration", text: "幾天後，我在通勤的電車上，滑到一段訪談剪輯。" },
-    { type: "line", who: "manager", text: "「最近，有沒有什麼小小的獎勵？」", expr: "主持人" },
+    { type: "line", who: "host", text: "「最近，有沒有什麼小小的獎勵？」" },
     { type: "line", who: "narration", text: "星野灯想了一下。" },
     { type: "line", who: "akari", text: "「焦糖布丁。」" },
-    { type: "line", who: "manager", text: "「意外地普通呢。」", expr: "主持人" },
+    { type: "line", who: "host", text: "「意外地普通呢。」" },
     { type: "line", who: "narration", text: "她笑。影片閃過。", pause: 0.5 },
 
     { type: "line", who: "narration", text: "下車之後，我走進車站旁的便利商店。" },
@@ -83,6 +95,12 @@ window.HOSHINO.endings = {
     { type: "line", who: "narration", text: "這一次，不是替誰買的。是我自己選的。", cg: "pudding", pause: 0.6 },
     { type: "line", who: "narration", text: "我學會了自己選。", speed: "slow", pause: 0.6 },
     { type: "line", who: "narration", text: "只是學得太晚，沒能跟她說一聲。", speed: "slow", pause: 1.0 },
+    /* d7s6「下次」回收（苦：下次沒有來） */
+    {
+      type: "gate", cond: "flag:d7_food_pudding",
+      then: [ { type: "line", who: "narration", text: "「下次再買布丁吧」——我那天這樣說。布丁今天買到了，那句「下次」沒有。", speed: "slow", pause: 0.6 } ],
+      else: [ { type: "line", who: "narration", text: "「下次再吃油豆腐吧」——我那天這樣說。油豆腐沒有下次，那句話也一樣。", speed: "slow", pause: 0.6 } ],
+    },
     { type: "line", who: "narration", text: "口袋裡那片肉球印紙片還在。她漏收的這隻貓，我也沒能還回去。", pause: 0.7 },
   ],
 
@@ -96,7 +114,7 @@ window.HOSHINO.endings = {
     { type: "line", who: "akari", text: "我把手伸進外套最裡面的口袋，按了一下。" },
     { type: "line", who: "akari", text: "那支用了七天的護唇膏，還在。", speed: "slow", pause: 0.6 },
     { type: "line", who: "akari", text: "那隻很急的貓，今天……", speed: "slow", pause: 1.0 },
-    { type: "line", who: "manager", text: "「灯，下一場。」", expr: "工作人員" },
+    { type: "line", who: "staff", text: "「灯，下一場。」" },
     { type: "line", who: "akari", text: "我把手從口袋裡收回來。", speed: "slow" },
     { type: "line", who: "akari", text: "「來了。」", pause: 0.8 },
   ],
