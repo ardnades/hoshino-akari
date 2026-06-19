@@ -202,20 +202,21 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline
   opacity:0;transform:translateY(10px);transition:opacity .4s ease,transform .5s cubic-bezier(.2,.7,.2,1)}
 #sceneTag.scene-toast.show .ov-strip{opacity:1;transform:none}
 
-#cgLayer{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;z-index:2;background:rgba(5,7,10,.55);padding-bottom:34dvh}
-#cgLayer svg,#galViewArt svg{width:min(72vw,300px);height:auto;filter:drop-shadow(0 6px 24px rgba(0,0,0,.5))}
-#cgLayer .cg-img{max-width:min(82vw,360px);max-height:72%;border-radius:var(--r-md);box-shadow:0 8px 30px rgba(0,0,0,.5);animation:cgCardIn .45s cubic-bezier(.2,.7,.2,1) both}   /* 預設＝道具 CG 置中卡（淡入＋微放大 pop）*/
-#cgLayer .cg-cap{position:absolute;bottom:calc(34dvh + 12px);left:0;right:0;text-align:center;color:var(--ink-dim);font-size:12px;letter-spacing:.2em;font-family:var(--font-sans);text-shadow:0 1px 6px rgba(0,0,0,.8);animation:cgIn .9s ease both}
+/* 道具 CG ＝ 場景上的小型「相片卡」popup：縮小＋相片白邊＋場景透出＋置對話框上方；caption 以 column flex 貼卡片下方 */
+#cgLayer{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:11px;z-index:2;background:rgba(5,7,10,.5);padding-bottom:34dvh}
+#cgLayer svg,#galViewArt svg{width:min(52vw,230px);height:auto;filter:drop-shadow(0 8px 24px rgba(0,0,0,.55))}
+#cgLayer .cg-img{max-width:min(58vw,265px);max-height:44dvh;border-radius:4px;border:4px solid rgba(244,240,232,.92);box-shadow:0 16px 42px rgba(0,0,0,.6),0 3px 10px rgba(0,0,0,.5);animation:cgCardIn .5s cubic-bezier(.2,.8,.2,1) both}   /* 道具相片卡（縮小＋相片白邊）*/
+#cgLayer .cg-cap{color:var(--ink-dim);font-size:12px;letter-spacing:.2em;font-family:var(--font-sans);text-shadow:0 1px 6px rgba(0,0,0,.8);animation:cgIn .9s ease both}
 /* event CG（ev_*）：全畫面 cover ＋ 對話框透明；進場＝淡入＋緩慢 Ken-Burns 推近（アマガミ式一枚絵運鏡）*/
-#cgLayer.cg-full{background:#07090d;padding-bottom:0}
-#cgLayer.cg-full .cg-img{position:absolute;inset:0;width:100%;height:100%;max-width:none;max-height:none;border-radius:0;box-shadow:none;object-fit:cover;transform-origin:50% 38%;animation:cgIn .65s ease both,cgKen 14s ease-in-out infinite alternate}
-#cgLayer.cg-full .cg-cap{bottom:35dvh}
+#cgLayer.cg-full{background:#07090d;padding-bottom:0;gap:0}
+#cgLayer.cg-full .cg-img{position:absolute;inset:0;width:100%;height:100%;max-width:none;max-height:none;border:0;border-radius:0;box-shadow:none;object-fit:cover;transform-origin:50% 38%;animation:cgIn .65s ease both,cgKen 14s ease-in-out infinite alternate}
+#cgLayer.cg-full .cg-cap{position:absolute;bottom:35dvh;left:0;right:0;text-align:center}
 @keyframes cgIn{from{opacity:0}to{opacity:1}}
-@keyframes cgCardIn{from{opacity:0;transform:scale(.95)}to{opacity:1;transform:none}}
+@keyframes cgCardIn{from{opacity:0;transform:scale(.92) translateY(6px)}to{opacity:1;transform:none}}
 @keyframes cgKen{from{transform:scale(1)}to{transform:scale(1.06)}}   /* 緩慢推近，origin 偏上對準臉；cover 故不露邊 */
 @media (prefers-reduced-motion:reduce){#cgLayer .cg-img,#cgLayer.cg-full .cg-img{animation:cgIn .3s ease both}}
-#game.cg-on #textbox{background:linear-gradient(180deg,rgba(9,12,18,0) 0%,rgba(9,12,18,.34) 55%,rgba(9,12,18,.62) 100%)}
-#game.cg-on #dialogue,#game.cg-on #speaker{text-shadow:0 1px 6px rgba(0,0,0,.85),0 0 2px rgba(0,0,0,.7)}
+#game.cg-on #textbox{background:linear-gradient(180deg,rgba(9,12,18,0) 0%,rgba(9,12,18,.16) 50%,rgba(9,12,18,.4) 100%)}   /* CG 上對話框更透明，露出下半 CG；可讀性靠下面加強的文字陰影 */
+#game.cg-on #dialogue,#game.cg-on #speaker{text-shadow:0 1px 8px rgba(0,0,0,.95),0 0 4px rgba(0,0,0,.9),0 0 2px rgba(0,0,0,.85)}
 
 /* 情緒提示（無立繪時的弱提示，刻意低調，不喧賓奪主） */
 #exprBadge{position:absolute;left:12px;top:12px;z-index:4;font-size:11px;color:var(--akari);
@@ -264,7 +265,7 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline
 @keyframes badge-pulse{0%{transform:scale(1)}40%{transform:scale(1.55)}80%{transform:scale(.95)}100%{transform:scale(1)}}
 
 /* ---- 文字框 ---- */
-#textbox{position:relative;min-height:32dvh;max-height:34dvh;padding:22px 22px 26px;z-index:6;cursor:pointer;
+#textbox{position:relative;min-height:32dvh;max-height:34dvh;padding:22px 22px calc(26px + env(safe-area-inset-bottom));z-index:6;cursor:pointer;
   background:linear-gradient(180deg,rgba(14,10,22,.50) 0%,rgba(9,7,16,.60) 55%,rgba(6,5,12,.68) 100%);
   -webkit-backdrop-filter:blur(18px) saturate(1.4);backdrop-filter:blur(18px) saturate(1.4);
   box-shadow:inset 0 1px 0 rgba(180,140,255,.10),0 -10px 32px rgba(0,0,0,.42)}

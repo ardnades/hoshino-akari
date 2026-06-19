@@ -712,6 +712,7 @@
 
     $("textbox").onclick = userAdvance;
     $("stage").onclick = userAdvance;
+    $("cgLayer").onclick = userAdvance;   // CG 全畫面層也可點前進（cgLayer 是 #game 子層、點擊不會冒泡到 #stage）
     document.addEventListener("keydown", (e) => {
       if (e.key === "Enter" || e.key === " ") { e.preventDefault(); userAdvance(); }
       if (devMode && e.key.toLowerCase() === "d") { $("dbgChk").checked = !$("dbgChk").checked; $("dbgPanel").classList.toggle("hidden", !$("dbgChk").checked); openMenu(); }
@@ -757,7 +758,7 @@
     // 蒐集 manifest 內所有圖片 URL（characters 含 @masks／cg／background；bgm/se 不算圖、不預載）
     const collectImageUrls = () => {
       const urls = new Set();
-      const walk = (o) => { for (const k in o) { const v = o[k]; if (typeof v === "string") { if (v) urls.add(v); } else if (v && typeof v === "object") walk(v); } };
+      const walk = (o) => { for (const k in o) { const v = o[k]; if (typeof v === "string") { if (v && !/\.(mp4|webm|mov)$/i.test(v)) urls.add(v); } else if (v && typeof v === "object") walk(v); } };  // 跳過影片：new Image() 抓 mp4 只會白下載又解碼失敗
       const a = H.assets || {}; walk(a.characters || {}); walk(a.cg || {}); walk(a.background || {});
       return [...urls];
     };
