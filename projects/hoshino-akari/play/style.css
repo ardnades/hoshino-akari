@@ -97,12 +97,13 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline
   -webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
 #topbar #dayTag,#topbar>span,#topbarGal>span{color:var(--akari);font-family:var(--font-num);letter-spacing:.16em;font-size:13px;
   text-shadow:0 0 10px var(--glow)}
-#btnMenu{width:38px;height:38px;min-width:38px;border-radius:var(--r-sm);border:1px solid var(--line-top);
-  background:var(--bg-glass);font-size:18px;color:var(--ink);display:grid;place-items:center}
+#btnMenu{width:38px;height:38px;min-width:38px;border-radius:var(--r-sm);border:1px solid rgba(200,180,255,.18);
+  background:rgba(15,11,28,.5);font-size:18px;color:var(--ink);display:grid;place-items:center;transition:.18s}
+#btnMenu:hover{border-color:var(--accent);color:var(--accent);box-shadow:0 0 12px rgba(192,132,252,.3)}
 .top-right{margin-left:auto;display:flex;gap:6px}
-#topbar .top-right button{padding:8px 12px;min-height:40px;border:1px solid var(--line);border-radius:var(--r-pill);
-  font-size:12px;color:var(--ink-dim);font-family:var(--font-sans);background:rgba(255,255,255,.03);transition:.15s}
-#topbar .top-right button:hover,#topbar button.on{color:var(--accent);border-color:var(--accent);background:var(--glow)}
+#topbar .top-right button{padding:8px 12px;min-height:40px;border:1px solid rgba(200,180,255,.16);border-radius:var(--r-pill);
+  font-size:12px;color:var(--ink-dim);font-family:var(--font-sans);background:rgba(255,255,255,.035);transition:.16s}
+#topbar .top-right button:hover,#topbar button.on{color:var(--accent);border-color:var(--accent);background:rgba(192,132,252,.16);box-shadow:0 0 12px rgba(192,132,252,.3)}
 /* Day eyecatch 期間頂列退讓；收掉時 Day/標題微亮，提示資訊已轉移到頂列 */
 #topbar{transition:opacity .5s ease}
 #topbar.dim{opacity:.18}
@@ -385,13 +386,13 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline
 
 /* ---- 存檔／讀檔 ---- */
 .sl-list{display:flex;flex-direction:column;gap:9px;margin:2px 0}
-.sl-row{display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid var(--line);border-radius:var(--r-sm);background:var(--bg-2)}
+.sl-row{display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid rgba(200,180,255,.14);border-radius:var(--r-md);background:rgba(255,255,255,.03)}
 .sl-info{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
 .sl-name{font-family:var(--font-sans);font-size:12px;letter-spacing:.12em;color:var(--akari)}
 .sl-meta{font-size:13px;color:var(--ink-dim);font-family:var(--font-sans);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .sl-btns{display:flex;gap:6px;flex-shrink:0}
-.sl-btns button{min-height:40px;padding:8px 14px;font-size:14px;border:1px solid var(--line-top);border-radius:var(--r-sm);background:var(--bg-1);color:var(--ink)}
-.sl-btns button:hover:not(:disabled){border-color:var(--accent);color:var(--accent)}
+.sl-btns button{min-height:40px;padding:8px 14px;font-size:14px;border:1px solid rgba(200,180,255,.18);border-radius:var(--r-sm);background:rgba(255,255,255,.05);color:var(--ink);transition:.16s}
+.sl-btns button:hover:not(:disabled){border-color:var(--accent);color:var(--akari);background:rgba(192,132,252,.16);box-shadow:0 0 12px rgba(192,132,252,.28)}
 .sl-btns button:disabled{opacity:.32;cursor:not-allowed}
 
 /* ---- 回想室 ---- */
