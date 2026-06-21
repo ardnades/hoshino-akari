@@ -200,24 +200,26 @@
     bgFront = bgFront === "A" ? "B" : "A";
   }
   function flashSE() { const f = $("seFlash"); f.classList.remove("pulse"); void f.offsetWidth; f.classList.add("pulse"); }
-  function setExpr() {
-    const b = $("exprBadge"); if (b) b.classList.add("hidden");   // 表情改整合進角色名牌，不再用浮動徽章
+  function hideExprBadge() {   // 表情已整合進角色名牌；此函式只負責藏掉已廢棄的浮動表情徽章
+    const b = $("exprBadge"); if (b) b.classList.add("hidden");
   }
   function showCG(key) {
-    if (!key || key === "clear") { $("cgLayer").classList.add("hidden"); $("cgLayer").classList.remove("cg-full"); $("game").classList.remove("cg-on"); return; }
+    if (!key || key === "clear") { $("cgLayer").classList.add("hidden"); $("cgLayer").classList.remove("cg-full"); $("game").classList.remove("cg-on", "cg-prop"); return; }
     unlockCG(key);
     const cap = capFor(key);
     const url = assetUrl("cg", key);                                    // 有真 CG 用圖/影片，否則 inline SVG
+    const poster = url ? url.replace(/\.(mp4|webm)$/i, ".png") : "";     // 影片 CG 靜圖：補滿播放前的黑幀＋載入失敗時 poster 續顯。ponytail: 假設同名 .png（ev_signlight 為 .webp → poster 404 無害，退回現狀黑底）
     const art = url
       ? (/\.(mp4|webm)$/i.test(url)
-          ? `<video class="cg-img" src="${url}" autoplay loop muted playsinline></video>`   // loop 影片 CG：assets.js 指向 .mp4/.webm 即自動循環播放
+          ? `<video class="cg-img" src="${url}" poster="${poster}" autoplay loop muted playsinline></video>`   // loop 影片 CG：assets.js 指向 .mp4/.webm 即自動循環；poster 防首幀黑屏
           : `<img class="cg-img" src="${url}" alt="" onerror="this.outerHTML=''">`)
       : (ART[key] ? ART[key]() : "");
     $("cgLayer").innerHTML = art + (cap ? `<div class="cg-cap">${cap}</div>` : "");
-    const isEvent = /^ev_/.test(key);                                   // 主視覺 event CG → 全畫面＋對話框透明；道具 CG → 置中卡
-    $("cgLayer").classList.remove("hidden"); $("cgLayer").classList.toggle("cg-full", isEvent); $("game").classList.toggle("cg-on", isEvent);
+    const isEvent = /^ev_/.test(key);                                   // 主視覺 event CG → 全畫面＋對話框透明；道具 CG → 置中相片卡
+    $("cgLayer").classList.remove("hidden"); $("cgLayer").classList.toggle("cg-full", isEvent);
+    $("game").classList.toggle("cg-on", isEvent); $("game").classList.toggle("cg-prop", !isEvent);   // 道具相片卡顯示時 → 立繪退後景（CSS 壓暗），不再卡在臉上
   }
-  function clearCG() { $("cgLayer").classList.add("hidden"); $("cgLayer").classList.remove("cg-full"); $("cgLayer").innerHTML = ""; $("game").classList.remove("cg-on"); }
+  function clearCG() { $("cgLayer").classList.add("hidden"); $("cgLayer").classList.remove("cg-full"); $("cgLayer").innerHTML = ""; $("game").classList.remove("cg-on", "cg-prop"); }
   function capFor(key) {
     for (const g of ["anchors", "signs", "hidden"]) {
       const it = M.gallery[g].find((x) => x.key === key); if (it) return it.cap;
@@ -299,7 +301,7 @@
 
   // 場景轉換（Normal）：換背景 + 小型 toast（非阻塞、不蓋對白、dedup）。Day 卡才用中央 eyecatch。
   async function showScene(node) {
-    resetCamera(0); clearCG(); setExpr("");
+    resetCamera(0); clearCG(); hideExprBadge();
     if (node.mood || node.bg) setMood(node.mood, node.bg || null);   // 場景背景：地點 bg 優先，無則 mood；每場景重設 curBg
     Overlay.scene(node.place, node.time, node.mood);
     $("speaker").classList.add("hidden"); $("dialogue").textContent = ""; $("advanceHint").classList.remove("show");
@@ -382,7 +384,7 @@
     let per = speed === "instant" ? 0 : speed === "slow" ? 68 : (base == null ? 26 : base);
     if (cfg.textSpeed === "instant") per = 0;   // 玩家設定瞬間 → 一律即顯（行內 slow 演出讓位給玩家偏好）
     return new Promise((res) => {
-      if (per === 0 || skipMode) { el.textContent = text; res(); return; }
+      if (per === 0 || skipMode || prefersReducedMotion()) { el.textContent = text; res(); return; }  // reduced-motion：整行即顯（JS setInterval 繞過全域動畫關閉，須在此自行讓位）
       typing = true; let i = 0; el.textContent = "";
       const done = () => { clearInterval(t); el.textContent = text; typing = false; finishTyping = null; res(); };
       finishTyping = done;
@@ -404,7 +406,7 @@
     if (node.bg) setMood(undefined, node.bg);        // 行內背景微調（如甜點櫃子場景），不動音樂/漸層
     if (node.cg !== undefined) showCG(node.cg);
     if (node.clear) { await clearSpriteAnimated(); }                              // 乾淨退場（與 expr 互斥，clear 優先）；注意：與 cg:"clear"（清 CG）不同
-    else if (node.expr !== undefined) { setExpr(node.expr); setSprite(node.who, node.expr, node.mask, node); }
+    else if (node.expr !== undefined) { hideExprBadge(); setSprite(node.who, node.expr, node.mask, node); }
     if (node.se) playSE(node.se);
     if (node.unread) handleUnread(node.unread);
     if (node.camera) handleCamera(node.camera);
@@ -428,7 +430,8 @@
     if (node.text) pushHistory(node);
     if (node.pause && !skipMode) await Promise.race([delay(node.pause * 1000), waitAdvance(0)]);
     $("advanceHint").classList.add("show");
-    await waitAdvance(autoMode ? cfg.autoMs + (node.pause || 0) * 1000 : 0);
+    const autoWait = Math.max(cfg.autoMs, (node.text || "").length * 45) + (node.pause || 0) * 1000;  // auto 等待隨字數縮放：長句留足閱讀時間（~45ms/字），短句仍≥autoMs
+    await waitAdvance(autoMode ? autoWait : 0);
     if (node.ui === "sns") hideSNS();
   }
 
@@ -499,7 +502,7 @@
     state.day = d; if (!opts.replay) persist();      // 章節回想不覆蓋正式存檔
     const info = dayInfo(d);
     $("dayTag").textContent = "Day " + d + (info.title ? "　" + info.title : "") + (opts.replay ? "（回想）" : ""); refreshDbg();
-    clearCG(); setExpr(""); setSprite(null, null); hideSNS(); resetUnread(); history = []; resetCamera(0); setBlack(false); Overlay.resetDay();
+    clearCG(); hideExprBadge(); setSprite(null, null); hideSNS(); resetUnread(); history = []; resetCamera(0); setBlack(false); Overlay.resetDay();
     setMood("night", null);                           // 開新一天：清掉上一場景殘留的 curBg
     await showDayCard(d, "start");                  // 必做1：每日章節標題卡
     await playNodes(chapterOf(d).intro || []);      // 必做3：當日極短引子（intro 後不再插空白停頓，直接進當日第一幕）

@@ -39,12 +39,30 @@ button{font-family:inherit;cursor:pointer;border:none;color:var(--ink);backgroun
 button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}   /* 鍵盤無障礙焦點環 */
 
 /* ---- 標題 ---- */
-#title{align-items:center;justify-content:center;text-align:center;padding:24px;position:relative;overflow:hidden;
-  /* 滿版標題 KV（凌晨便利店 Anima 水彩）＋ 暗色 scrim 保字可讀＋頂部暖暈；最底層 solid fallback */
-  background:linear-gradient(180deg,rgba(8,7,16,.60) 0%,rgba(8,7,16,.34) 28%,rgba(8,7,16,.46) 56%,rgba(8,7,16,.90) 100%),
-             radial-gradient(120% 56% at 50% 12%,rgba(160,120,255,.10),transparent 55%),
-             url("assets/ui/title_kv.webp") center/cover no-repeat,#0a0d11}
+#title{align-items:center;justify-content:flex-start;text-align:center;padding:24px;position:absolute;inset:0;overflow:hidden;
+  /* 滿版標題 KV（雨後便利店＋灯，Anima 水彩）＋ 暗色 scrim 保字可讀；最底層 solid fallback */
+  background:linear-gradient(180deg,rgba(8,7,16,.52) 0%,rgba(8,7,16,.18) 22%,rgba(8,7,16,0) 42%,rgba(8,7,16,0) 100%),
+             radial-gradient(120% 50% at 50% 10%,rgba(160,120,255,.10),transparent 55%),
+             url("assets/ui/title_kv.webp?v=20260622g") center/cover no-repeat,#0a0d11}
 #title .title-art{display:none}   /* 標題改用滿版 KV，隱藏舊線稿貓 placeholder */
+#title h1,#title .subtitle{display:none}   /* 改用水彩 logo 圖（已含主標＋副標） */
+#titleLogo{width:min(86vw,560px);aspect-ratio:1200/654;margin:14px auto 0;position:relative;
+  background:url("assets/ui/title_logo.webp") center/contain no-repeat;
+  filter:drop-shadow(0 1px 2px rgba(0,0,0,.7)) drop-shadow(0 0 6px rgba(6,5,16,.55)) drop-shadow(0 0 18px rgba(176,128,255,.9)) drop-shadow(0 0 40px rgba(205,160,255,.6));
+  animation:logoGlow 4.6s ease-in-out infinite}
+/* 月光暈呼吸（更強發光）＋固定暗影：讓淺色字在亮背景上也讀得出 */
+@keyframes logoGlow{
+  0%,100%{filter:drop-shadow(0 1px 2px rgba(0,0,0,.7)) drop-shadow(0 0 6px rgba(6,5,16,.55)) drop-shadow(0 0 16px rgba(168,120,250,.78)) drop-shadow(0 0 34px rgba(205,160,255,.5))}
+  50%{filter:drop-shadow(0 1px 2px rgba(0,0,0,.7)) drop-shadow(0 0 6px rgba(6,5,16,.55)) drop-shadow(0 0 30px rgba(188,140,255,1)) drop-shadow(0 0 60px rgba(225,190,255,.82))}
+}
+/* 發光疊層：以 logo 形狀為遮罩，screen 疊「整體月光輝光」，只打在字上、隨呼吸明滅（無光掃） */
+#titleLogo::after{content:"";position:absolute;inset:0;pointer-events:none;
+  -webkit-mask:url("assets/ui/title_logo.webp") center/contain no-repeat;
+  mask:url("assets/ui/title_logo.webp") center/contain no-repeat;mix-blend-mode:screen;
+  background:radial-gradient(95% 95% at 50% 50%,rgba(222,194,255,.55),rgba(198,162,255,.4) 100%);
+  animation:logoBloom 4.6s ease-in-out infinite}
+@keyframes logoBloom{0%,100%{opacity:.7}50%{opacity:1}}
+@media (prefers-reduced-motion:reduce){#titleLogo,#titleLogo::after{animation:none}}
 /* 開場 loading overlay（P1-7）：撐到字型＋標題 KV 就緒再淡出，消除字體跳動與背景閃白 */
 #loadingOverlay{position:fixed;inset:0;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;background:#0a0d11;transition:opacity .55s ease}
 #loadingOverlay.done{opacity:0;pointer-events:none}
@@ -62,21 +80,22 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline
   background:linear-gradient(90deg,transparent,var(--accent))}
 .subtitle::before{right:calc(100% + 14px)}
 .subtitle::after{left:calc(100% + 14px);transform:scaleX(-1)}
-.title-menu{display:flex;flex-direction:column;gap:13px;width:min(82vw,300px)}
-.title-menu button{padding:14px;min-height:48px;border:1px solid var(--line-top);border-radius:var(--r-md);
-  background:var(--bg-glass);font-size:16px;letter-spacing:.12em;color:var(--ink);transition:.18s;
-  -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
-#btnStart{background:linear-gradient(180deg,rgba(255,157,110,.22),rgba(255,157,110,.10));
-  border-color:var(--accent);color:var(--akari);box-shadow:0 4px 20px var(--glow),inset 0 1px 0 rgba(255,255,255,.12)}
-.title-menu button:hover{border-color:var(--accent);background:var(--bg-2);box-shadow:0 6px 22px var(--glow)}
+.title-menu{display:flex;flex-direction:column;gap:12px;width:min(60vw,260px);position:absolute;left:7%;bottom:14%;align-items:stretch;z-index:2}
+.title-menu button{padding:13px 16px;min-height:50px;border:1px solid rgba(200,180,255,.18);border-radius:var(--r-md);
+  background:rgba(15,11,28,.40);font-size:15.5px;letter-spacing:.14em;color:var(--ink);transition:.2s ease;
+  -webkit-backdrop-filter:blur(11px) saturate(1.15);backdrop-filter:blur(11px) saturate(1.15)}
+#btnStart{background:linear-gradient(180deg,rgba(192,132,252,.22),rgba(192,132,252,.08));
+  border-color:rgba(192,132,252,.55);color:var(--akari);box-shadow:0 4px 18px var(--glow),inset 0 1px 0 rgba(255,255,255,.12)}
+.title-menu button:hover{border-color:var(--accent);background:rgba(26,20,44,.55);
+  box-shadow:0 0 18px rgba(192,132,252,.42),0 6px 22px var(--glow);color:var(--akari)}
 .title-menu button:disabled{opacity:.35;cursor:not-allowed;box-shadow:none}
-.title-note{margin-top:28px;color:var(--ink-mute);font-size:11px;line-height:1.8;font-family:var(--font-sans)}
+.title-note{position:absolute;left:7%;bottom:4%;text-align:left;color:var(--ink-mute);font-size:11px;line-height:1.8;font-family:var(--font-sans);z-index:2}
 
 /* ---- 頂列 ---- */
-#topbar{display:flex;align-items:center;gap:10px;padding:max(8px,env(safe-area-inset-top)) 14px 8px;
+#topbar,#topbarGal{display:flex;align-items:center;gap:10px;padding:max(8px,env(safe-area-inset-top)) 14px 8px;
   background:linear-gradient(180deg,rgba(8,11,16,.85),rgba(8,11,16,0));font-size:13px;z-index:6;
   -webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
-#topbar #dayTag,#topbar>span{color:var(--akari);font-family:var(--font-num);letter-spacing:.16em;font-size:13px;
+#topbar #dayTag,#topbar>span,#topbarGal>span{color:var(--akari);font-family:var(--font-num);letter-spacing:.16em;font-size:13px;
   text-shadow:0 0 10px var(--glow)}
 #btnMenu{width:38px;height:38px;min-width:38px;border-radius:var(--r-sm);border:1px solid var(--line-top);
   background:var(--bg-glass);font-size:18px;color:var(--ink);display:grid;place-items:center}
@@ -93,7 +112,7 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline
 /* ---- 舞台 ---- */
 #stage{position:relative;flex:1;overflow:hidden}
 #stageVisual{position:absolute;inset:0;transform-origin:center center;will-change:transform}
-#moodbg{position:absolute;inset:0;background:var(--night);background-size:cover;background-position:center;transition:background 1.4s ease;isolation:isolate}
+#moodbg{position:absolute;inset:0;background:var(--night);background-size:cover;background-position:center;transition:background .7s ease;isolation:isolate}  /* 漸層 fallback 過渡與 .mb-img 圖層交叉淡入同步（.7s），無圖場景切換不再讀成兩段式 */
 /* 背景照片雙層交叉淡入：z-index:-1 → 疊在 #moodbg 漸層之上、雨絲/光斑 fx(::before/::after) 之下 */
 #moodbg .mb-img{position:absolute;inset:0;z-index:-1;background-size:cover;background-position:center;background-repeat:no-repeat;opacity:0;transition:opacity .7s ease;will-change:opacity}
 #moodbg .mb-img.show{opacity:1}
@@ -217,6 +236,8 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline
 @media (prefers-reduced-motion:reduce){#cgLayer .cg-img,#cgLayer.cg-full .cg-img{animation:cgIn .3s ease both}}
 #game.cg-on #textbox{background:linear-gradient(180deg,rgba(9,12,18,0) 0%,rgba(9,12,18,.16) 50%,rgba(9,12,18,.4) 100%)}   /* CG 上對話框更透明，露出下半 CG；可讀性靠下面加強的文字陰影 */
 #game.cg-on #dialogue,#game.cg-on #speaker{text-shadow:0 1px 8px rgba(0,0,0,.95),0 0 4px rgba(0,0,0,.9),0 0 2px rgba(0,0,0,.85)}
+/* 道具相片卡（非全畫面 CG）顯示時，立繪退到後景：用景深模糊（非降透明度，避免變成背景透出來的鬼影）讓相片卡成為焦點；cgLayer 本身的 .5 暗罩已負責壓暗 */
+#game.cg-prop #spriteLayer{filter:blur(3px);transition:filter .35s ease}
 
 /* 情緒提示（無立繪時的弱提示，刻意低調，不喧賓奪主） */
 #exprBadge{position:absolute;left:12px;top:12px;z-index:4;font-size:11px;color:var(--akari);
@@ -287,9 +308,6 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline
 /* 數字標籤等寬：Day 1／Day 11、章節編號寬度不漂移 */
 #dayTag,.sc-time,.dc-no,.ch-no{font-variant-numeric:tabular-nums}
 #dialogue.narration{color:var(--ink-dim);padding-left:2px}
-#dialogue .caret{display:inline-block;width:.5em;color:transparent;border-right:2px solid var(--accent);margin-left:1px;
-  animation:caretBlink 1.05s steps(1) infinite;filter:drop-shadow(0 0 4px var(--glow))}
-@keyframes caretBlink{50%{border-color:transparent}}
 #dialogue.swap{animation:lineIn .26s ease both}
 @keyframes lineIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
 #advanceHint{position:absolute;right:18px;bottom:13px;display:flex;gap:4px;align-items:center;opacity:0;transition:opacity .25s}
@@ -299,29 +317,31 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline
 #advanceHint span:nth-child(3){animation-delay:.4s}
 @keyframes advDot{0%,100%{opacity:.2;transform:scale(1)}50%{opacity:1;transform:scale(1.55)}}
 
-/* ---- 選項 ---- */
+/* ---- 選項（C 電影風・克制版：編號光條；強調僅用低透明度底＋細邊，無亮紫/光暈）---- */
 #choices{position:absolute;inset:0;z-index:8;display:flex;flex-direction:column;align-items:center;justify-content:center;
-  gap:14px;padding:26px;overflow-y:auto;background:rgba(6,9,14,.5);backdrop-filter:blur(4px)}
+  gap:12px;padding:26px;overflow-y:auto;background:rgba(6,9,14,.5);backdrop-filter:blur(4px);counter-reset:opt}
 .choice-prompt{color:var(--ink-dim);font-size:13px;margin-bottom:8px;letter-spacing:.16em;font-family:var(--font-sans)}
-#choices button{position:relative;width:min(86vw,460px);min-height:48px;padding:13px 20px 13px 20px;font-size:16px;font-weight:500;
-  letter-spacing:.04em;text-align:left;color:var(--ink);background:var(--opt-bg);border:0.5px solid rgba(180,140,255,.16);border-radius:3px;
+#choices button{counter-increment:opt;position:relative;width:min(86vw,460px);min-height:50px;padding:13px 18px 13px 60px;font-size:16px;font-weight:500;
+  letter-spacing:.04em;text-align:left;color:var(--ink);background:var(--opt-bg);border:1px solid rgba(180,140,255,.16);border-radius:6px;
   overflow:hidden;
-  transition:transform .16s cubic-bezier(.2,.7,.3,1),border-color .16s,background .16s,opacity .16s;
+  transition:border-color .16s,background .16s,opacity .16s;
   opacity:0;animation:fadeUp .34s ease both;animation-delay:calc(var(--i,0) * 70ms + 60ms)}
-#choices button::before{content:"";position:absolute;left:0;top:0;bottom:0;width:2px;background:rgba(192,132,252,.28);
-  transition:background .16s,box-shadow .16s,width .12s}
-#choices button:hover{background:var(--opt-bg-hov);border-color:rgba(192,132,252,.38);transform:translateX(4px)}
-#choices button:hover::before{background:#c084fc;width:2.5px;box-shadow:0 0 10px rgba(192,132,252,.55)}
-#choices button:active{transform:translateX(2px) scale(.99)}
-#choices button.picked{border-color:var(--accent);background:var(--opt-bg-hov)}
-#choices button.picked::before{background:#c084fc;box-shadow:0 0 10px rgba(192,132,252,.55)}
+/* 左側編號塊（01/02/03），淡灰紫、不搶眼 */
+#choices button::before{content:counter(opt,decimal-leading-zero);position:absolute;left:0;top:0;bottom:0;width:44px;
+  display:flex;align-items:center;justify-content:center;font-family:var(--font-num);font-size:12.5px;letter-spacing:.04em;
+  color:var(--ink-mute);background:rgba(192,132,252,.06);border-right:1px solid rgba(180,140,255,.12);transition:color .16s,background .16s}
+#choices button:hover{background:var(--opt-bg-hov);border-color:rgba(192,132,252,.30)}
+#choices button:hover::before{color:var(--accent);background:rgba(192,132,252,.12)}
+#choices button:active{transform:scale(.99)}
+#choices button.picked{border-color:rgba(192,132,252,.5);background:var(--opt-bg-hov)}
+#choices button.picked::before{color:var(--accent);background:rgba(192,132,252,.16)}
 #choices button.dim{opacity:.25}
 #choices button.flavor-opt{opacity:.8}
-#choices button.flavor-opt::before{background:rgba(255,255,255,.25)}
+#choices button.flavor-opt::before{color:var(--ink-mute);background:rgba(255,255,255,.04)}
 #choices button .hint{display:block;margin-top:5px;color:var(--accent);font-size:11.5px;letter-spacing:.10em;font-family:var(--font-sans);opacity:.85}
 @media (hover:none){
-  #choices button:active{background:var(--opt-bg-hov);border-color:var(--accent);transform:scale(.985)}
-  #choices button:active::before{background:#c084fc;box-shadow:0 0 10px rgba(192,132,252,.55)}
+  #choices button:active{background:var(--opt-bg-hov);border-color:rgba(192,132,252,.4)}
+  #choices button:active::before{color:var(--accent);background:rgba(192,132,252,.14)}
 }
 
 /* ---- 彈窗 / 選單 ---- */
@@ -329,8 +349,8 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline
 .modal-box{width:min(86vw,360px);background:var(--bg-1);border:1px solid var(--line-top);border-radius:var(--r-lg);
   padding:20px;display:flex;flex-direction:column;gap:11px;max-height:86vh;overflow:auto}
 .modal-box h3{text-align:center;letter-spacing:.18em;color:var(--akari);margin-bottom:4px;font-family:var(--font-sans)}
-.modal-box button{padding:12px;min-height:48px;border:1px solid var(--line);border-radius:var(--r-sm);background:var(--bg-2);font-size:15px}
-.modal-box button:hover{border-color:var(--accent)}
+.modal-box button{padding:12px;min-height:48px;border:1px solid rgba(200,180,255,.18);border-radius:var(--r-md);background:rgba(255,255,255,.045);font-size:15px;letter-spacing:.06em;color:var(--ink);transition:.18s ease}
+.modal-box button:hover{border-color:var(--accent);background:rgba(192,132,252,.14);box-shadow:0 0 14px rgba(192,132,252,.3)}
 .dbg-toggle{font-size:12px;color:var(--ink-mute);display:flex;align-items:center;gap:8px;margin-top:6px;font-family:var(--font-sans)}
 #dbgPanel{font-size:12px;color:var(--ink-dim);background:#0c1016;border-radius:var(--r-sm);padding:10px;line-height:1.9;font-family:var(--font-sans)}
 #dbgPanel .row{display:flex;justify-content:space-between}
@@ -343,9 +363,9 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline
 .set-row.set-check{justify-content:flex-start;gap:9px;cursor:pointer}
 .set-speed{flex-wrap:wrap}
 .set-speed .seg{display:flex;gap:5px}
-.set-speed .seg button{padding:8px 12px;min-height:40px;font-size:13px;border:1px solid var(--line);border-radius:var(--r-sm);background:var(--bg-2);color:var(--ink-dim);transition:.15s}
-.set-speed .seg button:hover{border-color:var(--accent)}
-.set-speed .seg button.on{border-color:var(--accent);color:var(--akari);background:var(--glow)}
+.set-speed .seg button{padding:8px 12px;min-height:40px;font-size:13px;border:1px solid rgba(200,180,255,.18);border-radius:var(--r-sm);background:rgba(255,255,255,.04);color:var(--ink-dim);transition:.15s}
+.set-speed .seg button:hover{border-color:var(--accent);color:var(--ink)}
+.set-speed .seg button.on{border-color:var(--accent);color:var(--akari);background:rgba(192,132,252,.18);box-shadow:0 0 12px rgba(192,132,252,.28)}
 
 /* ---- 對白回顧 ---- */
 .backlog-box{width:min(92vw,560px);max-height:84dvh}

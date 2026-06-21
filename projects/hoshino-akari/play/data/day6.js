@@ -86,9 +86,9 @@ window.HOSHINO.days[6] = [
   },
 
   /* ── D6-S3 雨棚・並肩：像剛好同路（同框風險名場面） ── */
-  { type: "line", who: "narration", text: "她繞到我側後方，跟我隔著半步，往同一個方向走。" },
+  { type: "line", who: "narration", text: "她繞到我側後方，跟我隔著半步，往同一個方向走。", expr: "並肩" },
   { type: "line", who: "me", text: "「妳怎麼知道我會走這裡？」" },
-  { type: "line", who: "akari", text: "「便利商店不能去，販賣機也不能去。」", expr: "" },
+  { type: "line", who: "akari", text: "「便利商店不能去，販賣機也不能去。」" },
   { type: "line", who: "akari", text: "「你回家只剩這條路了。」" },
   { type: "line", who: "me", text: "「妳想到這個？」" },
   { type: "line", who: "akari", text: "「貓看到獵物，盯著不放。」", speed: "instant" },
@@ -238,7 +238,7 @@ window.HOSHINO.days[6] = [
 
   { type: "line", who: "narration", text: "她停下來。" },
   { type: "line", who: "narration", text: "沒有回頭。" },
-  { type: "line", who: "narration", text: "只伸出一隻手，手心朝上。" },
+  { type: "line", who: "narration", text: "只伸出一隻手，手心朝上。", expr: "背對伸手" },
   { type: "line", who: "akari", text: "「護唇膏。」", speed: "slow" },
   { type: "line", who: "narration", text: "我把護唇膏，放到她手裡。", cg: "lipbalm" },
   { type: "line", who: "narration", text: "她握了一下。" },
@@ -257,7 +257,7 @@ window.HOSHINO.days[6] = [
   { type: "line", who: "akari", text: "「最後一次。」", speed: "slow" },
   { type: "line", who: "akari", text: "「真的，最後一次。」", speed: "slow" },
   { type: "line", who: "narration", text: "連這一次，都沒看到她的臉。" },
-  { type: "line", who: "narration", text: "她把圍巾往上拉，遮住半張臉。", expr: "圍巾遮臉", mask: "口罩", motion: "fade_in", depth: "far", pos: "right" },
+  { type: "line", who: "narration", text: "她把圍巾往上拉，遮住半張臉。", expr: "圍巾遮臉", motion: "fade_in", depth: "far", pos: "right" },
   { type: "line", who: "narration", text: "走進大馬路的燈光裡。" },
   { type: "line", who: "narration", text: "白氣跟在身後。很快散了。", expr: "", clear: true, pause: 0.8 },
 

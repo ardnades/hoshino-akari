@@ -115,7 +115,7 @@ window.HOSHINO.days[2] = [
   { type: "line", who: "narration", text: "她沒有再追問。帽簷下，她先笑了。", pause: 0.6, expr: "素顏微笑" },
   { type: "line", who: "akari", text: "「你啊。」" },
   { type: "line", who: "akari", text: "「真的很不會說謊。」" },
-  { type: "line", who: "narration", text: "她伸手夾走一塊。只是側著身，拉下口罩，咬了一口。", se: "mask" },
+  { type: "line", who: "narration", text: "她伸手夾走一塊。只是側著身，拉下口罩，咬了一口。", se: "mask", expr: "側身咬食" },
   { type: "line", who: "narration", text: "熱氣燙得她瞇起眼。招牌的光打在她半張臉上。", expr: "素顏", se: "steam", depth: "near", cg: "ev_signlight" },
   { type: "line", who: "narration", text: "沒有妝。就是一個普通女生，在寒夜裡吃一塊很燙的油豆腐。" },
   { type: "line", who: "akari", text: "「……嗯。還是這塊好吃。」", speed: "slow" },

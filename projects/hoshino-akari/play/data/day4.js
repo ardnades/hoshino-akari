@@ -123,7 +123,7 @@ window.HOSHINO.days[4] = [
   /* ───── 深夜・停車場：熱可可與布丁 ───── */
   { type: "scene", place: "深夜・便利商店後方 停車場", time: "一點二十五分", mood: "store", bg: "bg_vending_parking_night" },
 
-  { type: "line", who: "narration", text: "停車場的盡頭。", bgm: "store" },
+  { type: "line", who: "narration", text: "停車場的盡頭。", bgm: "store", expr: "全身", depth: "far", motion: "fade_in" },
   { type: "line", who: "narration", text: "一排自動販賣機，旁邊一張塑膠長椅。" },
   { type: "line", who: "narration", text: "地上是停車格褪色的白線。" },
   { type: "line", who: "narration", text: "從店裡看不到這裡。" },
@@ -141,7 +141,7 @@ window.HOSHINO.days[4] = [
   { type: "line", who: "narration", text: "她從口袋掏出一個東西，晃了晃。" },
   { type: "line", who: "narration", text: "昨天那個暖暖包。" },
   { type: "line", who: "akari", text: "「涼了。」她說，「但丟掉又可惜。」" },
-  { type: "line", who: "narration", text: "她把它墊在長椅上，坐上去。" },
+  { type: "line", who: "narration", text: "她把它墊在長椅上，坐上去。", expr: "坐姿", motion: "fade_in" },
   { type: "line", who: "akari", text: "「……完全沒用。」" },
   { type: "line", who: "me", text: "「那現在是坐墊嗎。」" },
   { type: "line", who: "akari", text: "「現在是了。」" },
@@ -180,7 +180,7 @@ window.HOSHINO.days[4] = [
   },
   { type: "line", who: "narration", text: "過了一會。" },
   { type: "line", who: "narration", text: "又震。", se: "buzz", unread: { op: "inc", by: 1 } },
-  { type: "line", who: "narration", text: "她看著販賣機的燈，笑了一下。", expr: "" },
+  { type: "line", who: "narration", text: "她看著販賣機的燈，笑了一下。", expr: "微笑" },
   { type: "line", who: "akari", text: "「今天好熱鬧。」" },
   { type: "line", who: "me", text: "「妳不回？」" },
   { type: "line", who: "akari", text: "「回了，就要回去。」" },
@@ -287,7 +287,7 @@ window.HOSHINO.days[4] = [
     add: { regret: 1 },
   },
   { type: "line", who: "narration", text: "她說完，拉低帽子，走進黑暗裡。", se: "step", expr: "背對" },
-  { type: "line", who: "narration", text: "這次，她的背影走得比哪一天都慢。", expr: "" },
+  { type: "line", who: "narration", text: "這次，她的背影走得比哪一天都慢。" },
 
   /* regret>=1 → 追加「我數到三，沒有叫住她。」 */
   {

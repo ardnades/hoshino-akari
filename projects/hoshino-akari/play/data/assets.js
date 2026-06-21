@@ -32,7 +32,7 @@ window.HOSHINO.assets = {
       "喘氣帽簷低": "assets/characters/akari_cb_troubled.png",
       "警戒": "assets/characters/akari_cb_neutral.png",
       "戒備遮臉": "assets/characters/akari_cb_neutral.png",
-      "圍巾遮臉": "assets/characters/akari_cb_neutral.png",
+      "圍巾遮臉": "assets/characters/akari_cb_scarf_walk.png",   // batch6：3/4 背・圍巾拉高走遠（口罩烤入，不疊 overlay）；Day6:260「連這次都沒看到她的臉」走進大馬路
       "看玻璃門眼神警戒": "assets/characters/akari_cb_neutral.png",
       // —— mask_off（P0-1：bust 缺檔→cb base；素顏，不疊 mask）——
       "素顏": "assets/characters/akari_cb_neutral.png",
@@ -59,6 +59,15 @@ window.HOSHINO.assets = {
       // —— Day6 角度錨點（雨棚並肩/擦身）：整圖去背、白口罩烤入、不疊 frontal overlay。已就位待用；劇情逐行 line 接入待 Day6 場景確認 ——
       "側身": "assets/characters/akari_cb_side.png",        // s89001 側面：朝前走、視線望側前、不看鏡頭（QC canon8.5/defect7）
       "走遠": "assets/characters/akari_cb_back_walk.png",   // s89013 後3/4 背影：臉幾乎不露、白口罩可見（QC 8/8，比 akari_cb_back_masked 更乾淨，可考慮替換「背對」）
+      // —— 動作姿勢（batch1，spec/41）：半蹲低姿，白口罩烤入底圖、不疊 frontal overlay；用於「蹲下塞東西／蹲回來寫字／低頭處理手邊」 ——
+      "半蹲": "assets/characters/akari_cb_crouch.png",   // crouch_write_s82002 去背（batch_cutout）：低頭、雙手身前持物、戴白口罩、帽簷適中
+      "攤手": "assets/characters/akari_cb_handshrug.png",   // batch2：正面攤手聳肩（戴白口罩）；「聳肩」鍵也指到這
+      "坐姿": "assets/characters/akari_cb_sit.png",   // batch2：坐長椅捧罐（含長椅、戴白口罩）；用於 Day4 長椅戲坐下那拍
+      "背對吃": "assets/characters/akari_cb_back_eat.png",   // batch2：3/4 背對・抬手吃（口罩烤入底圖，不疊 frontal overlay）；Day1:91 背對咬油豆腐
+      "全身": "assets/characters/akari_fullbody_maskon.png",   // batch1：全身遠景（mask_on，img2img off v007）；用 depth:"far" 做入場/離席遠景
+      "側身咬食": "assets/characters/akari_cb_eat_squint.png",   // waveA：3/4 側拉口罩咬油豆腐・熱氣瞇眼（素顏，口罩拉下）；Day2:118
+      "並肩": "assets/characters/akari_cb_side_walk.png",   // batch4：3/4 背・同向往前走（口罩烤入，不疊 overlay）；Day6 雨棚並肩段
+      "背對伸手": "assets/characters/akari_cb_hand_out.png",   // batch4：3/4 背・一手向外伸掌心朝上討回（口罩烤入）；Day6:241
 
       // —— 演出 pass 別名：story data 的情緒描述字串 → 最近似的現有素材（零新圖）——
       // Day2
@@ -69,9 +78,9 @@ window.HOSHINO.assets = {
       "收笑":     "assets/characters/akari_cb_accept.png",       // 笑意收起 ≈ 平靜
       "收起玩笑": "assets/characters/akari_cb_accept.png",       // 認真說話 ≈ 平靜
       "立刻嘴硬": "assets/characters/akari_cb_pouty.png",        // 反射性嘴硬 ≈ 嘴硬
-      "聳肩":     "assets/characters/akari_cb_neutral.png",      // 聳肩無所謂 ≈ 中性
+      "聳肩":     "assets/characters/akari_cb_handshrug.png",   // batch2：改指到「攤手聳肩」立繪（原為中性 bust）
       // Day3
-      "盯著自動門":  "assets/characters/akari_cb_neutral.png", // P0-1：cb base（劇情行配 mask:"口罩"）
+      "盯著自動門":  "assets/characters/akari_cb_side34.png", // waveA：3/4 側・望門戒備（side34_glance，口罩烤入→劇情行不要再配 mask:"口罩"）
       "心虛":        "assets/characters/akari_cb_troubled.png",  // 心虛 ≈ 為難
       "藏不住的高興":"assets/characters/akari_cb_smile.png",     // = 藏不住的笑
       "不服氣":      "assets/characters/akari_cb_pouty.png",     // 不服氣 ≈ 嘴硬
@@ -82,7 +91,7 @@ window.HOSHINO.assets = {
       "慌":          "assets/characters/akari_cb_troubled.png",  // 慌張 ≈ 為難
       "專注數錢":    "assets/characters/akari_cb_accept.png",    // 專注 ≈ 平靜
       "一本正經":    "assets/characters/akari_cb_neutral.png",   // 一本正經 ≈ 中性
-      "珍惜":        "assets/characters/akari_cb_accept.png",    // 珍惜布丁 ≈ 平靜
+      "珍惜":        "assets/characters/akari_cb_hold_prop.png",  // waveA：雙手捧物胸前・低頭凝視（hold_prop_chest，mask_on）；Day3:179 捧布丁
       "眼睛彎":      "assets/characters/akari_cb_closedsmile.png", // day3:192 隔口罩「眼睛彎起來」→ 閉眼笑底；ComfyUI 眼睛 inpaint 於 master，原生 832×1216 → 共用 @masks 口罩 overlay 原生對位（day3 那行配 mask:"口罩"）
       "試探":        "assets/characters/akari_cb_shy.png",       // 試探性回頭 ≈ 別開視線
       "瞪":          "assets/characters/akari_cb_pouty.png",     // 瞪 ≈ 嘴硬
@@ -91,19 +100,19 @@ window.HOSHINO.assets = {
       "直起身嘴硬":  "assets/characters/akari_cb_pouty.png",     // 喘完氣反射性嘴硬 ≈ 嘴硬
       "嘴硬被逗":    "assets/characters/akari_cb_pouty.png",      // 被逗到嘴硬 ≈ 嘴硬
       "看白線出神":  "assets/characters/akari_cb_accept.png",     // 盯停車格白線出神 ≈ 平靜
-      "凍手撕蓋":    "assets/characters/akari_cb_troubled.png",   // 手指凍僵撕不開 ≈ 為難
+      "凍手撕蓋":    "assets/characters/akari_cb_look_down.png",   // waveA：低頭看手・雙手胸前操作道具（look_down_handle，mask_on）；Day4:165 撕蓋
       "動作凝滯":    "assets/characters/akari_cb_neutral.png",    // 手機來電・湯匙停在半空 ≈ 中性
       "低頭聲音小":  "assets/characters/akari_cb_shy.png",        // 低頭・聲音小 ≈ 別開視線
       "瞇眼吃焦糖":  "assets/characters/akari_cb_closedsmile.png", // day4:222 吃到焦糖底層・瞇眼 → 閉眼笑（素顏 mask-off，收斂的滿足笑，好感明確但克制）
       "認真點頭微笑":"assets/characters/akari_cb_smile.png",      // 緩慢真誠的點頭 ≈ 微笑
       "耳朵紅低頭":  "assets/characters/akari_cb_shy.png",        // 耳朵紅了・低頭 ≈ 別開視線
       "看螢幕凝重":  "assets/characters/akari_cb_neutral.png",    // 盯著手機螢幕・重量感 ≈ 中性
-      "回頭半側臉":  "assets/characters/akari_cb_shy.png",        // 走了幾步回頭・半側臉 ≈ 別開視線
+      "回頭半側臉":  "assets/characters/akari_cb_back_turn.png",   // batch2：改指到「側身回頭」立繪（back_turn_smile_s83002 去背，口罩烤入，不疊 overlay）
       // Day6（並肩・不能看彼此・口罩全程）
       "眼神彎":      "assets/characters/akari_cb_smile.png", // P0-1：cb base（劇情行配 mask:"半罩"）
       "眼神低":      "assets/characters/akari_cb_shy.png",   // P0-1：cb base（劇情行配 mask:"口罩"）
       // Day7（正面相見・素顏・可以 near/closeup）
-      "妝容＋塌髮＋貓眼神": "assets/characters/akari_cb_shy.png", // P0-1：cb base（素顏，不疊 mask）首次正面
+      "妝容＋塌髮＋貓眼神": "assets/characters/akari_cb_day7.png", // Day7 見面造型：chic 米色針織+牛仔外套+雙馬尾+素顏有妝（denim_s96001）；取代原 catgaze/shy 錯接
       "嘴硬但眼底鬆":       "assets/characters/akari_cb_pouty.png",    // 嘴硬防禦但眼神已在鬆動 ≈ 嘴硬
       "直視・眼底鬆嘴硬收起": "assets/characters/akari_cb_accept.png",  // 護唇膏交還對視・戒心放下 ≈ 平靜
       "嘴硬・眼神鬆":       "assets/characters/akari_cb_pouty.png",    // 說「閉嘴」但眼神已溫 ≈ 嘴硬
@@ -126,6 +135,7 @@ window.HOSHINO.assets = {
   },
     cg: {
     cat_meet: "assets/cg/cat_meet.png",
+    ev_interview: "assets/cg/ev_interview.png",   // 三結局訪談剪輯：手機畫面播灯的電視訪談（route B，s97001）；接 endings warm/quiet/bitter「滑到訪談剪輯」→「下車之後」clear
     cocoa: "assets/cg/cocoa.png",
     lipbalm: "assets/cg/lipbalm.png",
     note: "assets/cg/note.png",

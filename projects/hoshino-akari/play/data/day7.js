@@ -66,7 +66,7 @@ window.HOSHINO.days[7] = [
 
   /* ── S3 雨棚下・一步的距離：讀紙片判定 ── */
   { type: "line", who: "narration", text: "她在離我一步的地方停下。這次，她沒有戴口罩。", pause: 1.2 },
-  { type: "line", who: "narration", text: "妝還在。頭髮是拍攝後的樣子，有點塌。外面隨便披了一件普通外套。" },
+  { type: "line", who: "narration", text: "妝還在。頭髮還綁著拍攝時的馬尾。外面隨便披了一件普通外套。" },
   { type: "line", who: "narration", text: "她看起來，比這幾天的任何一晚，都更像「星野灯」。" },
   { type: "line", who: "narration", text: "但她的眼睛，是那隻在巷子裡偷吃油豆腐的貓。" },
   { type: "line", who: "akari", text: "「……看夠了沒。」", speed: "slow", expr: "妝容＋塌髮＋貓眼神", motion: "fade_in", depth: "normal" },

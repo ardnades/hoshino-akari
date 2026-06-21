@@ -88,10 +88,22 @@
     const bgResolvable = (key) =>
       Object.prototype.hasOwnProperty.call((assets && assets.background) || {}, key);
     // 口罩等 overlay：node.mask 須在該角色 assets.characters[who]["@masks"] 內有對應透明 PNG
-    const maskResolvable = (who, key) => {
-      const ch = ((assets && assets.characters) || {})[who || ""] || {};
-      const masks = ch["@masks"] || {};
+    const maskResolvable = (who, expr, key) => {
+      const chars = (assets && assets.characters) || {};
+      let ch = chars[who || ""];
+      // 鏡像 engine.setSprite 的「旁白→akari 回退」：who 無立繪表但 akari 有此 expr 時，
+      // 立繪與其 @masks 都來自 akari，故 mask 應對 akari 的 @masks 解析（修正旁白行帶 akari expr+mask 的假警告）。
+      if (!ch && expr != null && expr !== "" && chars.akari && chars.akari[expr] != null) ch = chars.akari;
+      const masks = (ch && ch["@masks"]) || {};
       return Object.prototype.hasOwnProperty.call(masks, key);
+    };
+    // node.expr → 立繪：鏡像 engine.setSprite（查 characters[who][expr]；who 無立繪表→akari 回退）。
+    // expr 是「表情字串」，不可拿來當說話者身分（曾有 who:"manager"+expr:"主持人" 的誤用，靠此規則攔下）。
+    const exprResolvable = (who, expr) => {
+      const chars = (assets && assets.characters) || {};
+      let ch = chars[who || ""];
+      if (!ch) ch = chars.akari;   // 旁白／無立繪表角色 → akari 立繪回退
+      return !!(ch && Object.prototype.hasOwnProperty.call(ch, expr));
     };
     const checkScoreKeys = (obj, file, loc, label, rule) => {
       if (typeof obj !== "object") { err(file, loc, `${label} 必須是物件`, rule); return; }
@@ -145,7 +157,8 @@
         if (node.speed != null && !SPEEDS.has(node.speed)) err(file, loc, `line.speed "${node.speed}" 不合法（normal/slow/instant）`, "line-speed");
         if (node.bgm != null && node.bgm !== "" && !MOODS.has(node.bgm)) err(file, loc, `line.bgm "${node.bgm}" 不是合法 mood`, "line-bgm");
         if (node.cg != null && node.cg !== "clear" && !cgResolvable(node.cg)) warn(file, loc, `line.cg "${node.cg}" 無 assets.cg 真圖、也無 ART fallback`, "line-cg");
-        if (node.mask != null && !maskResolvable(node.who, node.mask)) warn(file, loc, `line.mask "${node.mask}" 在 assets.characters["${node.who}"]["@masks"] 無對應 overlay`, "line-mask");
+        if (node.mask != null && !maskResolvable(node.who, node.expr, node.mask)) warn(file, loc, `line.mask "${node.mask}" 在 assets.characters["${node.who}"]["@masks"] 無對應 overlay`, "line-mask");
+        if (node.expr != null && node.expr !== "" && !exprResolvable(node.who, node.expr)) warn(file, loc, `line.expr "${node.expr}" 無法解析為立繪（assets.characters["${node.who || "narration"}"] 與 akari 回退皆無此表情；expr 不應拿來當說話者身分）`, "line-expr");
         if (node.bg != null && !bgResolvable(node.bg)) warn(file, loc, `line.bg "${node.bg}" 無對應 assets.background`, "line-bg");
         if (node.se != null) {
           if (assets.enabled && assets.enabled.se) {

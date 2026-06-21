@@ -9,6 +9,9 @@ __pycache__/
 .venv/
 venv/
 
+# 字型子集化 build 輸入（大型來源 OTF＋charset，不入庫；產物 play/fonts/*.woff2 才追蹤）
+projects/hoshino-akari/tools/_fontsrc/
+
 # 工作暫存（diff 備份、一次性腳本草稿）
 tmp/
 
@@ -44,3 +47,9 @@ public/assets/characters/hoshino_akari/bustup_fix_ready/hq_tests/**/*.webp
 #   public/assets/characters/hoshino_akari/manifest.json
 #   art_tool/character_pipeline/hoshino_akari/*.md
 #   art_tool/art_review/ASSET_CLEANUP_REPORT.md
+
+# === 本機設定 / 草稿（不進 repo）===
+.claude/
+# CG loop 影片源（草稿；遊戲跑的是成品 loop，源檔不需入庫）
+projects/hoshino-akari/play/assets/cg/_video_src/
+projects/hoshino-akari/play/assets/cg/_video_src2/

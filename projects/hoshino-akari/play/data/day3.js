@@ -23,7 +23,7 @@ window.HOSHINO.days[3] = [
   { type: "line", who: "narration", text: "門「叮咚」一聲滑開。", se: "door" },
   { type: "line", who: "narration", text: "她往後退了半步。", pause: 0.6, expr: "戒備遮臉", mask: "口罩", motion: "step_back" },
   { type: "line", who: "me", text: "「……妳在幹嘛？」" },
-  { type: "line", who: "akari", text: "「測感應範圍。」", speed: "instant", expr: "盯著自動門", mask: "口罩", depth: "far" },
+  { type: "line", who: "akari", text: "「測感應範圍。」", speed: "instant", expr: "盯著自動門", depth: "far" },
   { type: "line", who: "me", text: "「測多久了？」" },
   { type: "line", who: "akari", text: "「…………十分鐘。」", speed: "slow", pause: 1.0, expr: "心虛" },
 
@@ -39,7 +39,7 @@ window.HOSHINO.days[3] = [
           { type: "line", who: "narration", text: "她清了清喉嚨。" },
           { type: "line", who: "akari", text: "「我本來就很普通。」" },
           { type: "line", who: "me", text: "「普通人不會測感應範圍。」" },
-          { type: "line", who: "akari", text: "「……走了啦。」", expr: "" },
+          { type: "line", who: "akari", text: "「……走了啦。」" },
         ],
       },
       {
@@ -193,8 +193,8 @@ window.HOSHINO.days[3] = [
   { type: "line", who: "me", text: "「……嗯。剛好。」", speed: "slow", pause: 1.2 },
   { type: "line", who: "narration", text: "她把暖暖包和布丁放進同一個口袋。" },
   { type: "line", who: "narration", text: "轉身，走進巷子。", expr: "背對" },
-  { type: "line", who: "narration", text: "走了幾步，回頭。" },
-  { type: "line", who: "akari", text: "「明天。同樣時間。」", expr: "試探", depth: "far" },
+  { type: "line", who: "narration", text: "走了幾步，回頭。", expr: "回頭半側臉", depth: "far" },
+  { type: "line", who: "akari", text: "「明天。同樣時間。」" },
   { type: "line", who: "akari", text: "「你會來吧？」" },
   { type: "line", who: "narration", text: "這次，我沒有說「可能」。", pause: 0.8 },
   { type: "line", who: "me", text: "「會。」", speed: "instant" },

@@ -58,10 +58,58 @@ function loadGame() {
   return { window: sandbox.window, loadIssues };
 }
 
+// 素材檔磁碟存在性檢查（CLI 專屬；story_schema 為純函式不讀檔）。
+// 空字串值＝刻意靜音/未接（如多數 se），跳過；只查有填路徑卻找不到檔的。
+function checkAssetFiles(assets, playDir) {
+  const out = [];
+  const seen = new Set();
+  const check = (val, where) => {
+    if (typeof val !== "string" || val === "" || val === "clear") return;
+    if (seen.has(val)) return; seen.add(val);
+    if (!fs.existsSync(path.join(playDir, val)))
+      out.push({ level: "WARN", file: "data/assets.js", loc: where, msg: `素材檔不存在於磁碟：${val}`, rule: "asset-file-missing" });
+  };
+  const a = assets || {};
+  for (const who of Object.keys(a.characters || {})) {
+    const tbl = a.characters[who] || {};
+    for (const k of Object.keys(tbl)) {
+      if (k === "@masks") { const m = tbl[k] || {}; for (const mk of Object.keys(m)) check(m[mk], `characters.${who}.@masks.${mk}`); }
+      else check(tbl[k], `characters.${who}.${k}`);
+    }
+  }
+  for (const grp of ["cg", "background", "bgm", "se"]) {
+    const g = a[grp] || {};
+    for (const k of Object.keys(g)) check(g[k], `${grp}.${k}`);
+  }
+  return out;
+}
+
 function main() {
   const { window: W, loadIssues } = loadGame();
   const result = StorySchema.validateGame(W.HOSHINO, W.ART);
-  const issues = loadIssues.concat(result.issues);
+
+  // flag set↔read 對稱 + gate 可達性（接 analyzeRelations，原本只算給 inspector、CLI 從未用）。
+  // 全部 WARN：揭露死 flag/不可達分支但不擋 build；修乾淨後可在此升 ERROR 防回歸（見 spec/32 P0-4）。
+  // 注意：undefined-read 不在此重報——已由 validateGame 的 gate-cond-flag-undefined 覆蓋，避免重複。
+  const rel = StorySchema.analyzeRelations(W.HOSHINO);
+  const relIssues = [];
+  for (const f of rel.flags) {
+    if (f.status === "unused") {
+      const where = f.setBy.map((s) => `${s.file} ${s.loc}`).join("；");
+      const at = f.setBy[0] || { file: "data", loc: "-" };
+      relIssues.push({ level: "WARN", file: at.file, loc: at.loc,
+        msg: `flag "${f.name}" 被 set 卻無任何 gate.cond 讀取、也不在 judge() 使用（死 flag＝選了沒差）。set 於：${where}`,
+        rule: "flag-set-never-read" });
+    }
+  }
+  for (const g of rel.gates) {
+    if (g.neverTrue) relIssues.push({ level: "WARN", file: g.file, loc: g.loc,
+      msg: `gate.cond "${g.cond}" 的 flag 從未被 set → 恆假，then 分支不可達`, rule: "gate-never-true" });
+    if (g.alwaysTrue) relIssues.push({ level: "WARN", file: g.file, loc: g.loc,
+      msg: `gate.cond "${g.cond}" 為 !flag:未定義 → 恆真，else 分支不可達`, rule: "gate-always-true" });
+  }
+  const fileIssues = checkAssetFiles(W.HOSHINO && W.HOSHINO.assets, PLAY);
+  const issues = loadIssues.concat(result.issues).concat(relIssues).concat(fileIssues);
 
   const errors = issues.filter((i) => i.level === "ERROR");
   const warns = issues.filter((i) => i.level === "WARN");
@@ -70,7 +118,7 @@ function main() {
   out.push("==============================");
   out.push(`- Errors:   ${errors.length}`);
   out.push(`- Warnings: ${warns.length}`);
-  out.push("- Note: 深層 unreachable / always-true-false 可達性分析未做（TODO，見 spec/phase1-data-contract.md D.7）。");
+  out.push("- Note: flag set↔read 對稱檢查 + gate 恆真/恆假可達性：已啟用（WARN 級；接 analyzeRelations，見 spec/32 P0-4）。");
   for (const info of result.infos) out.push(`- INFO: ${info}`);
   out.push("");
   if (issues.length === 0) {
