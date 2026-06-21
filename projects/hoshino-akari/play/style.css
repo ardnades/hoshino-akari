@@ -203,12 +203,17 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline
 #sceneCard .sc-rule{width:54px;height:1px;background:linear-gradient(90deg,transparent,var(--accent),transparent);opacity:.7}
 /* 章節卡（Day Start / End）全幅暗底——用 class（不依賴 :has），舊瀏覽器也成立 */
 #sceneCard.daycard,#sceneCard:has(.day-card){background:radial-gradient(120% 80% at 50% 40%,#0c1119,#05070b)}
-#sceneCard .day-card{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;text-align:center;padding:0 24px}
+/* 電影 letterbox 上下黑邊＋內緣月光細線（claude design 版 eyecatch；月夜紫統一） */
+#sceneCard.daycard::before,#sceneCard.daycard::after{content:"";position:absolute;left:0;right:0;height:12%;background:#05050b;z-index:1;pointer-events:none;animation:lbIn .7s ease both}
+#sceneCard.daycard::before{top:0;transform-origin:top;box-shadow:inset 0 -1px 0 rgba(200,180,255,.20)}
+#sceneCard.daycard::after{bottom:0;transform-origin:bottom;box-shadow:inset 0 1px 0 rgba(200,180,255,.20)}
+@keyframes lbIn{from{transform:scaleY(0)}to{transform:scaleY(1)}}
+#sceneCard .day-card{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;text-align:center;padding:0 24px;z-index:2}
 #sceneCard .dc-no{color:var(--accent);font-family:var(--font-num);letter-spacing:.42em;font-size:14px;
   text-shadow:0 0 12px var(--glow);animation:dcNo 1s ease both}
 @keyframes dcNo{from{opacity:0;letter-spacing:.9em}to{opacity:1;letter-spacing:.42em}}
 #sceneCard .dc-rule{width:54px;height:1px;background:linear-gradient(90deg,transparent,var(--accent),transparent);opacity:.8}
-#sceneCard .dc-title{font-size:clamp(24px,6.4vw,38px);letter-spacing:.22em;animation:fadeUp .9s .2s ease both}
+#sceneCard .dc-title{font-size:clamp(26px,7vw,42px);letter-spacing:.22em;text-shadow:0 0 22px var(--glow),0 2px 4px rgba(0,0,0,.5);animation:fadeUp .9s .2s ease both}
 #sceneCard .dc-sub{color:var(--ink-dim);font-size:clamp(13px,3.6vw,16px);letter-spacing:.18em;animation:fadeUp .9s .35s ease both}
 #sceneCard .day-end .dc-tail{color:var(--ink-dim);letter-spacing:.42em;font-size:16px;font-family:var(--font-sans)}
 @keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
