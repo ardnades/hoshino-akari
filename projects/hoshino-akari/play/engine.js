@@ -97,6 +97,12 @@
     }
     flashSE();                                                          // 視覺脈衝永遠保留（即使沒音檔）
   }
+  const seWarm = [];
+  function preloadSE() {                                                 // 預熱 SE 位元組：消除首播 fetch/解碼延遲 → 撞擊 shake 與聲音同拍（spec/50 #2）
+    const en = A().enabled || {}; if (!en.se) return;
+    const g = A().se || {};
+    for (const k in g) { const u = g[k]; if (u) { try { const a = new Audio(); a.preload = "auto"; a.src = u; a.load(); seWarm.push(a); } catch (e) {} } }   // 保留參考避免載入途中被 GC 中止
+  }
   // ── 立繪演出 v0：pos / depth / motion（讀 line 欄位 → 套 CSS class）＋ clear 乾淨退場 ──
   // 沒有任何演出欄位的 line：className 維持純 "sprite-stack"，行為與舊版完全一致（向後相容硬要求）。
   const SPRITE_POS = { left: "sprite-pos-left", right: "sprite-pos-right" };       // center = 預設，不加 class
@@ -204,14 +210,22 @@
   function hideExprBadge() {   // 表情已整合進角色名牌；此函式只負責藏掉已廢棄的浮動表情徽章
     const b = $("exprBadge"); if (b) b.classList.add("hidden");
   }
-  function showCG(key) {
+  let cgToken = 0;                                                       // 防止解碼期間玩家已換頁，舊圖晚到才蓋上
+  async function showCG(key) {
+    const myToken = ++cgToken;
     if (!key || key === "clear") { $("cgLayer").classList.add("hidden"); $("cgLayer").classList.remove("cg-full"); $("game").classList.remove("cg-on", "cg-prop"); return; }
     unlockCG(key);
     const cap = capFor(key);
     const url = assetUrl("cg", key);                                    // 有真 CG 用圖/影片，否則 inline SVG
+    const isVideo = url && /\.(mp4|webm)$/i.test(url);
+    if (url && !isVideo) {                                              // 靜圖：先解碼完才上畫面，杜絕「清黑底→才載圖」的黑幀（spec/50 #1）
+      const pre = new Image(); pre.src = url;
+      try { await pre.decode(); } catch (e) {}
+      if (myToken !== cgToken) return;                                  // 解碼途中已被新 CG / clear 取代 → 放棄，避免舊圖蓋到新畫面
+    }
     const poster = url ? url.replace(/\.(mp4|webm)$/i, ".png") : "";     // 影片 CG 靜圖：補滿播放前的黑幀＋載入失敗時 poster 續顯。ponytail: 假設同名 .png（ev_signlight 為 .webp → poster 404 無害，退回現狀黑底）
     const art = url
-      ? (/\.(mp4|webm)$/i.test(url)
+      ? (isVideo
           ? `<video class="cg-img" src="${url}" poster="${poster}" autoplay loop muted playsinline></video>`   // loop 影片 CG：assets.js 指向 .mp4/.webm 即自動循環；poster 防首幀黑屏
           : `<img class="cg-img" src="${url}" alt="" onerror="this.outerHTML=''">`)
       : (ART[key] ? ART[key]() : "");
@@ -220,7 +234,7 @@
     $("cgLayer").classList.remove("hidden"); $("cgLayer").classList.toggle("cg-full", isEvent);
     $("game").classList.toggle("cg-on", isEvent); $("game").classList.toggle("cg-prop", !isEvent);   // 道具相片卡顯示時 → 立繪退後景（CSS 壓暗），不再卡在臉上
   }
-  function clearCG() { $("cgLayer").classList.add("hidden"); $("cgLayer").classList.remove("cg-full"); $("cgLayer").innerHTML = ""; $("game").classList.remove("cg-on", "cg-prop"); }
+  function clearCG() { cgToken++; $("cgLayer").classList.add("hidden"); $("cgLayer").classList.remove("cg-full"); $("cgLayer").innerHTML = ""; $("game").classList.remove("cg-on", "cg-prop"); }
   function capFor(key) {
     for (const g of ["anchors", "signs", "hidden"]) {
       const it = M.gallery[g].find((x) => x.key === key); if (it) return it.cap;
@@ -780,6 +794,7 @@
     const fontsReady = (document.fonts && document.fonts.ready) ? document.fonts.ready : Promise.resolve();
     const kvReady = new Promise((res) => { kv.onload = res; kv.onerror = res; });
     const imagesReady = preloadImages();
+    preloadSE();                                                         // SE 預熱（不阻塞進場；warm 一次後撞擊聲與 shake 同拍）
     // ponytail: 封頂 12s——本地/快網數秒讀完；慢網最多等 12s 仍進場（之後 pop-in 但可玩），不無限卡
     Promise.race([Promise.all([fontsReady, kvReady, imagesReady]), new Promise((r) => setTimeout(r, 12000))]).then(revealApp);
   }
