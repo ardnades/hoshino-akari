@@ -46,7 +46,6 @@ window.HOSHINO.days[5] = [
   { type: "line", who: "narration", text: "還在。", pause: 0.6 },
   { type: "line", who: "narration", text: "她說，今天可能來不了。", speed: "slow", pause: 1.0 },
   { type: "line", who: "narration", text: "那我，還要去嗎？", pause: 0.6 },
-  { type: "line", who: "narration", text: "去了她沒來，我就是站在巷子裡發呆的笨蛋。" },
   { type: "line", who: "narration", text: "不去——", speed: "instant", pause: 0.5 },
   { type: "line", who: "narration", text: "她說的是「可能來不了」。" },
   { type: "line", who: "narration", text: "不是「不要來」。", speed: "slow", pause: 1.0 },

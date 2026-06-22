@@ -113,6 +113,12 @@ window.HOSHINO.days[7] = [
     ],
   },
 
+  /* P1-1：不可逆硬倒數補進共用段（stance gate 之前，全玩家可達）。
+     由 akari 嘴硬漏一句具體機票資訊承載不可逆；一句、不展開、不點破主題（akari／me 不出現主題六詞）。 */
+  { type: "line", who: "narration", text: "她數著數著，忽然沒頭沒尾地補了一句：", depth: "near", pause: 0.6 },
+  { type: "line", who: "akari", text: "「十二號的飛機。退票賠三成，我算過，不划算。」", speed: "slow", expr: "嘴硬但眼底鬆", depth: "near", pause: 0.8 },
+  { type: "line", who: "narration", text: "她說得很平，像在念一張收據。然後又把視線移回那排燈上。", depth: "near", pause: 0.6 },
+
   {
     type: "choice", id: "d7s3", prompt: "口袋裡那片紙——",
     options: [
@@ -252,9 +258,8 @@ window.HOSHINO.days[7] = [
       { type: "line", who: "me", text: "「……油豆腐？」", cg: "oden", camera: { op: "push", amount: "small", duration: 500 } },
       { type: "line", who: "akari", text: "「還有焦糖布丁。」", cg: "pudding" },
       { type: "line", who: "narration", text: "她說完，自己先笑了一下。", cg: "clear", camera: { op: "reset", duration: 400 } },
-      { type: "line", who: "akari", text: "「我以前覺得，普通是很無聊的東西。」" },
-      { type: "line", who: "me", text: "「現在呢？」" },
-      { type: "line", who: "akari", text: "「現在覺得，」", pause: 1.0 },
+      /* P2-1：自剖收一句——刪去「以前無聊／現在呢？」的前後對比框，讓「很貴」直接從那一下笑裡漏出，卸防更含蓄。 */
+      { type: "line", who: "akari", text: "「現在才知道，」", pause: 1.0 },
       { type: "line", who: "akari", text: "「很貴。」", speed: "slow", pause: 0.8 },
       /* charm warn：「很貴」這拍底下補同框的涼——說完立刻嘴硬岔開的反射動作，讓結論從動作縫隙漏出。 */
       { type: "line", who: "narration", text: "說完，她像是發現自己講太多了，握著護唇膏的手指緊了一下，立刻把頭撇開。", depth: "near", pause: 0.6 },
