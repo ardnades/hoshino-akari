@@ -133,7 +133,7 @@ window.HOSHINO.days[2] = [
       {
         label: "「妳明早不是有身體檢查？」",
         hint: "替她想後果",
-        add: { stance: 1, awareness: 1, regret: 1 },
+        add: { stance: 1, awareness: 1 },
         reaction: [
           { type: "line", who: "me", text: "「妳明早不是有身體檢查？」" },
           { type: "line", who: "narration", text: "她的手停在半空，指尖離那塊油豆腐只剩一公分。", pause: 0.8, expr: "怔住", depth: "near", camera: { op: "push", amount: "small", duration: 600 } },
