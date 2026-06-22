@@ -15,7 +15,7 @@
        選項播完 reaction 後續接下一個 node（匯合）
    - {type:"gate", cond, then:[node...], else?:[node...]}
        cond 字串：支援 "affection>=2" / "warmth>=5" / "flag:seen_through_flag" / "!flag:xxx"
-       可用變數：affection distance awareness regret warmth(=aff-dist)
+       可用變數：affection distance awareness regret warmth(=aff-dist) stance heat
 */
 window.HOSHINO = { days: {}, endings: {}, meta: {} };
 
@@ -47,16 +47,21 @@ window.HOSHINO.meta = {
     narration: { label: "", cls: "narration" },
   },
 
-  // 四分數初始
-  initScores: { affection: 0, distance: 0, awareness: 0, regret: 0 },
+  // 初始分數（affection=bond / awareness=seen / distance 僅入 warmth / stance 幫她逃(負)↔逼她面對(正) / heat 曝光熱度0-100）
+  initScores: { affection: 0, distance: 0, awareness: 0, regret: 0, stance: 0, heat: 0 },
 
   // 結局判定（D7 結算，由上往下短路；回傳 tone key）
+  // 7 命運結局。順序是承重的：true_bad 必排第一（否則被 warm_true 截走）；
+  // fate_top/brave_freedom 排在 hidden_pov/warm_true 之前。bond=affection, seen=awareness。
   judge(s, flags) {
     const warmth = s.affection - s.distance;
-    if (s.awareness >= 3 && s.affection >= 5 && flags.sns_post_seen && flags.almost_confession_flag)
-      return "hidden_pov";
-    if (warmth >= 5 && s.awareness >= 2 && s.regret <= 2) return "warm_true";
-    if (s.regret >= 3 || s.distance >= 4) return "bitter";
+    const bond = s.affection, seen = s.awareness;
+    if (flags.gambled_on_being_seen && s.heat >= 85 && !flags.let_her_go && !flags.pushed_to_choose) return "true_bad";
+    if (seen >= 4 && bond >= 5 && flags.pushed_to_choose && flags.let_her_go && s.regret <= 1) return "fate_top";
+    if (flags.helped_her_escape && flags.let_her_go && seen < 4 && s.regret <= 2 && bond >= 5) return "brave_freedom";
+    if (seen >= 4 && bond >= 5 && flags.sns_post_seen && flags.almost_confession_flag) return "hidden_pov";
+    if (warmth >= 5 && seen >= 2 && s.regret <= 2) return "warm_true";
+    if (s.regret >= 3) return "bitter";
     return "quiet_normal";
   },
 
@@ -65,6 +70,9 @@ window.HOSHINO.meta = {
     quiet_normal: { badge: "end_quiet",  title: "靜・常結局", note: "偷來的七天，安靜地還了回去。主角學會自己選——不特別甜，也不特別苦。" },
     bitter:       { badge: "end_bitter", title: "苦・餘味結局", note: "他親手讓溫度降下來。布丁仍自己買，只是話學得太晚，沒能跟她說一聲。" },
     hidden_pov:   { badge: "end_hidden", title: "隱藏・灯視點", note: "唯一一次，她的內心正面給你看半句。她仍選擇不聯絡，把那隻沒被收的貓留在口袋。" },
+    fate_top:     { badge: "end_fate",   title: "命運頂結局", note: "甜點櫃前，她第一次替自己選了一次——那班退不掉的票，她沒去趕。你沒攔、也沒替她決定，只是站在原地，看懂了就夠。苦，但是亮的。" },
+    brave_freedom:{ badge: "end_brave",  title: "勇敢的自由結局", note: "陪她賭過那幾晚，最後沒把她留下。她往她要去的地方走，腳步輕了一點；你站在雨棚下，沒有追。釋然裡有一塊空，但兩個人都往前了。" },
+    true_bad:     { badge: "end_bad",    title: "真壞・永久缺席結局", note: "貪了太多次，那一刻終究被人多看了一眼。熱度一夜燒過頭，連那隻很急的貓，都被路上的燈火淹沒了。她沒再出現——不是誰害的，是時程自己把她收走了。" },
   },
 
   // 圖鑑（cg key → 分組與說明）。story 中出現對應 cg 即解鎖。

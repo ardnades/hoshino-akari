@@ -18,12 +18,12 @@
 })(typeof globalThis !== "undefined" ? globalThis : this, function () {
   "use strict";
 
-  const SCORE_KEYS = ["affection", "distance", "awareness", "regret"];
+  const SCORE_KEYS = ["affection", "distance", "awareness", "regret", "stance", "heat"];
   const COND_IDENTS = new Set([...SCORE_KEYS, "warmth"]);
   const MOODS = new Set(["night", "warm", "rain", "stop", "store"]);
   const SPEEDS = new Set(["normal", "slow", "instant"]);
   const NODE_TYPES = new Set(["scene", "line", "choice", "gate"]);
-  const REQUIRED_TONES = ["warm_true", "quiet_normal", "bitter", "hidden_pov"];
+  const REQUIRED_TONES = ["warm_true", "quiet_normal", "bitter", "hidden_pov", "fate_top", "brave_freedom", "true_bad"];
   const SUSPICIOUS_TEXT = /affection|distance|awareness|regret|warmth|\bscore\b|\bdebug\b|debug mode|開發者模式/i;
 
   // cond 引用解析（顯示與分析共用）

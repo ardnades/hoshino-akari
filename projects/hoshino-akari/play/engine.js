@@ -171,7 +171,7 @@
     cond = (cond || "").trim();
     if (cond.startsWith("flag:")) return !!state.flags[cond.slice(5)];
     if (cond.startsWith("!flag:")) return !state.flags[cond.slice(6)];
-    const s = state.scores, scope = { affection: s.affection, distance: s.distance, awareness: s.awareness, regret: s.regret, warmth: s.affection - s.distance };
+    const s = state.scores, scope = { affection: s.affection, distance: s.distance, awareness: s.awareness, regret: s.regret, warmth: s.affection - s.distance, stance: s.stance, heat: s.heat };
     try { return Function(...Object.keys(scope), "return (" + cond + ")")(...Object.values(scope)); }
     catch (e) { console.warn("cond err", cond, e); return false; }
   }
@@ -528,7 +528,7 @@
     await showDayCard(d, "end");                     // 必做2：Day End 轉場（含 Day7 終章卡）
     if (opts.replay) {                               // 回想：只重看一日，不續播、不進結局
       const sv = JSON.parse(localStorage.getItem(SAVE) || "null");   // 還原正式存檔狀態，避免回想污染進度
-      if (sv) state = { day: sv.day, scores: { ...sv.scores }, flags: { ...sv.flags } };
+      if (sv) state = { day: sv.day, scores: { ...M.initScores, ...sv.scores }, flags: { ...sv.flags } };
       openGallery(); return;
     }
     if (d < M.dayCount) { await runDay(d + 1); }
@@ -553,9 +553,10 @@
   function showEndingCard(tone) {
     const em = M.endingMeta[tone] || M.endingMeta.quiet_normal;
     const box = $("choices");
+    const drawBadge = ART[em.badge] || ART.end_quiet;   // 防呆：任何 tone 漏 badge 函式不再崩潰
     box.innerHTML =
       `<div style="text-align:center;max-width:460px">
-        <div style="width:160px;margin:0 auto 14px">${ART[em.badge]()}</div>
+        <div style="width:160px;margin:0 auto 14px">${drawBadge()}</div>
         <h2 style="letter-spacing:.18em;color:var(--akari);margin-bottom:10px">${em.title}</h2>
         <p style="color:var(--ink-dim);font-size:14px;line-height:1.9;margin-bottom:22px">${em.note}</p>
       </div>`;
@@ -622,6 +623,8 @@
        <div class="row"><span>awareness</span><b>${s.awareness}</b></div>
        <div class="row"><span>regret</span><b>${s.regret}</b></div>
        <div class="row"><span>warmth(aff-dist)</span><b>${s.affection - s.distance}</b></div>
+       <div class="row"><span>stance</span><b>${s.stance}</b></div>
+       <div class="row"><span>heat</span><b>${s.heat}</b></div>
        <div class="row"><span>預測結局</span><b style="color:var(--accent)">${M.endingMeta[M.judge(s, state.flags)].title}</b></div>
        <div style="margin-top:6px;color:#6b7785">flags: ${flags.join(", ") || "（無）"}</div>
        <div class="jump"></div>`;
@@ -689,7 +692,7 @@
   }
   function loadSlot(i) {
     const s = readSlot(i); if (!s) return;
-    state = { day: s.day, scores: { ...s.scores }, flags: { ...s.flags } };
+    state = { day: s.day, scores: { ...M.initScores, ...s.scores }, flags: { ...s.flags } };
     closeSaveLoad(); closeMenu();
     showScreen("game"); runDay(s.day);
   }
@@ -719,7 +722,7 @@
     } else { $("contLabel").textContent = "　（尚無進度）"; $("btnContinue").disabled = true; }
 
     $("btnStart").onclick = () => { state = { day: 1, scores: { ...M.initScores }, flags: {} }; showScreen("game"); runDay(1); };
-    $("btnContinue").onclick = () => { if (!save) return; state = { day: save.day, scores: save.scores, flags: save.flags }; showScreen("game"); runDay(save.day); };
+    $("btnContinue").onclick = () => { if (!save) return; state = { day: save.day, scores: { ...M.initScores, ...save.scores }, flags: { ...save.flags } }; showScreen("game"); runDay(save.day); };
     $("btnGallery").onclick = openGallery;
     $("btnGalleryG").onclick = openGallery;
     $("gBack").onclick = () => showScreen($("game").classList.contains("hidden") ? "title" : "game");

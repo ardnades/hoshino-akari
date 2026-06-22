@@ -1,0 +1,9 @@
+{
+  "true_bad":      { "d2_main":0, "d2_close":0, "d3s3":0, "d4_ponr":0, "d5s3":0, "d6_ponr":2, "d7_fate_a":0, "d7s5":0 },
+  "fate_top":      { "d2_main":1, "d2_close":0, "d3s3":0, "d4_ponr":1, "d5s3":0, "d6_ponr":1, "d7_fate_b":0, "d7s5":0, "d7s6":1 },
+  "brave_freedom": { "d2_main":0, "d2_close":0, "d3s3":0, "d4_ponr":0, "d5s3":0, "d6_ponr":0, "d7_fate_a":1, "d7s5":0 },
+  "hidden_pov":    { "d2_main":1, "d2_close":0, "d3s3":0, "d4_ponr":1, "d5s3":0, "d6_ponr":1, "d7_fate_b":1, "d7_almost":0, "d7s5":0, "d7s6":0 },
+  "warm_true":     { "d2_main":1, "d2_close":0, "d3s3":0, "d4_ponr":1, "d5s3":0, "d6_ponr":1, "d7_fate_b":1, "d7_almost":1, "d7s5":0, "d7s6":0 },
+  "bitter":        { "d2_main":1, "d2_close":1, "d3s3":1, "d4_ponr":2, "d5s3":1, "d6_ponr":1, "d7_fate_b":1, "d7_almost":1, "d7s5":1, "d7s6":1 },
+  "quiet_normal":  { "d2_main":1, "d2_close":1, "d3s3":0, "d4_ponr":2, "d5s3":0, "d6_ponr":1, "d7_fate_b":1, "d7_almost":1, "d7s5":0, "d7s6":1 }
+}
