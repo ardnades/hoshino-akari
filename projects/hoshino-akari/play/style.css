@@ -107,6 +107,9 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline
 /* Day eyecatch 期間頂列退讓；收掉時 Day/標題微亮，提示資訊已轉移到頂列 */
 #topbar{transition:opacity .5s ease}
 #topbar.dim{opacity:.18}
+/* 隱藏對話框／頂列：偷看無遮擋的 CG／場景；點畫面或 Enter 恢復（VN 標準） */
+#game.ui-hidden #textbox,#game.ui-hidden #topbar{opacity:0;pointer-events:none}
+#textbox{transition:opacity .25s ease}
 @keyframes dayTagFlash{0%{color:#fff;text-shadow:0 0 18px var(--accent),0 0 30px var(--glow)}100%{color:var(--akari);text-shadow:0 0 10px var(--glow)}}
 #topbar #dayTag.flash{animation:dayTagFlash 1.2s ease}
 
@@ -210,11 +213,16 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline
 #sceneCard.daycard::after{bottom:0;transform-origin:bottom;box-shadow:inset 0 1px 0 rgba(200,180,255,.20)}
 @keyframes lbIn{from{transform:scaleY(0)}to{transform:scaleY(1)}}
 #sceneCard .day-card{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;text-align:center;padding:0 24px;z-index:2}
-#sceneCard .dc-no{color:var(--accent);font-family:var(--font-num);letter-spacing:.42em;font-size:14px;
-  text-shadow:0 0 12px var(--glow);animation:dcNo 1s ease both}
-@keyframes dcNo{from{opacity:0;letter-spacing:.9em}to{opacity:1;letter-spacing:.42em}}
-#sceneCard .dc-rule{width:54px;height:1px;background:linear-gradient(90deg,transparent,var(--accent),transparent);opacity:.8}
-#sceneCard .dc-title{font-size:clamp(26px,7vw,42px);letter-spacing:.22em;text-shadow:0 0 22px var(--glow),0 2px 4px rgba(0,0,0,.5);animation:fadeUp .9s .2s ease both}
+/* 彎月（mock 版 eyecatch 記號） */
+#sceneCard .day-card::before{content:"";width:30px;height:30px;border-radius:50%;
+  box-shadow:inset -9px 3px 0 0 var(--akari),0 0 14px var(--glow);transform:rotate(-16deg);animation:fadeUp 1s ease both}
+/* Day N 放大當主角 */
+#sceneCard .dc-no{color:var(--akari);font-family:"Noto Serif TC","Georgia","Times New Roman",serif;letter-spacing:.14em;font-size:clamp(44px,12vw,66px);font-weight:700;line-height:1;
+  text-shadow:0 0 26px var(--glow),0 2px 6px rgba(0,0,0,.5);animation:dcNo 1s ease both}
+@keyframes dcNo{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+#sceneCard .dc-rule{width:64px;height:1px;background:linear-gradient(90deg,transparent,var(--accent),transparent);opacity:.85}
+/* 章節名退為副標 */
+#sceneCard .dc-title{font-size:clamp(17px,4.6vw,24px);letter-spacing:.28em;color:var(--akari);text-shadow:0 0 14px var(--glow);animation:fadeUp .9s .2s ease both}
 #sceneCard .dc-sub{color:var(--ink-dim);font-size:clamp(13px,3.6vw,16px);letter-spacing:.18em;animation:fadeUp .9s .35s ease both}
 #sceneCard .day-end .dc-tail{color:var(--ink-dim);letter-spacing:.42em;font-size:16px;font-family:var(--font-sans)}
 @keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
@@ -228,7 +236,7 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline
 #sceneTag.scene-toast.show .ov-strip{opacity:1;transform:none}
 
 /* 道具 CG ＝ 場景上的小型「相片卡」popup：縮小＋相片白邊＋場景透出＋置對話框上方；caption 以 column flex 貼卡片下方 */
-#cgLayer{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:11px;z-index:2;background:rgba(5,7,10,.5);padding-bottom:34dvh}
+#cgLayer{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:11px;z-index:2;background:rgba(5,7,10,.5);padding-bottom:34dvh;animation:cgIn .45s ease both}   /* 整層(含暗底)一起淡入 → 杜絕進場時暗底瞬間蓋上的上下黑閃 */
 #cgLayer svg,#galViewArt svg{width:min(52vw,230px);height:auto;filter:drop-shadow(0 8px 24px rgba(0,0,0,.55))}
 #cgLayer .cg-img{max-width:min(58vw,265px);max-height:44dvh;border-radius:4px;border:4px solid rgba(244,240,232,.92);box-shadow:0 16px 42px rgba(0,0,0,.6),0 3px 10px rgba(0,0,0,.5);animation:cgCardIn .5s cubic-bezier(.2,.8,.2,1) both}   /* 道具相片卡（縮小＋相片白邊）*/
 #cgLayer .cg-cap{color:var(--ink-dim);font-size:12px;letter-spacing:.2em;font-family:var(--font-sans);text-shadow:0 1px 6px rgba(0,0,0,.8);animation:cgIn .9s ease both}
@@ -239,8 +247,10 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline
 @keyframes cgIn{from{opacity:0}to{opacity:1}}
 @keyframes cgCardIn{from{opacity:0;transform:scale(.92) translateY(6px)}to{opacity:1;transform:none}}
 @keyframes cgKen{from{transform:scale(1)}to{transform:scale(1.06)}}   /* 緩慢推近，origin 偏上對準臉；cover 故不露邊 */
-@media (prefers-reduced-motion:reduce){#cgLayer .cg-img,#cgLayer.cg-full .cg-img{animation:cgIn .3s ease both}}
-#game.cg-on #textbox{background:linear-gradient(180deg,rgba(9,12,18,0) 0%,rgba(9,12,18,.16) 50%,rgba(9,12,18,.4) 100%)}   /* CG 上對話框更透明，露出下半 CG；可讀性靠下面加強的文字陰影 */
+@media (prefers-reduced-motion:reduce){#cgLayer{animation:cgIn .2s ease both}#cgLayer .cg-img,#cgLayer.cg-full .cg-img{animation:cgIn .3s ease both}}
+#game.cg-on #textbox{background:linear-gradient(180deg,rgba(6,5,12,0) 0%,rgba(6,5,12,0) 24%,rgba(6,5,12,.44) 62%,rgba(6,5,12,.78) 100%);
+  -webkit-backdrop-filter:none;backdrop-filter:none;box-shadow:none}   /* CG 時對話框不再是毛玻璃面板：拿掉模糊/面板陰影，只留貼底漸層 scrim → CG 下緣保持清晰，字浮在畫面上靠陰影讀 */
+#game.cg-on .tb-frame{display:none}   /* CG 時隱藏紫框，不在畫面上圈一個盒子 */
 #game.cg-on #dialogue,#game.cg-on #speaker{text-shadow:0 1px 8px rgba(0,0,0,.95),0 0 4px rgba(0,0,0,.9),0 0 2px rgba(0,0,0,.85)}
 /* 道具相片卡（非全畫面 CG）顯示時，立繪退到後景：用景深模糊（非降透明度，避免變成背景透出來的鬼影）讓相片卡成為焦點；cgLayer 本身的 .5 暗罩已負責壓暗 */
 #game.cg-prop #spriteLayer{filter:blur(3px);transition:filter .35s ease}

@@ -147,6 +147,7 @@
   // ---- 前進控制（點擊 / 鍵盤 / auto / skip）----
   let pendingAdvance = null, typing = false, finishTyping = null;
   function userAdvance() {
+    if ($("game").classList.contains("ui-hidden")) { $("game").classList.remove("ui-hidden"); return; }   // 偷看模式：點畫面／Enter 先叫回對話框，不前進
     if (typing && finishTyping) { finishTyping(); return; }
     if (pendingAdvance) { const r = pendingAdvance; pendingAdvance = null; r(); }
   }
@@ -733,6 +734,7 @@
     $("btnSkipRead").onclick = () => { const cur = skipMode && skipUntilUnread; skipMode = !cur; skipUntilUnread = !cur; updateSkipUI(); if (skipMode) userAdvance(); };          // 只快進已讀（遇未讀自動停）
 
     // 對白回顧
+    $("btnHide").onclick = () => $("game").classList.toggle("ui-hidden");   // 隱藏對話框／頂列偷看全圖；點畫面或 Enter 恢復（見 userAdvance）
     $("btnLog").onclick = openBacklog;
     $("backlogClose").onclick = closeBacklog;
     // 設定
